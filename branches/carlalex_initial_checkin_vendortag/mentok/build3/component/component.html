@@ -1,0 +1,480 @@
+<html> <head>
+<title>Build System Component Module</title>
+</head>
+
+<body>
+<h1>Build System Component Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Build System Component Module provides the
+build system with the ability to import and export
+shared components from the common component repository
+(currently, this repository resides on a NFS directory 
+on the engineering network).
+<p>
+Most build system modules and targets deal within
+the context of the current directory, however
+the Component module deals with components as a whole,
+so many of the targets produced by this module are
+stored in a location known to all subdirectories within
+a component build at the COMPONENT_ROOT level.
+
+<hr>
+<h2>Component Repository / Dist Area</h2>
+XXX Say something here.
+
+<hr>
+<h2>Component Descriptors</h2>
+XXX Say something here.
+
+
+<hr>
+<h2>Macros and Controls</h2>
+<dl>
+  <dt><b>COMPONENT_DISTROOT</b></dt>
+  <dd>This macro specifies the location of the component repository.
+       </dd><p>
+  <dt><b>COMPONENT_DIST_COMPATIBILITY_PLATFORMS</b></dt>
+  <dd>This macro includes a list of platform link targets that
+       is suitable for maintaining backwards compatibility with
+       older component make code. This macro is provided as
+       a convenience for assigning to the _LINKS controls for individual
+       DIST_TARGETS (see below). The variant tag is not appended to
+       this lit of platform names.
+       </dd><p>
+  <dt><b>COMPONENT_DIST_COMPATIBILITY_PLATFORMS_AND_VTAG</b></dt>
+  <dd>This macro includes a list of platform link targets that
+       is suitable for maintaining backwards compatibility with
+       older component make code. This macro is provided as
+       a convenience for assigning to the _LINKS controls for individual
+       DIST_TARGETS (see below). The variant tag is appended to
+       this lit of platform names.
+       </dd><p>
+  <dt><b>COMPONENT_IMPORT_TARGET_ROOT</b></dt>
+  <dd>This macro indicates the root location that all import targets
+       are copied to for use in the component build.
+       Individual import targets may override this
+       with target specific options and controls.
+       </dd><p>
+  <dt><b>COMPONENT_IMPORT_ARCH_TARGET_DIR</b></dt>
+  <dd>This macro indicates the location that architecture specific import
+       targets are copied to for use in the component build.
+       Individual import targets may override this
+       with target specific options and controls.
+       </dd><p>
+  <dt><b>COMPONENT_IMPORT_NOARCH_TARGET_DIR</b></dt>
+  <dd>This macro indicates the location that architecture neutral import
+       targets are copied to for use in the component build.
+       Individual import targets may override this
+       with target specific options and controls.
+       </dd><p>
+       
+  <dt><b>COMPONENT_DISTTAG</b></dt>
+  <dd>An additional tag that will be appended to the revision of a component
+       that is pushed to the DISTROOT as the result of the building of the
+       DIST_TARGETS pattern targets. The primary purpose of this macro is to
+       provide Release Engineering a way to add tags to the "Natural" version
+       of a component when it is pushed to the component repository (a.k.a.
+       the dist area).
+       </dd>
+       <p>
+</dl>
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#IMPORT_ARCH_TARGETS">IMPORT_ARCH_TARGETS</a>
+  <li><a href="#IMPORT_NOARCH_TARGETS">IMPORT_NOARCH_TARGETS</a>
+  <li><a href="#DIST_TARGETS">DIST_TARGETS</a>
+  <li><a href="#EXPORT_DESC_TARGETS">EXPORT_DESC_TARGETS</a>
+  <li><a href="#component_import">component_import</a>
+  <li><a href="#component_dist">component_dist</a>
+  <li><a href="#component_desc">component_desc</a>
+  <li><a href="#component_info">component_info</a>
+  <li><a href="#component_man">component_man</a>
+</ul>
+
+<hr>
+<h2>Functions</h2>
+<ul>
+  <li><a href="#COMPONENT_FUNC_GET_IMPORT_ARCH_FLAGTARGET">COMPONENT_FUNC_GET_IMPORT_ARCH_FLAGTARGET</a>
+  <li><a href="#COMPONENT_FUNC_GET_IMPORT_NOARCH_FLAGTARGET">COMPONENT_FUNC_GET_IMPORT_NOARCH_FLAGTARGET</a>
+</ul>
+
+
+<hr>
+<a name="IMPORT_ARCH_TARGETS">
+<h2>IMPORT_ARCH_TARGETS</h2>
+<h3>IMPORT_ARCH_TARGETS Overview</h3>
+IMPORT_ARCH_TARGETS is the pattern target used to import
+architecture specific components into a component build tree. Architecture
+specific import components are taken from the COMPONENT_DISTROOT
+directory and copied into the COMPONENT_IMPORT_ARCH_TARGET_DIR directory.
+Both of these locations may be overridden with target specific options.
+<p>
+Since imported
+components consist of many files, a flag target must be used
+if an import target is to be explicitly mentioned in the dependency
+chain of another target built by another build system module. 
+The function COMPONENT_FUNC_GET_IMPORT_ARCH_FLAGTARGET
+is provided to translate an import target as named in the
+IMPORT_ARCH_TARGETS list to its flag target file name. This flag
+target happens to also be the XML component descriptor file for the
+imported component.  
+When an imported component does not provide a valid XML descriptor,
+a stub descriptor is generated as part of the import process.
+<p>
+IMPORT_ARCH_TARGETS will be built during the "target" phase of a build.
+IMPORT_ARCH_TARGETS may be built in isolation by requesting the "component_import"
+target.
+
+<h3>IMPORT_ARCH_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;import target&gt;</i>_REV</b></dt>
+  <dd>Specify the revision of the <i>&lt;import target&gt;</i> to import
+       into the current build. This will default to "-UNSPECIFIED-" if
+       this option is not set. This should normally be set and is the
+       primary control for individual import pattern targets.
+       </dd><p>
+
+  <dt><b><i>&lt;import target&gt;</i>_DISTROOT</b></dt>
+  <dd>Override the value of the COMPONENT_DISTROOT for the current
+       <i>&lt;import target&gt;</i> only.
+       </dd><p>
+
+  <dt><b><i>&lt;import target&gt;</i>_VTAG</b></dt>
+  <dd>Override the value of the BS_VTAG for the current
+       <i>&lt;import target&gt;</i> only.
+       </dd><p>
+
+  <dt><b><i>&lt;import target&gt;</i>_TO</b></dt>
+  <dd>
+       Override the default location of the imported component. The
+       default location is specified by the COMPONENT_IMPORT_ARCH_TARGET_DIR
+       macro.
+       </dd><p>
+	
+  <dt><b><i>&lt;import target&gt;</i>_FROM</b></dt>
+  <dd>
+       Override the full path from which the imported target will be imported from.
+       Normally this path is a construction of the <i>&lt;import target&gt;</i> name
+       COMPONENT_DISTROOT, <i>&lt;import target&gt;</i>_REV, and the current platform.
+       </dd><p>
+
+</dl>
+
+
+<hr>
+<a name="IMPORT_NOARCH_TARGETS">
+<h2>IMPORT_NOARCH_TARGETS</h2>
+<h3>IMPORT_NOARCH_TARGETS Overview</h3>
+IMPORT_NOARCH_TARGETS is the pattern target used to import
+architecture neutral components into a component build tree. Architecture
+neutral import components are taken from the COMPONENT_DISTROOT
+directory and copied into the COMPONENT_IMPORT_NOARCH_TARGET_DIR directory.
+Both of these locations may be overridden with target specific options.
+<p>
+Since imported
+components consist of many files, a flag target must be used
+if an import target is to be explicitly mentioned in the dependency
+chain of another target built by another build system module. The function
+COMPONENT_FUNC_GET_IMPORT_NOARCH_FLAGTARGET
+is provided to translate an import target as named in the
+IMPORT_NOARCH_TARGETS list to its flag target file name. This flag
+target happens to also be the XML component descriptor file for the
+imported component.  
+When an imported component does not provide a valid XML descriptor,
+a stub descriptor is generated as part of the import process.
+<p>
+IMPORT_NOARCH_TARGETS will be built during the "target" phase of a build.
+IMPORT_NOARCH_TARGETS may be built in isolation by requesting the "component_import"
+target.
+
+<h3>IMPORT_NOARCH_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;import target&gt;</i>_REV</b></dt>
+  <dd>Specify the revision of the <i>&lt;import target&gt;</i> to import
+       into the current build. This will default to "-UNSPECIFIED-" if
+       this option is not set. This should normally be set and is the
+       primary control for individual import pattern targets.
+       </dd><p>
+
+  <dt><b><i>&lt;import target&gt;</i>_DISTROOT</b></dt>
+  <dd>Override the value of the COMPONENT_DISTROOT for the current
+       <i>&lt;import target&gt;</i> only.
+       </dd><p>
+
+
+  <dt><b><i>&lt;import target&gt;</i>_VTAG</b></dt>
+  <dd>Override the value of the BS_VTAG for the current
+       <i>&lt;import target&gt;</i> only.
+       </dd><p>
+
+  <dt><b><i>&lt;import target&gt;</i>_TO</b></dt>
+  <dd>
+       Override the default location of the imported component. The
+       default location is specified by the COMPONENT_IMPORT_NOARCH_TARGET_DIR
+       macro.
+       </dd><p>
+	
+
+  <dt><b><i>&lt;import target&gt;</i>_FROM</b></dt>
+  <dd>
+       Override the full path from which the imported target will be imported from.
+       Normally this path is a construction of the <i>&lt;import target&gt;</i> name
+       COMPONENT_DISTROOT, <i>&lt;import target&gt;</i>_REV, and the current platform.
+       </dd><p>
+
+</dl>
+
+
+
+<hr>
+<a name="DIST_TARGETS">
+<h2>DIST_TARGETS</h2>
+<h3>DIST_TARGETS Overview</h3>
+DIST_TARGETS is the pattern target used to push components to
+the component repository used for sharing components across
+development teams and time. Unlike import targets, all assumed
+to be architecture specific targets and are "phony" make targets
+so they will always be build when requested, even if the
+the requested component and revision appears to have already
+been pushed to dist. 
+<p>
+In addition to pushing the contents of a component to the
+component repository, DIST_TARGETS pattern targets also cause a
+XML component descriptor file to be generated and pushed
+to dist. The component descriptor for components pushed to
+dist will chain the component descriptors of all imported
+components before being pushed to the component repository.
+This is done to track the full dependency tree of a component
+even if components used in its construction are not
+re-packaged in its dist or hidden by static linking.
+
+<h3>DIST_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;dist target&gt;</i>_FROM</b></dt>
+  <dd>Specifies the directory to push to dist. If left
+       unspecified, the current working directory will be
+       pushed, which is probably not what you want. In most
+       cases it is expected that a directory created by
+       targets from the Packaging build system module
+       will be specified as the _FROM for a given
+       <i>&lt;dist target&gt;</i>
+       </dd><p>
+
+  <dt><b><i>&lt;dist target&gt;</i>_REEXPORT</b></dt>
+  <dd>Specifies a list of components from the IMPORT_[ARCH|NOARCH]_TARGETS
+       pattern target that should be re-exported when creating the
+       the current <i>&lt;dist target&gt;</i>. ONLY components that
+       have been imported via a IMPORT_[ARCH|NOARCH]_TARGETS operation
+       may be re-exported.
+       </dd><p>
+
+  <dt><b><i>&lt;dist target&gt;</i>_REV</b></dt>
+  <dd>Specify the revision of the component to push to
+       the component repository. The default revision is
+       the date expressed in YYYY-MM-DD format.
+       COMPONENT_DISTTAG will be appended to this revision if
+       specified by release engineering (see above).
+       </dd><p>
+
+  <dt><b><i>&lt;dist target&gt;</i>_DISTROOT</b></dt>
+  <dd>
+       Override the value of the COMPONENT_DISTROOT for the current
+       <i>&lt;dist target&gt;</i> only.
+       </dd><p>
+
+  <dt><b><i>&lt;dist target&gt;</i>_PLATFORM</b></dt>
+  <dd>Specify a platform for the component as it will be
+       pushed to the component repository. This should be
+       the string in the macro BS_PLATFORM_NOARCH for
+       architecture neutral components. The default will be
+       the platform identifier string in the macro BS_PLATFORM_ARCH_FULL
+       provided by the build system base module.
+       </dd><p>
+
+  <dt><b><i>&lt;dist target&gt;</i>_PLATFORMLINKS</b></dt>
+  <dd>Specify a list of compatibility platforms for the given
+       component as it will be pushed to the component repository.
+       The default value for this will be empty.
+       </dd><p>
+
+  <dt><b><i>&lt;dist target&gt;</i>_TO</b></dt>
+  <dd>Specify an override location for the constructed path
+       under the component repository (Specified by COMPONENT_DISTROOT
+       or <i>&lt;dist target&gt;</i>_DISTROOT) to push the
+       component to. The default location to push a
+       <i>&lt;dist target&gt;</i> to is
+       <i>&lt;Component Repository&gt;</i>/<i>&lt;dist target&gt;</i>/<i>&lt;dist target&gt;</i>_REV)/<i>&lt;Platform&gt;</i>
+
+       </dd><p>
+
+  <dt><b><i>&lt;dist target&gt;</i>_COMMENT</b></dt>
+  <dd>Specify a text comment that will be included in the
+       component descriptor XML file.
+       </dd><p>
+</dl>
+
+<hr>
+<a name="EXPORT_DESC_TARGETS">
+<h2>EXPORT_DESC_TARGETS</h2>
+<h3>EXPORT_DESC_TARGETS Overview</h3>
+EXPORT_DESC_TARGETS is the pattern target used to create
+component descriptor XML files without pushing a component to the
+component repository. The target options availible for
+EXPORT_DESC_TARGETS pattern targets are identical to
+those for DIST_TARGETS. The generated descriptor will
+be placed in $(BS_ARCH_TARGET_DIR)/<i>export desc target</i>.xml
+
+
+<hr>
+<a name="component_import">
+<h2>component_import</h2>
+<h3>component_import Overview</h3>
+Simple target to trigger the building of IMPORT_ARCH_TARGETS
+and IMPORT_NOARCH_TARGETS pattern targets independent of the
+main build "target" phase. 
+
+<hr>
+<a name="component_dist">
+<h2>component_dist</h2>
+<h3>component_dist Overview</h3>
+Simple target to trigger the building of DIST_TARGETS
+pattern targets independent of the main build "posttarget" phase. 
+
+<hr>
+<a name="component_desc">
+<h2>component_desc</h2>
+<h3>component_desc Overview</h3>
+Simple target to trigger the building of EXPORT_DESC_TARGETS
+pattern targets independent of the main build "posttarget" phase. 
+
+<hr>
+<a name="component_info">
+<h2>component_info</h2>
+<h3>component_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the component module of
+the build system. The <b>component_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>component_info</b> target.
+
+<hr>
+<a name="component_man">
+<h2>component_man</h2>
+<h3>component_man Overview</h3>
+Simple targets to display usage information and help pertaining to 
+the component module of the build system.
+The <b>component_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>component_man</b> target.
+
+<hr>
+<a name="COMPONENT_FUNC_GET_IMPORT_ARCH_FLAGTARGET">
+<h2>COMPONENT_FUNC_GET_IMPORT_ARCH_FLAGTARGET</h2>
+This function is provided to translate an import pattern target
+as it is named in the IMPORT_ARCH_TARGETS list to the actual
+flag target that is used to track dependencies on a given
+import pattern target. In the case of import pattern targets,
+this flag target happens to be the XML component descriptor
+file that is used to describe the imported component. When
+an imported component does not provide a valid XML descriptor,
+a stub descriptor is generated as part of the import process.
+
+<hr>
+<a name="COMPONENT_FUNC_GET_IMPORT_NOARCH_FLAGTARGET">
+<h2>COMPONENT_FUNC_GET_IMPORT_NOARCH_FLAGTARGET</h2>
+This function is provided to translate an import pattern target
+as it is named in the IMPORT_NOARCH_TARGETS list to the actual
+flag target that is used to track dependencies on a given
+import pattern target. In the case of import pattern targets,
+this flag target happens to be the XML component descriptor
+file that is used to describe the imported component. When
+an imported component does not provide a valid XML descriptor,
+a stub descriptor is generated as part of the import process.
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+COMPONENT_ROOT=../..
+BS_ROOT=$(COMPONENT_ROOT)/../build3
+
+include $(BS_ROOT)/defines.mk
+
+IMPORT_ARCH_TARGETS=mhnet
+IMPORT_NOARCH_TARGETS=mhjava
+DIST_TARGETS=foo
+EXPORT_DESC_TARGETS=test_descriptor
+
+mhnet_REV=2003-04-03
+#mhnet_DISTROOT=foo
+#mhnet_FROM=foobar
+#mhnet_TO=foo
+
+mhjava_REV=2003-04-07
+#mhjava_DISTROOT=
+#mhjava_FROM=
+#mhjava_TO=
+
+
+
+foo_FROM=/home/myhomedir/scratch/src/my-project-trunk/src/export_code
+foo_TO=
+foo_DISTROOT=
+#foo_PLATFORM=noarch
+foo_PLATFORMLINKS=
+foo_REV=3.1
+#foo_COMMENT=build system 3.0 test component
+
+#COMPONENT_DISTTAG=test_dist_tag
+
+
+include $(BS_ROOT)/rules.mk
+
+</tt></pre></blockquote>
+
+<hr>
+<h2>Example Component Descriptor XML File</h2>
+<bloclquote><pre><tt>
+&lt;?xml version="1.0"?&gt;
+&lt;ComponentDesc&gt;
+    &lt;Name&gt;foo&lt;/Name&gt;
+    &lt;Revision&gt;3.1&lt;/Revision&gt;
+    &lt;Comment&gt;foo component DIST created at 2003-06-13 14:28:42 on myhost.mydomain.net&lt;/Comment&gt;
+    &lt;Platform&gt;Linux-2.4.20-13-i686-libc-2.3.2&lt;/Platform&gt;
+    &lt;ReferenceDist&gt;/usr/local/test-dist/foo/3.1/Linux-2.4.20-13-i686-libc-2.3.2&lt;/ReferenceDist&gt;
+    &lt;CompatibilityPlatform&gt;Linux&lt;/CompatibilityPlatform&gt;
+    &lt;CompatibilityPlatform&gt;Linux-2.4-i686&lt;/CompatibilityPlatform&gt;
+    &lt;CompatibilityPlatform&gt;Linux-2.4-i686-libc-2.3.2&lt;/CompatibilityPlatform&gt;
+    &lt;CompatibilityPlatform&gt;Linux-2.4.20-13-i686&lt;/CompatibilityPlatform&gt;
+    &lt;CompatibilityPlatform&gt;Linux-i686&lt;/CompatibilityPlatform&gt;
+    &lt;Import&gt;
+        &lt;ComponentDesc&gt;
+            &lt;Name&gt;mhnet&lt;/Name&gt;
+            &lt;Revision&gt;2003-04-03&lt;/Revision&gt;
+            &lt;Comment&gt;Imported Component did not provide a component.xml file; This stub was auto generated by the importing rules.&lt;/Comment&gt;
+            &lt;Platform&gt;Linux-2.4.20-13-i686-libc-2.3.2&lt;/Platform&gt;
+            &lt;ImportDist&gt;/usr/local/test-dist/mhnet/2003-04-03/Linux-2.4-i686&lt;/ImportDist&gt;
+        &lt;/ComponentDesc&gt;
+        &lt;ComponentDesc&gt;
+            &lt;Name&gt;mhjava&lt;/Name&gt;
+            &lt;Revision&gt;2003-04-07&lt;/Revision&gt;
+            &lt;Comment&gt;MH java component descriptor.&lt;/Comment&gt;
+            &lt;Platform&gt;noarch&lt;/Platform&gt;
+            &lt;Import&gt;
+                &lt;ComponentDesc&gt;
+                    &lt;Name&gt;Test sub component&lt;/Name&gt;
+                    &lt;Revision&gt;1.0&lt;/Revision&gt;
+                &lt;/ComponentDesc&gt;
+            &lt;/Import&gt;
+            &lt;ImportDist&gt;/usr/local/test-dist/mhjava/2003-04-07/Linux-2.4-i686&lt;/ImportDist&gt;
+        &lt;/ComponentDesc&gt;
+    &lt;/Import&gt;
+&lt;/ComponentDesc&gt;
+
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>

@@ -1,0 +1,24 @@
+
+This is build3 (A.K.A. "Project Mentok"), our third generation make system.
+Build3 is intended to be a modular build system implemented with GNU make
+version 3.80 or later that is suitable for use in a release engineering
+environment. As such, reproducibility, predictability, and insensitivity
+to users' environments are prized over automated portability via
+probing of the runtime environment.
+
+
+Contents:
+
+    build3/
+        This directory contains the core modules of build3.
+
+    build3-sample-component-tree/
+        A sample component source tree that uses build system 3
+
+    src/
+        Build system 3 component src tree that uses the copy of
+        build system 3 in this dir. This is how build system 3
+        packages and publishes itself. (Holy recursion Batman!)
+
+
+For full build3 documentation, see build3/buildsystem3.html
