@@ -1,0 +1,63 @@
+ifeq ($(BUILDSTAMP_COMMENT),)
+BUILDSTAMP_COMMENT=Copyright (c) $(BS_DATE_YEAR) Your_name_here. All rights reserved.
+endif
+
+# numbers for date provided by the build system core are leading zero padded
+# for pretty string printing. We don't want this for integer C constants
+# since this means "octal" integer constants.
+ifeq ($(BUILDSTAMP_DATE_YEAR),)
+BUILDSTAMP_DATE_YEAR=$(BS_DATE_YEAR)
+endif
+
+ifeq ($(BUILDSTAMP_DATE_MONTH),)
+BUILDSTAMP_DATE_MONTH=$(patsubst 0%,%,$(BS_DATE_MONTH))
+endif
+
+ifeq ($(BUILDSTAMP_DATE_DAY),)
+BUILDSTAMP_DATE_DAY=$(patsubst 0%,%,$(BS_DATE_DAY))
+endif
+
+ifeq ($(BUILDSTAMP_DATE_HOUR),)
+BUILDSTAMP_DATE_HOUR=$(patsubst 0%,%,$(BS_DATE_HOUR))
+endif
+
+ifeq ($(BUILDSTAMP_DATE_MINUTE),)
+BUILDSTAMP_DATE_MINUTE=$(patsubst 0%,%,$(BS_DATE_MINUTE))
+endif
+
+ifeq ($(BUILDSTAMP_DATE_SECOND),)
+BUILDSTAMP_DATE_SECOND=$(patsubst 0%,%,$(BS_DATE_SECOND))
+endif
+
+ifeq ($(BUILDSTAMP_DATE_STRING),)
+BUILDSTAMP_DATE_STRING=$(BUILDSTAMP_DATE_YEAR)/$(BUILDSTAMP_DATE_MONTH)/$(BUILDSTAMP_DATE_DAY) $(BUILDSTAMP_DATE_HOUR):$(BUILDSTAMP_DATE_MINUTE):$(BUILDSTAMP_DATE_SECOND)
+endif
+
+ifeq ($(BUILDSTAMP_OS),)
+BUILDSTAMP_OS=$(BS_OS_NAME)
+endif
+
+ifeq ($(BUILDSTAMP_MACHINETYPE),)
+BUILDSTAMP_MACHINETYPE=$(BS_OS_MACHINETYPE)
+endif
+
+ifeq ($(BUILDSTAMP_NAME),)
+BUILDSTAMP_NAME=NoName
+endif
+
+ifeq ($(BUILDSTAMP_REVISION_MAJOR),)
+BUILDSTAMP_REVISION_MAJOR=1
+endif
+
+ifeq ($(BUILDSTAMP_REVISION_MINOR),)
+BUILDSTAMP_REVISION_MINOR=0
+endif
+
+ifeq ($(BUILDSTAMP_REVISION_PATCH),)
+BUILDSTAMP_REVISION_PATCH=0
+endif
+
+ifeq ($(BUILDSTAMP_REVISION_STRING),)
+BUILDSTAMP_REVISION_STRING=$(BUILDSTAMP_REVISION_MAJOR)$(if $(strip $(BUILDSTAMP_REVISION_MINOR)),.$(strip $(BUILDSTAMP_REVISION_MINOR)))$(if $(strip $(BUILDSTAMP_REVISION_PATCH)),.$(strip $(BUILDSTAMP_REVISION_PATCH)))
+endif
+
