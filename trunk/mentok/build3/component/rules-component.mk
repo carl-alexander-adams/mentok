@@ -299,7 +299,7 @@ $(_IMPORT_NOARCH_DESC_TARGETS):
 
 _EXPORT_DESC_TARGETS=$(foreach d,$(addprefix $(BS_ARCH_TARGET_DIR)/,$(DIST_TARGETS)),$(d).xml) $(foreach d,$(addprefix $(BS_ARCH_TARGET_DIR)/,$(EXPORT_DESC_TARGETS)),$(d).xml)
 
-_DIST_TARGETS=$(addprefix _PHONEY_DIST_/,$(DIST_TARGETS))
+_DIST_TARGETS=$(addprefix _PHONY_DIST_/,$(DIST_TARGETS))
 
 
 
