@@ -16,6 +16,7 @@ COMPONENT_FUNC_GET_IMPORT_ARCH_FLAGTARGET=$(COMPONENT_IMPORT_ARCH_TARGET_DIR)/co
 _IMPORT_FUNC_COMPUTE_IMPORT_NOARCH_FROMPATH_DEFAULT=$(word 1,\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_NOARCH)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_NOARCH))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FULL)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_1)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_2)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_3)$(if $(strip $(3)),-$(strip $(3))))\
@@ -27,6 +28,7 @@ _IMPORT_FUNC_COMPUTE_IMPORT_NOARCH_FROMPATH_DEFAULT=$(word 1,\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_2)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_3)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_4)$(if $(strip $(3)),-$(strip $(3))))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FULL))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_1))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_2))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_3))\
@@ -48,6 +50,7 @@ _IMPORT_FUNC_COMPUTE_IMPORT_NOARCH_FROMPATH_DEFAULT=$(word 1,\
 #
 
 _IMPORT_FUNC_COMPUTE_IMPORT_ARCH_FROMPATH_DEFAULT=$(word 1,\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FULL)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_1)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_2)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_3)$(if $(strip $(3)),-$(strip $(3))))\
@@ -59,6 +62,7 @@ _IMPORT_FUNC_COMPUTE_IMPORT_ARCH_FROMPATH_DEFAULT=$(word 1,\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_2)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_3)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_4)$(if $(strip $(3)),-$(strip $(3))))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FULL))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_1))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_2))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_3))\
