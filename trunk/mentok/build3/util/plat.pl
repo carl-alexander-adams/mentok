@@ -70,7 +70,7 @@ $result_machineName = `uname -n`;
 $result_machineName = normalize($result_machineName);
 
 $tmp_rev = `uname -r`;
-($result_OSRevMajor, $result_OSRevMinor, $result_OSRevPatch, @junk) = split(/\./,$tmp_rev);
+($result_OSRevMajor, $result_OSRevMinor, $result_OSRevPatch) = split(/\./,$tmp_rev, 3);
 $result_OSRevMajor = normalize($result_OSRevMajor);
 $result_OSRevMinor = normalize($result_OSRevMinor);
 $result_OSRevPatch = normalize($result_OSRevPatch);
