@@ -98,3 +98,19 @@ ifeq ($(BIN_BSCATMAN),)
 BIN_BSCATMAN=$(BIN_LINKS) -dump
 endif
 
+ifeq ($(BIN_SH),)
+BIN_SH=/bin/sh
+endif
+
+ifeq ($(BIN_PRINTF),)
+BIN_PRINTF=/usr/bin/printf
+endif
+
+ifeq ($(BIN_ECHO),)
+BIN_ECHO=echo
+endif
+
+ifeq ($(BIN_WHOAMI),)
+BIN_WHOAMI=/usr/bin/whoami
+endif
+

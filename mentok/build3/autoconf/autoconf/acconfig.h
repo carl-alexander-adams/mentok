@@ -1,8 +1,3 @@
-/* acconfig.h
- *   Supplemental definitions for Mantrap
- *   $Id$
- */
-
 /*
  * Solaris 2.6 does not have socklen_t.  We know that socklen_t must
  * always be int, so we defined it as such.

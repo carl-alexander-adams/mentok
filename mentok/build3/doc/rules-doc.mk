@@ -73,8 +73,8 @@ $(_DOXYGEN_TARGETS):
 $(_DOXYGEN_TARGETS): _T=$(notdir $@)
 $(_DOXYGEN_TARGETS): _DOXYGEN = $(if $($(_T)_DOXYGEN), $($(_T)_DOXYGEN), $(BIN_DOXYGEN))
 $(_DOXYGEN_TARGETS): _DOXYGEN_FLAGS = $(if $($(_T)_DOXYGENFLAGS), $($(_T)_DOXYGENFLAGS),$(FLAGS_DOXYGEN))
-$(_DOXYGEN_TARGETS): _SRC = $(if $($(_T)_SRC), $($(_T)_SRC),Doxyfile)
-$(_DOXYGEN_TARGETS): _FIXED_SRC = $(BS_NOARCH_TARGET_DIR)/$(_SRC).buildsystem-altered.doxyfile
+$(_DOXYGEN_TARGETS): _SRC=$(if $($(_T)_SRC), $($(_T)_SRC),Doxyfile)
+$(_DOXYGEN_TARGETS): _FIXED_SRC = $(BS_NOARCH_TARGET_DIR)/$(notdir $(_SRC).buildsystem-altered.doxyfile)
 $(_DOXYGEN_TARGETS):
 	@echo "$(BS_INFO_PREFIX)  Generating DOXYGEN_TARGET document generation target $(_T)"
 	@echo "$(BS_INFO_PREFIX)      Target Name                     :  $(_T)"
@@ -107,7 +107,7 @@ man:: doc_man
 
 pretarget::
 
-target::
+target:: doc_doxygen
 
 # posttarget:: doc_doxygen
 posttarget::

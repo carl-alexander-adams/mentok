@@ -24,12 +24,6 @@
        The value of this macro should be a string.
        </dd><p>
 
-  <dt><b>BUILDSTAMP_REVISION_STRING</b></dt>
-  <dd>
-       The global default \"revision_string\" to use when generating a buildstamp target.
-       The value of this macro should be a string.
-       </dd><p>
-       
   <dt><b>BUILDSTAMP_REVISION_MAJOR</b></dt>
   <dd>
        The global default \"revision_major\" to use when generating a buildstamp target.
@@ -48,12 +42,12 @@
        The value of this macro should be an integer
        </dd><p>
 
-  <dt><b>BUILDSTAMP_DATE_STRING</b></dt>
+  <dt><b>BUILDSTAMP_REVISION_STRING</b></dt>
   <dd>
-       The global default \"date_string\" to use when generating a buildstamp target.
+       The global default \"revision_string\" to use when generating a buildstamp target.
        The value of this macro should be a string.
        </dd><p>
-
+       
   <dt><b>BUILDSTAMP_DATE_YEAR</b></dt>
   <dd>
        The global default \"date_year\" to use when generating a buildstamp target.
@@ -89,6 +83,92 @@
        The global default \"date_second\" to use when generating a buildstamp target.
        The value of this macro should be a integer.
        </dd><p>
+
+  <dt><b>BUILDSTAMP_DATE_STRING</b></dt>
+  <dd>
+       The global default \"date_string\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+
+  <dt><b>BUILDSTAMP_USERNAME</b></dt>
+  <dd>
+       The global default \"username\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+       
+  <dt><b>BUILDSTAMP_HOSTNAME</b></dt>
+  <dd>
+       The global default \"hostname\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+       
+  <dt><b>BUILDSTAMP_OS_NAME</b></dt>
+  <dd>
+       The global default \"os_name\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+
+  <dt><b>BUILDSTAMP_OS_REVMAJOR</b></dt>
+  <dd>
+       The global default \"os_revmajor\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+       
+  <dt><b>BUILDSTAMP_OS_REVMINOR</b></dt>
+  <dd>
+       The global default \"os_revminor\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+       
+  <dt><b>BUILDSTAMP_OS_REVPATCH</b></dt>
+  <dd>
+       The global default \"os_revpatch\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+       
+
+  <dt><b>BUILDSTAMP_OS_RUNTIMENAME</b></dt>
+  <dd>
+       The global default \"os_runtimename\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+
+  <dt><b>BUILDSTAMP_OS_RUNTIMEREVMAJOR</b></dt>
+  <dd>
+       The global default \"os_runtimerevmajor\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+       
+  <dt><b>BUILDSTAMP_OS_RUNTIMEREVMINOR</b></dt>
+  <dd>
+       The global default \"os_runtimerevminor\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+       
+  <dt><b>BUILDSTAMP_OS_RUNTIMEREVPATCH</b></dt>
+  <dd>
+       The global default \"os_runtimerevpatch\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+
+  <dt><b>BUILDSTAMP_MACHINETYPE</b></dt>
+  <dd>
+       The global default \"machinetype\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+
+  <dt><b>BUILDSTAMP_MACHINEPROC</b></dt>
+  <dd>
+       The global default \"machineproc\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+
+  <dt><b>BUILDSTAMP_MACHINEINSTSET</b></dt>
+  <dd>
+       The global default \"machineinstset\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+
 
 </dl>
 
@@ -128,12 +208,6 @@ target.
        the global macro  BUILDSTAMP_COMMENT is used.
        </dd><p>
 
-  <dt><b><i>&lt;buildstamp target&gt;</i>_REVISION_STRING</b></dt>
-  <dd>Specify the \"revision_string\" of the current <i>&lt;buildstamp target&gt;</i>.
-       This value should be a string. If none is provided, the value of
-       the global macro  BUILDSTAMP_REVISION_STRING is used.
-       </dd><p>
-
   <dt><b><i>&lt;buildstamp target&gt;</i>_REVISION_MAJOR</b></dt>
   <dd>Specify the \"revision_major\" of the current <i>&lt;buildstamp target&gt;</i>.
        This value should be an integer. If none is provided, the value of
@@ -153,10 +227,10 @@ target.
        </dd><p>
 
 
-  <dt><b><i>&lt;buildstamp target&gt;</i>_DATE_STRING</b></dt>
-  <dd>Specify the \"date_string\" of the current <i>&lt;buildstamp target&gt;</i>.
+  <dt><b><i>&lt;buildstamp target&gt;</i>_REVISION_STRING</b></dt>
+  <dd>Specify the \"revision_string\" of the current <i>&lt;buildstamp target&gt;</i>.
        This value should be a string. If none is provided, the value of
-       the global macro  BUILDSTAMP_DATE_STRING is used.
+       the global macro  BUILDSTAMP_REVISION_STRING is used.
        </dd><p>
 
   <dt><b><i>&lt;buildstamp target&gt;</i>_DATE_YEAR</b></dt>
@@ -194,6 +268,94 @@ target.
        This value should be an integer. If none is provided, the value of
        the global macro  BUILDSTAMP_DATE_SECOND is used.
        </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_DATE_STRING</b></dt>
+  <dd>Specify the \"date_string\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_DATE_STRING is used.
+       </dd><p>
+
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_USERNAME</b></dt>
+  <dd>Specify the \"username\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_USERNAME is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_HOSTNAME</b></dt>
+  <dd>Specify the \"hostname\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_HOSTNAME is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_OS_NAME</b></dt>
+  <dd>Specify the \"os_name\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_OS_NAME is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_OS_REVMAJOR</b></dt>
+  <dd>Specify the \"os_revmajor\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_OS_REVMAJOR is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_OS_REVMINOR</b></dt>
+  <dd>Specify the \"os_revminor\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_OS_REVMINOR is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_OS_REVPATCH</b></dt>
+  <dd>Specify the \"os_revpatch\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_OS_REVPATCH is used.
+       </dd><p>
+
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_OS_RUNTIMENAME</b></dt>
+  <dd>Specify the \"os_runtimename\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_OS_RUNTIMENAME is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_OS_RUNTIMEREVMAJOR</b></dt>
+  <dd>Specify the \"os_runtimerevmajor\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_OS_runtimeREVMAJOR is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_OS_RUNTIMEREVMINOR</b></dt>
+  <dd>Specify the \"os_runtimerevminor\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_OS_RUNTIMEREVMINOR is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_OS_RUNTIMEREVPATCH</b></dt>
+  <dd>Specify the \"os_runtimerevpatch\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_OS_RUNTIMEREVPATCH is used.
+       </dd><p>
+
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_MACHINETYPE</b></dt>
+  <dd>Specify the \"machinetype\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_MACHINETYPE is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_MACHINEPROC</b></dt>
+  <dd>Specify the \"machineproc\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_MACHINEPROC is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_MACHINEINSTSET</b></dt>
+  <dd>Specify the \"machineinstset\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string. If none is provided, the value of
+       the global macro  BUILDSTAMP_MACHINEINSTSET is used.
+       </dd><p>
+
 
 
 </dl>

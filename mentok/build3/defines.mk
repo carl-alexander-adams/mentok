@@ -8,6 +8,7 @@ include $(BS_ROOT)/component/defines-component.mk
 include $(BS_ROOT)/config/defines-config.mk
 include $(BS_ROOT)/codegen/defines-codegen.mk
 include $(BS_ROOT)/nativecode/defines-nativecode.mk
+include $(BS_ROOT)/aliencode/defines-aliencode.mk
 include $(BS_ROOT)/javacode/defines-javacode.mk
 include $(BS_ROOT)/packaging/defines-packaging.mk
 include $(BS_ROOT)/release-engineering/defines-release-engineering.mk

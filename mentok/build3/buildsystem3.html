@@ -1,10 +1,10 @@
 <html> <head>
-<title>Build System 3</title>
+<title>Build System 3.0</title>
 </head>
 
 <body>
 <center>
-<h1>Build System 3</h1>
+<h1>Build System 3.0</h1>
 <br>
 <small><i>A.K.A. Project Mentok... "We don't borrow, we TAKE the mind."</i></small>
 </center>
@@ -19,8 +19,8 @@
   <li><a href="#Modules">Supported Modules</a>
   <li><a href="#License">License</a>
 </ul>
-
-
+  
+  
 <hr>
 <a name="Goals">
 <h2>Goals</h2>
@@ -39,12 +39,12 @@ in mind:
        are used to compile or link any given target, and it should
        be easy to modify these on a per-target basis without
        effecting the whole component.
-
+  
   <li>Implement a modular design. It should be easy to add the ability
        to provide new pattern rules for 3rd party pre-processors, profiling
        tools, etc. Such additions to the build system should not
        require modification of unrelated rules.
-
+  
   <li>Component chain reporting. When building a large software project that
        may import binary components which themselves may have included other
        components, conflicts in hidden dependencies can take place.
@@ -52,7 +52,7 @@ in mind:
        along with a description of its unadvertised and hidden dependencies,
        tracking down problems that can arise from component chaining is
        greatly simplified.
-
+ 
   <li>Divorcing of the software component from the build system. By divorcing
        the generic pattern rules and default configuration files from
        any project specific customizations, it should be possible for
@@ -69,7 +69,7 @@ this build system re-write:
 <ul>
   <li>Nothing. Mentok TAKES the mind of the user.
 </ul>
-  
+
 
 <hr>
 <a name="Requirements">
@@ -79,10 +79,11 @@ Build3 current depends on the following other software packages:
   <li>Gnu Make 3.79.1
   <li>Perl 5.6
 </ul>
+
   
 <hr>
 <a name="NewTree">
-<h2>Starting a new component tree with Build System 3</h2>
+<h2>Starting a new component tree with Build System 3.0</h2>
 Accomplishing the goal of centralized build3 source management
 requires that either all components share a source repository capable of modularized
 checkouts such that different components can be checked out with build3
@@ -440,7 +441,7 @@ CVS to manage <i>&lt;Component&nbsp;root&gt;</i>, you can add an entry to
 
 <hr>
 <a name="DesignNotes">
-<h2>Design Notes for Build System 3</h2>
+<h2>Design Notes for Build System 3.0</h2>
 
 <p>
 We need design notes for the overall build process, targets, phases/slices, 
@@ -497,6 +498,7 @@ additional modules, and ways around it, need to go here.
   <li><a href="./doc/doc.html">Document Generation</a>
 </ul>
 
+
 <hr>
 <a name="License">
 <h2>License</h2>
@@ -521,5 +523,5 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 </pre>
-<hr>
+
 </body> </html>

@@ -26,9 +26,82 @@ codegen_info:
 	@echo "$(BS_INFO_PREFIX)"
 	@echo "$(BS_INFO_PREFIX) LEX_TARGETS                              $(LEX_TARGETS)"
 	@echo "$(BS_INFO_PREFIX) YACC_TARGETS                             $(YACC_TARGETS)"
+	@echo "$(BS_INFO_PREFIX) TEMPLATEFILE_TARGETS                     $(TEMPLATEFILE_TARGETS)"
+
 
 codegen_clean::
 	@echo "$(BS_INFO_PREFIX)  cleaning code generation targets..."
+
+#
+# Template file targets
+#
+_TEMPLATEFILE_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(sort $(TEMPLATEFILE_TARGETS)))
+_TEMPLATEFILE_DEP_GENERATION_TARGETS=$(addprefix _TEMPLATEFILE_DEP_,$(TEMPLATEFILE_TARGETS))
+_TEMPLATEFILE_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/codegen_depend_templatefile.mk
+
+_TEMPLATEFILE_BUILDERS=$(addsuffix -builder.sh,$(_TEMPLATEFILE_TARGETS))
+
+ifneq ($(strip $(TEMPLATEFILE_TARGETS)),)
+-include $(_TEMPLATEFILE_DEPEND_FILE)
+
+codegen_clean::
+	$(BIN_RM) -f $(_TEMPLATEFILE_TARGETS)
+	$(BIN_RM) -f $(_TEMPLATEFILE_BUILDERS)
+
+endif
+
+$(_TEMPLATEFILE_DEPEND_FILE): _TEMPLATEFILE_DEP_PREP $(_TEMPLATEFILE_DEP_GENERATION_TARGETS)
+.INTERMEDIATE:: _TEMPLATEFILE_DEP_PREP $(_TEMPLATEFILE_DEP_GENERATION_TARGETS)
+
+
+
+_TEMPLATEFILE_DEP_PREP:
+	@echo "$(BS_INFO_PREFIX) clearing dependancy file $(_TEMPLATEFILE_DEPEND_FILE)"
+	$(BIN_MKDIR) -p $(dir $(_TEMPLATEFILE_DEPEND_FILE))
+	echo "##" > $(_TEMPLATEFILE_DEPEND_FILE)
+	echo "## Auto generated depend file for TEMPLATEFILE_TARGETS" >> $(_TEMPLATEFILE_DEPEND_FILE)
+	echo "##" >> $(_TEMPLATEFILE_DEPEND_FILE)
+
+
+_TEMPLATEFILE_DEP_%:
+_TEMPLATEFILE_DEP_%: _TEMPLATEFILE_OUTPUT=$(BS_ARCH_TARGET_DIR)/$(*)
+_TEMPLATEFILE_DEP_%: _TEMPLATEFILE_SRC = $(if $($*_TEMPLATE),$($*_TEMPLATE),$(*).template)
+_TEMPLATEFILE_DEP_%: _DEP=$($*_DEP)
+_TEMPLATEFILE_DEP_%:
+	@echo "$(BS_INFO_PREFIX) Rebuilding dependancy for TEMPLATEFILE_TARGET $(*) "
+	@echo "## TEMPLATEFILE target: $(*) $(_TEMPLATEFILE_OUTPUT)" >> $(_TEMPLATEFILE_DEPEND_FILE)
+	@echo "$(_TEMPLATEFILE_OUTPUT): $(_TEMPLATEFILE_SRC)" >> $(_TEMPLATEFILE_DEPEND_FILE)
+	@echo "$(_TEMPLATEFILE_OUTPUT): $(_DEP)" >> $(_TEMPLATEFILE_DEPEND_FILE)
+	@echo "" >> $(_TEMPLATEFILE_DEPEND_FILE)
+
+
+
+$(_TEMPLATEFILE_TARGETS):
+$(_TEMPLATEFILE_TARGETS): _T=$(notdir $@)
+$(_TEMPLATEFILE_TARGETS): _BUILDER=$(@)-builder.sh
+$(_TEMPLATEFILE_TARGETS): _SRC = $(if $($(_T)_TEMPLATE), $($(_T)_TEMPLATE), $(_T).template)
+$(_TEMPLATEFILE_TARGETS):
+	@echo "$(BS_INFO_PREFIX)  Generating TEMPLATEFILE_TARGET code generation target $(_T)"
+	@echo "$(BS_INFO_PREFIX)      Target Name                     :  $(_T)"
+	@echo "$(BS_INFO_PREFIX)      Output File                     :  $@"
+	@echo "$(BS_INFO_PREFIX)      Source File                     :  $(_SRC)"
+	@echo "$(BS_INFO_PREFIX)      Template builder                :  $(_BUILDER)"
+	@echo
+	echo '#!$(BIN_SH)' > $(_BUILDER)
+	$(BIN_PRINTF) '$(BIN_ECHO) "' >> $(_BUILDER)
+#	$(BIN_CAT) $(_SRC) | $(BIN_SED)  's/"/\\"/g' >> $(_BUILDER)
+	$(BIN_SED)  's/"/\\"/g' < $(_SRC) \
+		| $(BIN_SED) 's/\$$\([^(]\)/\\$$\1/g' \
+		| $(BIN_SED) 's/\$$(\([^)][^)]*\))/$$\1/g' \
+		>> $(_BUILDER)
+	echo '"' >> $(_BUILDER)
+	$(BIN_CHMOD) 755 $(_BUILDER)
+	$(_BUILDER) > $@
+
+
+
+
+codegen_templatefile: $(_TEMPLATEFILE_TARGETS)
 
 
 #
@@ -179,6 +252,7 @@ man:: codegen_man
 
 pretarget:: codegen_lex
 pretarget:: codegen_yacc
+pretarget:: codegen_templatefile
 
 target::
 
