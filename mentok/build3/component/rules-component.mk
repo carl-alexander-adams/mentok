@@ -239,7 +239,7 @@ $(_IMPORT_ARCH_DESC_TARGETS): _FROM_FROM=$($(_T)_FROM)
 $(_IMPORT_ARCH_DESC_TARGETS): _FROM_DEFAULT=$(call _IMPORT_FUNC_COMPUTE_IMPORT_ARCH_FROMPATH_DEFAULT,$(_T),$(_REV),$(_VTAG),$(_DISTROOT)) 
 $(_IMPORT_ARCH_DESC_TARGETS): _FROM_AUTO=$(strip $(if $(_FROM_FROM),$(_FROM_FROM),$(_FROM_DEFAULT)))
 $(_IMPORT_ARCH_DESC_TARGETS):
-$(_IMPORT_ARCH_DESC_TARGETS): _SAFETY_CMD=$(if $(_FROM_AUTO),,@echo "$(BS_ERROR_PREFIX) Import not found in component repository (dist area)" ; $(BIN_FALSE))
+$(_IMPORT_ARCH_DESC_TARGETS): _SAFETY_CMD=$(if $(_FROM_AUTO),,@echo "$(BS_ERROR_PREFIX) Import not found in component repository" ; $(BIN_FALSE))
 $(_IMPORT_ARCH_DESC_TARGETS): _IMPORT_DESC=$(wildcard $(_FROM_AUTO)/component.xml)
 $(_IMPORT_ARCH_DESC_TARGETS): _COMPONENTUTIL_ARGS=$(if $(_IMPORT_DESC),\
                                      -I -f $(_FROM_AUTO)/component.xml,\
@@ -378,12 +378,35 @@ $(_DIST_TARGETS):
 	$(BIN_CP) $(_DESC) $(_TO)/component.xml
 
 
+#
+# We got lazy, and this isn't a pattern target. I'm not sure there really is call to make
+# this a full blown pattern target that can archive an arbitrary slice of the repository
+# that is independant from the IMPORT pattern targets.
+#
+$(BS_ARCH_TARGET_DIR)/imported_components_arch.tar.gz:
+$(BS_ARCH_TARGET_DIR)/imported_components_arch.tar.gz: _ARCH_DIST_FROMS=$(foreach import,$(IMPORT_ARCH_TARGETS),$(if $($(import)_FROM),$($(import)_FROM),$(call _IMPORT_FUNC_COMPUTE_IMPORT_ARCH_FROMPATH_DEFAULT,$(import),$($(import)_REV),$(if $($(import)_VTAG),$($(import)_VTAG),$(BS_VTAG)),$(if $($(import)_DISTROOT),$($(import)_DISTROOT),$(COMPONENT_DISTROOT)))))
+$(BS_ARCH_TARGET_DIR)/imported_components_arch.tar.gz:
+	@echo "$(BS_INFO_PREFIX)   Shadowing Arch Components from the following locations: $(_ARCH_DIST_FROMS)"
+	$(if $(strip $(_ARCH_DIST_FROMS)),$(BIN_TAR) cvhf - $(_ARCH_DIST_FROMS) | $(BIN_GZIP) -v9 > $@,$(BIN_TOUCH) $@)
+
+$(BS_NOARCH_TARGET_DIR)/imported_components_noarch.tar.gz:
+$(BS_NOARCH_TARGET_DIR)/imported_components_noarch.tar.gz: _NOARCH_DIST_FROMS=$(foreach import,$(IMPORT_NOARCH_TARGETS),$(if $($(import)_FROM),$($(import)_FROM),$(call _IMPORT_FUNC_COMPUTE_IMPORT_NOARCH_FROMPATH_DEFAULT,$(import),$($(import)_REV),$(if $($(import)_VTAG),$($(import)_VTAG),$(BS_VTAG)),$(if $($(import)_DISTROOT),$($(import)_DISTROOT),$(COMPONENT_DISTROOT)))))
+$(BS_NOARCH_TARGET_DIR)/imported_components_noarch.tar.gz:
+	@echo "$(BS_INFO_PREFIX)   Shadowing NoArch Components from the following locations: $(_NOARCH_DIST_FROMS)"
+	$(if $(strip $(_NOARCH_DIST_FROMS)),$(BIN_TAR) cvhf - $(_NOARCH_DIST_FROMS) | $(BIN_GZIP) -v9 > $@,$(BIN_TOUCH) $@)
+
+
 component_import: $(_IMPORT_ARCH_DESC_TARGETS) $(_IMPORT_NOARCH_DESC_TARGETS)
 
 component_desc: $(_EXPORT_DESC_TARGETS)
 
 component_dist: $(_EXPORT_DESC_TARGETS)
 component_dist: $(_DIST_TARGETS)
+
+component_shadow_arch: $(BS_ARCH_TARGET_DIR)/imported_components_arch.tar.gz
+component_shadow_noarch: $(BS_NOARCH_TARGET_DIR)/imported_components_noarch.tar.gz
+
+component_shadow: component_shadow_arch component_shadow_noarch
 
 
 #

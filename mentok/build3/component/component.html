@@ -352,6 +352,21 @@ Simple target to trigger the building of EXPORT_DESC_TARGETS
 pattern targets independent of the main build "posttarget" phase. 
 
 <hr>
+<a name="component_shadow">
+<h2>component_shadow</h2>
+<h3>component_shadow Overview</h3>
+Simple target that archives the areas of the component repository
+that are used during IMPORT_ARCH_TARGETS and IMPORT_NOARCH_TARGETS
+importing. The purpose of this rule is to facilitate the construction
+of offline build environments. The shadow archives of the repository are
+built as
+$(ARCH_TARGET_DIR)/imported_components_arch.tar.gz
+and
+$(NOARCH_TARGET_DIR)/imported_components_noarch.tar.gz
+component_shadow is only built if specificly requested; it is not part
+of any "pretarget", "target", or "posttarget" phase.
+
+<hr>
 <a name="component_info">
 <h2>component_info</h2>
 <h3>component_info Overview</h3>
