@@ -1,0 +1,525 @@
+<html> <head>
+<title>Build System 3</title>
+</head>
+
+<body>
+<center>
+<h1>Build System 3</h1>
+<br>
+<small><i>A.K.A. Project Mentok... "We don't borrow, we TAKE the mind."</i></small>
+</center>
+<hr>
+
+<h2>Contents</h2>
+<ul>
+  <li><a href="#Goals">Goals</a>
+  <li><a href="#Requirements">Requirements</a>
+  <li><a href="#NewTree">Starting a new component tree with Build System 3</a>
+  <li><a href="#DesignNotes">Design Notes for Build System 3</a>
+  <li><a href="#Modules">Supported Modules</a>
+  <li><a href="#License">License</a>
+</ul>
+
+
+<hr>
+<a name="Goals">
+<h2>Goals</h2>
+Build System 3 ("Build3" for short) is a ground-up effort to produce
+a system of Makefiles suitable for use in a release engineering environment.
+As such, build predictability and exact reproducibility are prized over
+automated portability via environment probing which can lead to different
+commands being executed during a build process based n users'
+environment settings. Build3 was build with the following secondary goals
+in mind:
+
+<ul>
+  <li>De-tangle and document how things such as compiler and linker
+       flags are determined. It should be easy to figure out
+       and change what compiler and compiler options
+       are used to compile or link any given target, and it should
+       be easy to modify these on a per-target basis without
+       effecting the whole component.
+
+  <li>Implement a modular design. It should be easy to add the ability
+       to provide new pattern rules for 3rd party pre-processors, profiling
+       tools, etc. Such additions to the build system should not
+       require modification of unrelated rules.
+
+  <li>Component chain reporting. When building a large software project that
+       may import binary components which themselves may have included other
+       components, conflicts in hidden dependencies can take place.
+       By providing a mechanism for a software component to export itself
+       along with a description of its unadvertised and hidden dependencies,
+       tracking down problems that can arise from component chaining is
+       greatly simplified.
+
+  <li>Divorcing of the software component from the build system. By divorcing
+       the generic pattern rules and default configuration files from
+       any project specific customizations, it should be possible for
+       several different software components to share a single copy
+       of Build3 from a repository, minimizing the amount of repeat
+       maintenance that must be done on the build system itself. (After all,
+       the goal of software development is to develop software, not build systems.)
+</ul>
+
+<p>
+
+Also, the following goals were explicitly excluded from
+this build system re-write:
+<ul>
+  <li>Nothing. Mentok TAKES the mind of the user.
+</ul>
+  
+
+<hr>
+<a name="Requirements">
+<h2>Requirements</h2>
+Build3 current depends on the following other software packages:
+<ul>
+  <li>Gnu Make 3.79.1
+  <li>Perl 5.6
+</ul>
+  
+<hr>
+<a name="NewTree">
+<h2>Starting a new component tree with Build System 3</h2>
+Accomplishing the goal of centralized build3 source management
+requires that either all components share a source repository capable of modularized
+checkouts such that different components can be checked out with build3
+source from a common repository location, or that build3 be be
+published from the source code repository to a well known location that
+other components can reference (The build3 "Component" module provides
+tools for importing and exporting binary components that are quite suitable
+to this). These approaches can be adopted
+simultaneously by different components depending on individual component
+needs and source code management.
+<p>
+The first approach provides a streamlined building
+procedure, but requires careful tag, branch, and module management of
+the build3 system in the source code repository to make sure that
+modifications propagated back to the build3 source repository from the
+needs of components do not break features or usage semantics of build3
+used by other components. This approach places a higher
+the maintainers of build3 in a given environment to be careful
+in making changes.
+<p>
+The 2nd approach has less of a problem with build3
+modification collisions since an external publishing mechanism,
+such as that provided by Build3's "Component" module, is expected
+to version or date-stamp static snap snots of build3. This comes at the cost
+of insisting that a somewhat awkward build3 bootstrapping procedure be
+performed in a component source code tree before build3 can be
+used to build the component in question.
+To make this process easier, a boiler plate component tree with
+basic build3 configuration files and code to bootstrap the build3 system
+from a component repository with a layout consistent with the
+tools provided by the "Component" build3 module is provided in
+the "build3/bootstrap" directory. 
+See the <a href="./component/component.html">"Component"</a>
+build3 module's documentation for details on the component repository
+and related pattern targets.
+<p>
+Regardless of which method is used to attach a given version
+of build3 to a component tree, the layout of a component tree
+should be fairly uniform.  The following component tree
+layout sample encompasses both the strict requirements of the 
+build3 system, and serves as a reference to what is considered to
+be "best practices" by the developers of build3. Use of the terms
+"MUST", "MUST NOT", "SHOULD", and "SHOULD NOT" are to be interpreted
+as they are in IETF RFCs.
+<p>
+<blockquote><table cellspacing="0" cellpadding="5" border="1">
+<tr valign="top" align="left">
+<th>
+Path
+</th>
+<th>
+Description
+</th>
+</tr>
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>
+</td>
+<td>
+Top level directory of a component's source tree. This directory
+path MUST be assigned to the macro "COMPONENT_ROOT" by all
+leaf Makefiles.
+</td>
+</tr>
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/build3
+</td>
+<td>
+The directory in which the build3 system should be installed for use
+by the component. This directory path MUST be assigned to the macro
+"BS_ROOT" by all leaf Makefiles. The name "build3" and location directly
+under the <i>&lt;Component&nbsp;root&gt;</i> are not strict requirements of
+build3, but represent standard convention.
+<p>
+Component developers should not have to modify the contents of this
+directory.  In component trees where build3 is attached via a bootstrapping
+mechanism external to the component's source code repository, this
+directory MUST NOT be checked into the components source code repository.
+In these cases it is considered a best practice to tell your source code
+revision control system to ignore this directory. (e.g.: If you are using
+CVS to manage <i>&lt;Component&nbsp;root&gt;</i>, you can add an entry to
+<i>&lt;Component&nbsp;root&gt;</i>/.cvsignore to ignore this directory.)
+</td>
+</tr>
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/Makefile
+</td>
+<td>
+Top level Makefile. For the most part this Makefile behaves
+exactly as any other leave Makefile in the component tree,
+and can specify pattern targets, recursion directories, custom
+rules etc.
+<p>
+By convention all import targets for a component are handled in
+this makefile. By further (and somewhat vestigial) convention
+the details of import targets are not directly defined in this Makefile,
+but specified in a separate imports.mk file that is included into this
+Makefile.
+<p>
+Components that require a bootstrapping of build3 can also include
+custom rules in this Makefile to facilitate auto-bootstrapping
+by taking advantage of some of the features of gnu make. Examples of
+such rules are included in the "build3/bootstrap/Makefile" boiler
+plate.
+</td>
+</tr>
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/imports.mk
+</td>
+<td>
+File that includes the definitions of IMPORT_ARCH_TARGETS
+and IMPORT_NOARCH_TARGETS that is included by
+<i>&lt;Component&nbsp;root&gt;</i>/Makefile.
+There is no strict requirement for these pattern targets
+to be specified in a stand alone file, and simply represents
+vestigial conventions inherited from Build System 1.0.
+<p>
+See the <a href="./component/component.html">"Component"</a>
+build3 module's documentation for details on import targets.
+</td>
+</tr>
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/Makefile-build3.mk
+</td>
+<td>
+A stand alone Makefile that does not use the build3 system
+at all, but rather provides simple "all" and "clean" targets
+to bootstrap build3 in component trees that require this step.
+This Makefile is intentionally small and simplistic, and is not
+considered part of build3 proper since bootstrapping is
+considered an extra-build3 activity that is forced onto
+some component trees by a particular source code control
+environment. Even so, this file is included in the
+boiler plate component tree as reference build3 bootstrapping code.
+<p>
+This file is not required in component trees that do not
+require a bootstrapping step.  In components that do
+require a bootstrapping step it is merely considered
+a best practice to include this small makefile to accomplish
+it. Other bootstrapping means may be more appropriate in
+some environments.
+</td>
+</tr>
+
+
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/build3-config
+</td>
+<td>
+Directory for all per-component configuration of build3. This directory
+MUST be located directly under the <i>&lt;Component&nbsp;root&gt;</i> and
+MUST be named "build3-config".
+</td>
+</tr>
+
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/build3-config/build3-bootsrap.mk
+</td>
+<td>
+Configuration file used by the <i>&lt;Component&nbsp;root&gt;</i>/Makefile-build3.mk
+bootstrapping code in the boiler plate component tree. Code outside the
+bootstrapping process MUST NOT depend on this file. As bootstrapping is
+considered an extra-build3 activity, this file is only required in component
+trees that require a bootstrapping step and use the boiler plate bootstrapping
+code in <i>&lt;Component&nbsp;root&gt;</i>/Makefile-build3.mk to accomplish it.
+</td>
+</tr>
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/build3-config/defines.mk
+</td>
+<td>
+Component wide configuration file. Build3 includes make definitions
+from this file or any file this file includes before evaluating any
+pattern rules in leaf Makefiles throughout the whole component tree.
+This is the expected location for a component to globally override build3
+defaults such as compiler flags, default build attributes such as
+optimization of native code, etc.
+<p>
+This is also the appropriate location for a component to define named
+build variants which can be build concurrently on a given platform
+via component defined controls leveraging the functionally implied by
+the <a href="base/base.html">"Base"</a> module's "BS_VTAG" control macro.
+For example, a component could use the macro "MY_COMPONENT_VARIANT" to
+select different build3 configurations, and set the "BS_VTAG" to permit
+these variant to coexist in a developer's component tree.
+<p>
+The following sample <i>&lt;Component&nbsp;root&gt;</i>/build3-config/defines.mk
+should give you an idea of how much the behavior of the core build3 modules
+can be controlled with a few lines of make code.
+<blockquote>
+<pre><tt>
+# Component wide defines file
+
+FLAGS_CC	+= -I$(COMPONENT_IMPORT_ARCH_TARGET_DIR)/include -I$(COMPONENT_ROOT)/include -D_MY_DEFINE
+
+# Force all exe's built in this component to link in a given object by default.
+FLAGS_LD_EXE_LOADLIBS	+=$(COMPONENT_ROOT)/buildnum/$(BS_ARCH_TARGET_DIR)/buildnum.o
+
+
+#
+# Set build flavor flags bases on VARIANT macro.
+# It is expected that "VARIANT=foo" will just be tacked onto
+# your command line invocation of make.
+#
+ifeq ($(VARIANT),DEBUG)
+#
+# Variant to add debug symbols to code (compiler -g flag)
+#
+BS_VTAG			= DEBUG
+NC_CONTROL_DEBUG	= 1
+else
+
+
+ifeq ($(VARIANT),MY_PROJECT_DEBUG)
+#
+# Variant to enable per-project c flags.
+#
+BS_VTAG			= DEBUG_CODE_ENABLED
+NC_CONTROL_DEBUG	= 1
+FLAGS_CC		+= -DENABLE_MY_PROJECT_DEBUG_CODE
+else
+
+
+ifeq ($(VARIANT),PURIFY)
+#
+# Variant to enable memory debugging - override the default tool chain.
+#
+BS_VTAG			= PURIFY
+NC_CONTROL_DEBUG   	= 1
+NC_CONTROL_TOOLCHAIN    = PURIFY
+else
+
+
+#
+# Default / Release variant.
+# 
+#BS_VTAG		= RELEASE
+NC_CONTROL_DEBUG	= 0
+NC_CONTROL_STRIP	= 1
+NC_CONTROL_OPTIMIZE	= 1
+FLAGS_CC		+= -DNDEBUG
+endif
+endif
+endif
+
+#
+# Layer in per-product per-OS defines...
+#
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_4).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_3).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_2).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_1).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FULL).mk
+
+#
+# Layer in build system modules not provided by the base build system.
+# This demonstrates how far the build system can be extended and configured.
+#
+-include $(COMPONENT_ROOT)/build3-config/b3-project_custom/defines-project_custom.mk
+
+
+
+</tt></pre>
+<blockquote>
+</td>
+</tr>
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/build3-config/rules.mk
+</td>
+<td>
+Component wide configuration file. Build3 includes make rules 
+from this file or any file this file includes before evaluating any
+pattern rules in leaf Makefiles throughout the whole component tree.
+This is the expected location for a component to layer in rules from
+custom build3 modules that may not be available by default.
+The following is a typical example of a i>&lt;Component&nbsp;root&gt;</i>/build3-config/rules.mk
+file:
+<blockquote>
+<pre><tt>
+# 
+# Component wide rules file
+#
+
+#
+# Layer in build system modules not provided by the base build system.
+#
+-include $(COMPONENT_ROOT)/build3-config/b3-project_custom/rules-project_custom.mk
+</tt>
+<pre>
+<blockquote>
+
+</td>
+</tr>
+
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/components*
+</td>
+<td>
+Top level directory for components imported by the import
+pattern targets provided by the 
+<a href="./component/component.html">"Component"</a>
+build3 module.
+See the <a href="./component/component.html">"Component"</a>
+build3 module's documentation for more details.
+<p>
+It is considered a best practice to tell your source code
+revision control system to ignore this directory. (e.g.: If you are using
+CVS to manage <i>&lt;Component&nbsp;root&gt;</i>, you can add an entry to
+<i>&lt;Component&nbsp;root&gt;</i>/.cvsignore to ignore this directory.)
+
+</td>
+</tr>
+
+<tr valign="top" align="left">
+<td>
+<i>&lt;Component&nbsp;root&gt;</i>/package*
+</td>
+<td>
+Top level directory for packaging and staging of build targets
+as packaged by the pattern targets provided by the 
+<a href="./packaging/packaging.html">"Packaging"</a>
+build3 module.
+See the <a href="./packaging/packaging.html">"Packaging"</a>
+build3 module's documentation for more details.
+<p>
+It is considered a best practice to tell your source code
+revision control system to ignore this directory. (e.g.: If you are using
+CVS to manage <i>&lt;Component&nbsp;root&gt;</i>, you can add an entry to
+<i>&lt;Component&nbsp;root&gt;</i>/.cvsignore to ignore this directory.)
+
+</td>
+</tr>
+
+</table></blockquote>
+
+
+<hr>
+<a name="DesignNotes">
+<h2>Design Notes for Build System 3</h2>
+
+<p>
+We need design notes for the overall build process, targets, phases/slices, 
+variants, attributes, and the distinction between these ideas. In short, you
+should be able to build any subtree of a build3 managed component by
+typing "make <i>&lt;target&gt;</i>" at the top of the subtree you wish
+to build. The currently available global targets are as follows:
+<ul>
+  <li><b>man</b> - Prints out build3's manual (this document).
+  <li><b>info</b> - Prints out the current values of all build3 macros.
+  <li><b>depends</b> - explicitly causes all build3 modules to rebuild their
+       dependency trees, even if no targets for that module are specified.
+  <li><b>target</b> - Build the primary targets of all build3
+       modules. 
+  <li><b>pretarget</b> - Perform any special pre build steps required
+       to build the targets of all modules. 
+  <li><b>posttarget</b> - Perform any special post build steps required
+       by all modules. 
+  <li><b>package</b> - Package the build targets from all modules
+       for redistribution.
+  <li><b>clean</b> - Remove build targets for all build3 modules.
+  <li><b>nuke</b> - Remove all build targets, dependency trees, and
+       imported components.
+  <li><b>all</b> - Synonymous with <b>target</b>
+</ul>
+<p>
+I need a design note on "simple" targets here.
+<p>
+I need a design note on "pattern" targets here.
+<p>
+I need a design note on targets and dependencies. here.
+
+
+<hr>
+<a name="Modules">
+<h2>Build System Modules</h2>
+I need a design note on now the module design is implemented here.
+<p>
+Design notes about writing and providing modules to extend the build
+system, include a word on the chicken and egg problem of importing
+additional modules, and ways around it, need to go here.
+<p>
+<ul>
+  <li><a href="./base/base.html">Base</a>
+  <li><a href="./config/config.html">Configuration</a>
+  <li><a href="./recursion/recursion.html">Recursion</a>
+  <li><a href="./component/component.html">Component</a>
+  <li><a href="./codegen/codegen.html">Source Code Generation</a>
+  <li><a href="./nativecode/nativecode.html">Native Code</a>
+  <li><a href="./javacode/javacode.html">Java Code</a>
+  <li><a href="./packaging/packaging.html">Packaging</a>
+  <li><a href="./release-engineering/release-engineering.html">Release Engineering</a>
+  <li><a href="./autoconf/autoconf.html">Autoconf</a>
+  <li><a href="./doc/doc.html">Document Generation</a>
+</ul>
+
+<hr>
+<a name="License">
+<h2>License</h2>
+<pre>
+Copyright (c) 2003 Symantec Corporation.
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</pre>
+<hr>
+</body> </html>

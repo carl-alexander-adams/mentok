@@ -1,0 +1,149 @@
+<html> <head>
+<title>Build System Base Module</title>
+</head>
+
+<body>
+<h1>Build System Base Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Build System Base Module provides the build
+system with basic macros and system information
+that should be sufficient for bootstrapping
+other build system modules. This information
+can also be used by build system users to
+make platform adjustments in their build targets.
+
+<hr>
+<h2>Macros and Controls</h2>
+<dl>
+  <dt><b>BS_ROOT</b></dt>
+  <dd>
+       This macro MUST be set in every Makefile, and indicates
+       the location of the build system directory, typically "build3".
+       </dd><p>
+
+  <dt><b>COMPONENT_ROOT</b></dt>
+  <dd>
+       This macro MUST be set in every Makefile, and indicates
+       the root location of the source tree of the component
+       using the build system.
+       </dd><p>
+
+  <dt><b>BS_VTAG</b></dt>
+  <dd>
+       This macro can be set by products to tag a
+       build with a variant name.  Different build variants
+       will have their build targets put into different target
+       directories, allowing a single build tree to simultaniously
+       maintain debug and optimized builds, build with different
+       compiler settings, etc. 
+       </dd><p>
+
+  <dt><b>BS_ROOT_TARGET_DIR</b></dt>
+  <dd>
+       This macro is set by the build system and indicates
+       the relative path to the root target dir.
+       </dd><p>
+
+  <dt><b>BS_ARCH_TARGET_DIR</b></dt>
+  <dd>
+       This macro is set by the build system and indicates
+       the relative path to the architecture specific target
+       directory.
+       </dd><p>
+
+  <dt><b>BS_NOARCH_TARGET_DIR</b></dt>
+  <dd>
+       This macro is set by the build system and indicates
+       the relative path to the architecture neutral target
+       directory.
+       </dd><p>
+
+       
+</dl>
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#base_info">base_targetsdirs</a>
+  <li><a href="#base_info">base_nuke</a>
+  <li><a href="#base_info">base_info</a>
+  <li><a href="#base_man">base_man</a>
+</ul>
+	
+
+<hr>
+<a name="base_targetdirs">
+<h2>base_targetdirs</h2>
+<h3>base_targetdirs Overview</h3>
+Simple target create dirs for targets created
+by other build rules.
+The <b>base_targetdirs</b> target will be built
+during the "pretarget" phase of a build,
+and can be built in isolation by requesting the 
+<b>base_targetdirs</b> target.
+
+
+<hr>
+<a name="base_nuke">
+<h2>base_nuke</h2>
+<h3>base_nuke Overview</h3>
+Simple target to remove target dirs created
+base_targetdirs.
+The base_nuke target will be built
+during the "nuke" phase of a build,
+and can be built in isolation by requesting the 
+<b>base_nuke</b> target. The "nuke" build phase
+capabilities provided by the base module should
+be addaquate for for most modules, freeing
+module writers from having to provide their own
+commands for the "nuke" build phase.
+
+
+<hr>
+<a name="base_info">
+<h2>base_info</h2>
+<h3>base_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the base module of
+the build system. The <b>base_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>base_info</b> target.
+
+<hr>
+<a name="base_man">
+<h2>base_man</h2>
+<h3>base_man Overview</h3>
+Simple target to display usage information and help pertaining to 
+the base module of the build system.
+The <b>base_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>base_man</b> target.
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+# The source root of this component
+COMPONENT_ROOT=../..
+
+# The root of the build system
+BS_ROOT=$(COMPONENT_ROOT)/../build3
+
+# Boostrap Build system definitions.
+include $(BS_ROOT)/defines.mk
+
+
+#
+# Base module provides no pattern targets, so no
+# additional macros need be specified in Makefiles.
+#
+
+
+# Finally, include the rules to make the build system go.
+include $(BS_ROOT)/rules.mk
+
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>
