@@ -20,6 +20,9 @@ _IMPORT_FUNC_COMPUTE_IMPORT_NOARCH_FROMPATH_DEFAULT=$(word 1,\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_2)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_3)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_4)$(if $(strip $(3)),-$(strip $(3))))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_5)$(if $(strip $(3)),-$(strip $(3))))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_6)$(if $(strip $(3)),-$(strip $(3))))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_7)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_1)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_2)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_3)$(if $(strip $(3)),-$(strip $(3))))\
@@ -28,6 +31,9 @@ _IMPORT_FUNC_COMPUTE_IMPORT_NOARCH_FROMPATH_DEFAULT=$(word 1,\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_2))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_3))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_4))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_5))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_6))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_7))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_1))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_2))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_3))\
@@ -46,6 +52,9 @@ _IMPORT_FUNC_COMPUTE_IMPORT_ARCH_FROMPATH_DEFAULT=$(word 1,\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_2)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_3)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_4)$(if $(strip $(3)),-$(strip $(3))))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_5)$(if $(strip $(3)),-$(strip $(3))))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_6)$(if $(strip $(3)),-$(strip $(3))))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_7)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_1)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_2)$(if $(strip $(3)),-$(strip $(3))))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_3)$(if $(strip $(3)),-$(strip $(3))))\
@@ -54,6 +63,9 @@ _IMPORT_FUNC_COMPUTE_IMPORT_ARCH_FROMPATH_DEFAULT=$(word 1,\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_2))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_3))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_4))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_5))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_6))\
+	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_FALLBACK_7))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_1))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_2))\
 	$(wildcard $(4)/$(1)/$(2)/$(BS_PLATFORM_ARCH_LEGACYFALLBACK_3))\
@@ -239,7 +251,7 @@ $(_IMPORT_ARCH_DESC_TARGETS): _FROM_FROM=$($(_T)_FROM)
 $(_IMPORT_ARCH_DESC_TARGETS): _FROM_DEFAULT=$(call _IMPORT_FUNC_COMPUTE_IMPORT_ARCH_FROMPATH_DEFAULT,$(_T),$(_REV),$(_VTAG),$(_DISTROOT)) 
 $(_IMPORT_ARCH_DESC_TARGETS): _FROM_AUTO=$(strip $(if $(_FROM_FROM),$(_FROM_FROM),$(_FROM_DEFAULT)))
 $(_IMPORT_ARCH_DESC_TARGETS):
-$(_IMPORT_ARCH_DESC_TARGETS): _SAFETY_CMD=$(if $(_FROM_AUTO),,@echo "$(BS_ERROR_PREFIX) Import not found in component repository" ; $(BIN_FALSE))
+$(_IMPORT_ARCH_DESC_TARGETS): _SAFETY_CMD=$(if $(_FROM_AUTO),,@echo "ERROR: Import not found in component repository" ; $(BIN_FALSE))
 $(_IMPORT_ARCH_DESC_TARGETS): _IMPORT_DESC=$(wildcard $(_FROM_AUTO)/component.xml)
 $(_IMPORT_ARCH_DESC_TARGETS): _COMPONENTUTIL_ARGS=$(if $(_IMPORT_DESC),\
                                      -I -f $(_FROM_AUTO)/component.xml,\
@@ -407,8 +419,6 @@ component_shadow_arch: $(BS_ARCH_TARGET_DIR)/imported_components_arch.tar.gz
 component_shadow_noarch: $(BS_NOARCH_TARGET_DIR)/imported_components_noarch.tar.gz
 
 component_shadow: component_shadow_arch component_shadow_noarch
-
-
 #
 # hook module rules into build system.
 #

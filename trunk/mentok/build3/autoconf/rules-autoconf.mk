@@ -99,8 +99,8 @@ $(_CONFIGH_TARGETS):
 	$(BIN_RM) -rf $(_TMP_DIR)
 	$(BIN_MKDIR) -p $(_TMP_DIR)
 	$(BIN_CP) $(_INPUT_FILES) $(_TMP_DIR)
-	$(BIN_CD) $(_TMP_DIR) && $(BIN_AUTOHEADER) 
-	$(BIN_CD) $(_TMP_DIR) && $(BIN_AUTOCONF) 
+	$(BIN_CD) $(_TMP_DIR) && $(BIN_AUTOHEADER)
+	$(BIN_CD) $(_TMP_DIR) && $(BIN_AUTOCONF)
 	$(BIN_CD) $(_TMP_DIR) && ./configure
 	$(BIN_CP) $(_TMP_DIR)/config.h $@
 

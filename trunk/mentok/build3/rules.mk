@@ -96,6 +96,7 @@ include $(BS_ROOT)/component/rules-component.mk
 include $(BS_ROOT)/config/rules-config.mk
 include $(BS_ROOT)/codegen/rules-codegen.mk
 include $(BS_ROOT)/nativecode/rules-nativecode.mk
+include $(BS_ROOT)/aliencode/rules-aliencode.mk
 include $(BS_ROOT)/javacode/rules-javacode.mk
 include $(BS_ROOT)/packaging/rules-packaging.mk
 include $(BS_ROOT)/release-engineering/rules-release-engineering.mk

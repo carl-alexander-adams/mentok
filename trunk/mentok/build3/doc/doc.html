@@ -43,7 +43,7 @@ DOXYGEN_TARGETS is the doxygen
 pattern target. This pattern
 target is used to produce documents from source code and doxygen
 configuration files.
-DOXYGEN_TARGETS will be build during the "posttarget" phase of a build.
+DOXYGEN_TARGETS will be build during the "target" phase of a build.
 The general form of the doxygen command used
 to generate documents is as follows:
 <blockquote>
@@ -89,7 +89,7 @@ FLAGS_DOXYGEN
 <h2>doc_doxygen</h2>
 <h3>doc_doxygen Overview</h3>
 Simple target to trigger the building of DOXYGEN_TARGETS
-pattern targets independent of the main build "posttarget" phase. 
+pattern targets independent of the main build "target" phase. 
 
 
 <hr>
