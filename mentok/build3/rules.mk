@@ -44,8 +44,8 @@ info::
 # target to provide online help
 man::
 
-# make .PHONEY a double colen rule build system wide
-.PHONEY::
+# make .PHONY a double colen rule build system wide
+.PHONY::
 
 # make .INTERMEDIATE a double colen rule build system wide
 .INTERMEDIATE::
