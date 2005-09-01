@@ -2,50 +2,50 @@
 # Module rules
 #
 config_man:
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) Build System Config Module Manual"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@$(BIN_BSCATMAN) $(BS_ROOT)/config/config.html
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Build System Config Module Manual")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	$(BS_CMDPREFIX_VERBOSE3) @$(BIN_BSCATMAN) $(BS_ROOT)/config/config.html
 
 config_info:
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) Build System Config Module Macro Settings"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_NAME                          $(BUILDSTAMP_NAME)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_COMMENT                       $(BUILDSTAMP_COMMENT)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_DATE_YEAR                     $(BUILDSTAMP_DATE_YEAR)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_DATE_MONTH                    $(BUILDSTAMP_DATE_MONTH)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_DATE_DAY                      $(BUILDSTAMP_DATE_DAY)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_DATE_HOUR                     $(BUILDSTAMP_DATE_HOUR)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_DATE_MINUTE                   $(BUILDSTAMP_DATE_MINUTE)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_DATE_SECOND                   $(BUILDSTAMP_DATE_SECOND)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_DATE_STRING                   $(BUILDSTAMP_DATE_STRING)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_REVISION_MAJOR                $(BUILDSTAMP_REVISION_MAJOR)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_REVISION_MINOR                $(BUILDSTAMP_REVISION_MINOR)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_REVISION_PATCH                $(BUILDSTAMP_REVISION_PATCH)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_REVISION_STRING               $(BUILDSTAMP_REVISION_STRING)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_USERNAME                      $(BUILDSTAMP_USERNAME)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_HOSTNAME                      $(BUILDSTAMP_HOSTNAME)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_OS_NAME                       $(BUILDSTAMP_OS_NAME)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_OS_REVMAJOR                   $(BUILDSTAMP_OS_REVMAJOR)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_OS_REVMINOR                   $(BUILDSTAMP_OS_REVMINOR)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_OS_REVPATCH                   $(BUILDSTAMP_OS_REVPATCH)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_OS_RUNTIMENAME                $(BUILDSTAMP_OS_RUNTIMENAME)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_OS_RUNTIMEREVMAJOR            $(BUILDSTAMP_OS_RUNTIMEREVMAJOR)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_OS_RUNTIMEREVMINOR            $(BUILDSTAMP_OS_RUNTIMEREVMINOR)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_OS_RUNTIMEREVPATCH            $(BUILDSTAMP_OS_RUNTIMEREVPATCH)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_MACHINETYPE                   $(BUILDSTAMP_MACHINETYPE)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_MACHINEPROC                   $(BUILDSTAMP_MACHINEPROC)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_MACHINEINSTSET                $(BUILDSTAMP_MACHINEINSTSET)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) BUILDSTAMP_TARGETS                       $(BUILDSTAMP_TARGETS)"
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Build System Config Module Macro Settings")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_NAME                          $(BUILDSTAMP_NAME)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_COMMENT                       $(BUILDSTAMP_COMMENT)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_DATE_YEAR                     $(BUILDSTAMP_DATE_YEAR)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_DATE_MONTH                    $(BUILDSTAMP_DATE_MONTH)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_DATE_DAY                      $(BUILDSTAMP_DATE_DAY)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_DATE_HOUR                     $(BUILDSTAMP_DATE_HOUR)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_DATE_MINUTE                   $(BUILDSTAMP_DATE_MINUTE)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_DATE_SECOND                   $(BUILDSTAMP_DATE_SECOND)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_DATE_STRING                   $(BUILDSTAMP_DATE_STRING)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_REVISION_MAJOR                $(BUILDSTAMP_REVISION_MAJOR)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_REVISION_MINOR                $(BUILDSTAMP_REVISION_MINOR)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_REVISION_PATCH                $(BUILDSTAMP_REVISION_PATCH)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_REVISION_STRING               $(BUILDSTAMP_REVISION_STRING)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_USERNAME                      $(BUILDSTAMP_USERNAME)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_HOSTNAME                      $(BUILDSTAMP_HOSTNAME)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_OS_NAME                       $(BUILDSTAMP_OS_NAME)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_OS_REVMAJOR                   $(BUILDSTAMP_OS_REVMAJOR)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_OS_REVMINOR                   $(BUILDSTAMP_OS_REVMINOR)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_OS_REVPATCH                   $(BUILDSTAMP_OS_REVPATCH)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_OS_RUNTIMENAME                $(BUILDSTAMP_OS_RUNTIMENAME)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_OS_RUNTIMEREVMAJOR            $(BUILDSTAMP_OS_RUNTIMEREVMAJOR)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_OS_RUNTIMEREVMINOR            $(BUILDSTAMP_OS_RUNTIMEREVMINOR)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_OS_RUNTIMEREVPATCH            $(BUILDSTAMP_OS_RUNTIMEREVPATCH)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_MACHINETYPE                   $(BUILDSTAMP_MACHINETYPE)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_MACHINEPROC                   $(BUILDSTAMP_MACHINEPROC)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_MACHINEINSTSET                $(BUILDSTAMP_MACHINEINSTSET)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BUILDSTAMP_TARGETS                       $(BUILDSTAMP_TARGETS)")
 
 config_clean::
 
@@ -68,9 +68,9 @@ ifneq ($(strip $(BUILDSTAMP_TARGETS)),)
 #-include $(_BUILDSTAMP_DEPEND_FILE)
 
 config_clean::
-	@echo "$(BS_INFO_PREFIX)  cleaning config buildstamp targets"
-	$(BIN_RM) -f $(_BUILDSTAMP_H_TARGETS)
-	$(BIN_RM) -f $(_BUILDSTAMP_C_TARGETS)
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Cleaning config buildstamp targets")
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_RM) -f $(_BUILDSTAMP_H_TARGETS)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_RM) -f $(_BUILDSTAMP_C_TARGETS)
 endif
 
 
@@ -79,22 +79,22 @@ endif
 
 
 #_BUILDSTAMP_DEP_PREP:
-#	@echo "$(BS_INFO_PREFIX) clearing dependancy file $(_BUILDSTAMP_DEPEND_FILE)"
+#	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_BUILDSTAMP_DEPEND_FILE)")
 #	$(BIN_MKDIR) -p $(dir $(_BUILDSTAMP_DEPEND_FILE))
-#	echo "##" > $(_BUILDSTAMP_DEPEND_FILE)
-#	echo "## Auto generated depend file for buildstamp targets" >> $(_BUILDSTAMP_DEPEND_FILE)
-#	echo "##" >> $(_BUILDSTAMP_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_BUILDSTAMP_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for buildstamp targets" >> $(_BUILDSTAMP_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_BUILDSTAMP_DEPEND_FILE)
 
 
 #_BUILDSTAMP_DEP_%:
 #_BUILDSTAMP_DEP_%: _BS_H=$(BS_ARCH_TARGET_DIR)/$(*).h
 #_BUILDSTAMP_DEP_%: _BS_C=$(BS_ARCH_TARGET_DIR)/$(*).c
 #_BUILDSTAMP_DEP_%:
-#	@echo "$(BS_INFO_PREFIX) Rebuilding dependancy for buildstamp target $(*) "
-#	@echo "## BUILDSTAMP target: $(*)" >> $(_BUILDSTAMP_DEPEND_FILE)
-#	@echo "$(_BS_H): " >> $(_BUILDSTAMP_DEPEND_FILE)
-#	@echo "$(_BS_C): " >> $(_BUILDSTAMP_DEPEND_FILE)
-#	@echo "" >> $(_BUILDSTAMP_DEPEND_FILE)
+#	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for buildstamp target $(*) ")
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## BUILDSTAMP target: $(*)" >> $(_BUILDSTAMP_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_BS_H): " >> $(_BUILDSTAMP_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_BS_C): " >> $(_BUILDSTAMP_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(_BUILDSTAMP_DEPEND_FILE)
 
 
 
@@ -136,92 +136,91 @@ $(_BUILDSTAMP_H_TARGETS): _MACHINEPROC=$(if $($(_T)_MACHINEPROC),$($(_T)_MACHINE
 $(_BUILDSTAMP_H_TARGETS): _MACHINEINSTSET=$(if $($(_T)_MACHINEINSTSET),$($(_T)_MACHINEINSTSET),$(BUILDSTAMP_MACHINEINSTSET))
 $(_BUILDSTAMP_H_TARGETS): 
 $(_BUILDSTAMP_H_TARGETS):
-	@echo
-	@echo "$(BS_INFO_PREFIX)  Generating BuildStamp header file target $(_T)"
-	@echo "$(BS_INFO_PREFIX)      Target Name                    :  $(_T)"
-	@echo "$(BS_INFO_PREFIX)      Output File                    :  $@"
-	echo "#ifndef $(_T)_H" > $(@)
-	echo "#define $(_T)_H" >> $(@)
-	echo "" >> $(@)
-	echo "" >> $(@)
-	echo "#define $(_T)_NAME                                 \"$(_NAME)\"" >> $(@)
-	echo "#define $(_T)_COMMENT                              \"$(_COMMENT)\"" >> $(@)
-	echo "" >> $(@)
-	echo "#define $(_T)_REVISION_MAJOR                       $(_REVISION_MAJOR)" >> $(@)
-	echo "#define $(_T)_REVISION_MINOR                       $(_REVISION_MINOR)" >> $(@)
-	echo "#define $(_T)_REVISION_PATCH                       $(_REVISION_PATCH)" >> $(@)
-	echo "#define $(_T)_REVISION_STRING                      \"$(_REVISION_STRING)\"" >> $(@)
-	echo "" >> $(@)
-	echo "#define $(_T)_DATE_YEAR                            $(_DATE_YEAR)" >> $(@)
-	echo "#define $(_T)_DATE_MONTH                           $(_DATE_MONTH)" >> $(@)
-	echo "#define $(_T)_DATE_DAY                             $(_DATE_DAY)" >> $(@)
-	echo "#define $(_T)_DATE_HOUR                            $(_DATE_HOUR)" >> $(@)
-	echo "#define $(_T)_DATE_MINUTE                          $(_DATE_MINUTE)" >> $(@)
-	echo "#define $(_T)_DATE_SECOND                          $(_DATE_SECOND)" >> $(@)
-	echo "#define $(_T)_DATE_STRING                          \"$(_DATE_STRING)\"" >> $(@)
-	echo "" >> $(@)
-	echo "#define $(_T)_USERNAME                             \"$(_USERNAME)\"" >> $(@)
-	echo "#define $(_T)_HOSTNAME                             \"$(_HOSTNAME)\"" >> $(@)
-	echo "" >> $(@)
-	echo "#define $(_T)_OS_NAME                              \"$(_OS_NAME)\"" >> $(@)
-	echo "#define $(_T)_OS_REVMAJOR                          \"$(_OS_REVMAJOR)\"" >> $(@)
-	echo "#define $(_T)_OS_REVMINOR                          \"$(_OS_REVMINOR)\"" >> $(@)
-	echo "#define $(_T)_OS_REVPATCH                          \"$(_OS_REVPATCH)\"" >> $(@)
-	echo "" >> $(@)
-	echo "#define $(_T)_OS_RUNTIMENAME                       \"$(_OS_RUNTIMENAME)\"" >> $(@)
-	echo "#define $(_T)_OS_RUNTIMEREVMAJOR                   \"$(_OS_RUNTIMEREVMAJOR)\"" >> $(@)
-	echo "#define $(_T)_OS_RUNTIMEREVMINOR                   \"$(_OS_RUNTIMEREVMINOR)\"" >> $(@)
-	echo "#define $(_T)_OS_RUNTIMEREVPATCH                   \"$(_OS_RUNTIMEREVPATCH)\"" >> $(@)
-	echo "" >> $(@)
-	echo "#define $(_T)_MACHINETYPE                          \"$(_MACHINETYPE)\"" >> $(@)
-	echo "#define $(_T)_MACHINEPROC                          \"$(_MACHINEPROC)\"" >> $(@)
-	echo "#define $(_T)_MACHINEINSTSET                       \"$(_MACHINEINSTSET)\"" >> $(@)
-	echo "" >> $(@)
-	echo "" >> $(@)
-	echo "" >> $(@)
-	echo "#ifndef $(_T)_NOEXTERN" >> $(@)
-	echo "" >> $(@)
-	echo "" >> $(@)
-	echo "extern const char $(_T)_name[];" >> $(@)
-	echo "extern const char $(_T)_comment[];" >> $(@)
-	echo "" >> $(@)
-	echo "extern const int  $(_T)_revision_major;" >> $(@)
-	echo "extern const int  $(_T)_revision_minor;" >> $(@)
-	echo "extern const int  $(_T)_revision_patch;" >> $(@)
-	echo "extern const char $(_T)_revision_string[];" >> $(@)
-	echo "" >> $(@)
-	echo "extern const int  $(_T)_date_year;" >> $(@)
-	echo "extern const int  $(_T)_date_month;" >> $(@)
-	echo "extern const int  $(_T)_date_day;" >> $(@)
-	echo "extern const int  $(_T)_date_hour;" >> $(@)
-	echo "extern const int  $(_T)_date_minute;" >> $(@)
-	echo "extern const int  $(_T)_date_second;" >> $(@)
-	echo "extern const char $(_T)_date_string[];" >> $(@)
-	echo "" >> $(@)
-	echo "extern const char $(_T)_username[];" >> $(@)
-	echo "extern const char $(_T)_hostname[];" >> $(@)
-	echo "" >> $(@)
-	echo "extern const char $(_T)_os_name[];" >> $(@)
-	echo "extern const char $(_T)_os_revmajor[];" >> $(@)
-	echo "extern const char $(_T)_os_revminor[];" >> $(@)
-	echo "extern const char $(_T)_os_revpatch[];" >> $(@)
-	echo "" >> $(@)
-	echo "extern const char $(_T)_os_runtimename[];" >> $(@)
-	echo "extern const char $(_T)_os_runtimerevmajor[];" >> $(@)
-	echo "extern const char $(_T)_os_runtimerevminor[];" >> $(@)
-	echo "extern const char $(_T)_os_runtimerevpatch[];" >> $(@)
-	echo "" >> $(@)
-	echo "extern const char $(_T)_machinetype[];" >> $(@)
-	echo "extern const char $(_T)_machineproc[];" >> $(@)
-	echo "extern const char $(_T)_machineinstset[];" >> $(@)
-	echo "" >> $(@)
-	echo "" >> $(@)
-	echo "#endif /* $(_T)_NOEXTERN*/" >> $(@)
-	echo "" >> $(@)
-	echo "" >> $(@)
-	echo "" >> $(@)
-	echo "#endif /* $(_T)_H */" >> $(@)
-	echo "" >> $(@)
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Generating BuildStamp header file target $(_T)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target Name                    :  $(_T)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Output File                    :  $@")
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#ifndef $(_T)_H" > $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_H" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_NAME                                 \"$(_NAME)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_COMMENT                              \"$(_COMMENT)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_REVISION_MAJOR                       $(_REVISION_MAJOR)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_REVISION_MINOR                       $(_REVISION_MINOR)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_REVISION_PATCH                       $(_REVISION_PATCH)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_REVISION_STRING                      \"$(_REVISION_STRING)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_DATE_YEAR                            $(_DATE_YEAR)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_DATE_MONTH                           $(_DATE_MONTH)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_DATE_DAY                             $(_DATE_DAY)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_DATE_HOUR                            $(_DATE_HOUR)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_DATE_MINUTE                          $(_DATE_MINUTE)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_DATE_SECOND                          $(_DATE_SECOND)" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_DATE_STRING                          \"$(_DATE_STRING)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_USERNAME                             \"$(_USERNAME)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_HOSTNAME                             \"$(_HOSTNAME)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_OS_NAME                              \"$(_OS_NAME)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_OS_REVMAJOR                          \"$(_OS_REVMAJOR)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_OS_REVMINOR                          \"$(_OS_REVMINOR)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_OS_REVPATCH                          \"$(_OS_REVPATCH)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_OS_RUNTIMENAME                       \"$(_OS_RUNTIMENAME)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_OS_RUNTIMEREVMAJOR                   \"$(_OS_RUNTIMEREVMAJOR)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_OS_RUNTIMEREVMINOR                   \"$(_OS_RUNTIMEREVMINOR)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_OS_RUNTIMEREVPATCH                   \"$(_OS_RUNTIMEREVPATCH)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_MACHINETYPE                          \"$(_MACHINETYPE)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_MACHINEPROC                          \"$(_MACHINEPROC)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_MACHINEINSTSET                       \"$(_MACHINEINSTSET)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#ifndef $(_T)_NOEXTERN" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_name[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_comment[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_revision_major;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_revision_minor;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_revision_patch;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_revision_string[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_date_year;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_date_month;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_date_day;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_date_hour;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_date_minute;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const int  $(_T)_date_second;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_date_string[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_username[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_hostname[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_os_name[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_os_revmajor[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_os_revminor[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_os_revpatch[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_os_runtimename[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_os_runtimerevmajor[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_os_runtimerevminor[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_os_runtimerevpatch[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_machinetype[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_machineproc[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "extern const char $(_T)_machineinstset[];" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#endif /* $(_T)_NOEXTERN*/" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#endif /* $(_T)_H */" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
 
 
 
@@ -229,45 +228,44 @@ $(_BUILDSTAMP_C_TARGETS):
 $(_BUILDSTAMP_C_TARGETS): _T=$(notdir $(@:.c=))
 $(_BUILDSTAMP_C_TARGETS): _BS_H=$(notdir $(@:.c=.h))
 $(_BUILDSTAMP_C_TARGETS):
-	@echo
-	@echo "$(BS_INFO_PREFIX)  Generating BuildStamp c code file target $(_T)"
-	@echo "$(BS_INFO_PREFIX)      Target Name                    :  $(_T)"
-	@echo "$(BS_INFO_PREFIX)      Output File                    :  $@"
-	echo "#define $(_T)_NOEXTERN" > $(@)
-	echo "#include \"$(_BS_H)\"" >> $(@)
-	echo "" >> $(@)
-	echo "const char $(_T)_name[]                = $(_T)_NAME;" >> $(@)
-	echo "const char $(_T)_comment[]             = $(_T)_COMMENT;" >> $(@)
-	echo "" >> $(@)
-	echo "const int $(_T)_revision_major         = $(_T)_REVISION_MAJOR;" >> $(@)
-	echo "const int $(_T)_revision_minor         = $(_T)_REVISION_MINOR;" >> $(@)
-	echo "const int $(_T)_revision_patch         = $(_T)_REVISION_PATCH;" >> $(@)
-	echo "const char $(_T)_revision_string[]     = $(_T)_REVISION_STRING;" >> $(@)
-	echo "" >> $(@)
-	echo "const int $(_T)_date_year              = $(_T)_DATE_YEAR;" >> $(@)
-	echo "const int $(_T)_date_month             = $(_T)_DATE_MONTH;" >> $(@)
-	echo "const int $(_T)_date_day               = $(_T)_DATE_DAY;" >> $(@)
-	echo "const int $(_T)_date_hour              = $(_T)_DATE_HOUR;" >> $(@)
-	echo "const int $(_T)_date_minute            = $(_T)_DATE_MINUTE;" >> $(@)
-	echo "const int $(_T)_date_second            = $(_T)_DATE_SECOND;" >> $(@)
-	echo "const char $(_T)_date_string[]         = $(_T)_DATE_STRING;" >> $(@)
-	echo "" >> $(@)
-	echo "const char $(_T)_username[]            = $(_T)_USERNAME;" >> $(@)
-	echo "const char $(_T)_hostname[]            = $(_T)_HOSTNAME;" >> $(@)
-	echo "" >> $(@)
-	echo "const char $(_T)_os_name[]             = $(_T)_OS_NAME;" >> $(@)
-	echo "const char $(_T)_os_revmajor[]         = $(_T)_OS_REVMAJOR;" >> $(@)
-	echo "const char $(_T)_os_revminor[]         = $(_T)_OS_REVMINOR;" >> $(@)
-	echo "const char $(_T)_os_revpatch[]         = $(_T)_OS_REVPATCH;" >> $(@)
-	echo "" >> $(@)
-	echo "const char $(_T)_os_runtimename[]      = $(_T)_OS_RUNTIMENAME;" >> $(@)
-	echo "const char $(_T)_os_runtimerevmajor[]  = $(_T)_OS_RUNTIMEREVMAJOR;" >> $(@)
-	echo "const char $(_T)_os_runtimerevminor[]  = $(_T)_OS_RUNTIMEREVMINOR;" >> $(@)
-	echo "const char $(_T)_os_runtimerevpatch[]  = $(_T)_OS_RUNTIMEREVPATCH;" >> $(@)
-	echo "" >> $(@)
-	echo "const char $(_T)_machinetype[]         = $(_T)_MACHINETYPE;" >> $(@)
-	echo "const char $(_T)_machineproc[]         = $(_T)_MACHINEPROC;" >> $(@)
-	echo "const char $(_T)_machineinstset[]      = $(_T)_MACHINEINSTSET;" >> $(@)
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Generating BuildStamp C code file target $(_T)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target Name                    :  $(_T)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Output File                    :  $@")
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#define $(_T)_NOEXTERN" > $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "#include \"$(_BS_H)\"" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_name[]                = $(_T)_NAME;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_comment[]             = $(_T)_COMMENT;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_revision_major         = $(_T)_REVISION_MAJOR;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_revision_minor         = $(_T)_REVISION_MINOR;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_revision_patch         = $(_T)_REVISION_PATCH;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_revision_string[]     = $(_T)_REVISION_STRING;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_date_year              = $(_T)_DATE_YEAR;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_date_month             = $(_T)_DATE_MONTH;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_date_day               = $(_T)_DATE_DAY;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_date_hour              = $(_T)_DATE_HOUR;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_date_minute            = $(_T)_DATE_MINUTE;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const int $(_T)_date_second            = $(_T)_DATE_SECOND;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_date_string[]         = $(_T)_DATE_STRING;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_username[]            = $(_T)_USERNAME;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_hostname[]            = $(_T)_HOSTNAME;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_os_name[]             = $(_T)_OS_NAME;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_os_revmajor[]         = $(_T)_OS_REVMAJOR;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_os_revminor[]         = $(_T)_OS_REVMINOR;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_os_revpatch[]         = $(_T)_OS_REVPATCH;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_os_runtimename[]      = $(_T)_OS_RUNTIMENAME;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_os_runtimerevmajor[]  = $(_T)_OS_RUNTIMEREVMAJOR;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_os_runtimerevminor[]  = $(_T)_OS_RUNTIMEREVMINOR;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_os_runtimerevpatch[]  = $(_T)_OS_RUNTIMEREVPATCH;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_machinetype[]         = $(_T)_MACHINETYPE;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_machineproc[]         = $(_T)_MACHINEPROC;" >> $(@)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "const char $(_T)_machineinstset[]      = $(_T)_MACHINEINSTSET;" >> $(@)
 
 
 

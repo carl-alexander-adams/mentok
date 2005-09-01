@@ -2,26 +2,25 @@
 # Module rules
 #
 autoconf_man:
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) Build System Autoconf Module Manual"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@$(BIN_BSCATMAN) $(BS_ROOT)/autoconf/autoconf.html
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Build System Autoconf Module Manual")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	$(BS_CMDPREFIX_VERBOSE3) $(BIN_BSCATMAN) $(BS_ROOT)/autoconf/autoconf.html
 
 autoconf_info:
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) Build System Auto Module Macro Settings"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) BIN_AUTOCONF                           $(BIN_AUTOCONF)"
-	@echo "$(BS_INFO_PREFIX) BIN_AUTOHEADER                         $(BIN_AUTOHEADER)"
-	@echo "$(BS_INFO_PREFIX) AUTOCONF_AUXTOOLS_DIR                  $(AUTOCONF_AUXTOOLS_DIR)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) CONFIGH_TARGETS                        $(CONFIGH_TARGETS)"
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Build System Auto Module Macro Settings")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BIN_AUTOCONF                           $(BIN_AUTOCONF)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) BIN_AUTOHEADER                         $(BIN_AUTOHEADER)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) CONFIGH_TARGETS                        $(CONFIGH_TARGETS)")
 
 autoconf_clean::
 
@@ -43,8 +42,8 @@ ifneq ($(strip $(CONFIGH_TARGETS)),)
 #-include $(_CONFIGH_DEPEND_FILE)
 
 autoconf_clean::
-	@echo "$(BS_INFO_PREFIX)  cleaning autoconf configh targets"
-	$(BIN_RM) -f $(_CONFIGH_TARGETS)
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Cleaning autoconf configh targets")
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_RM) -f $(_CONFIGH_TARGETS)
 endif
 
 
@@ -53,30 +52,24 @@ endif
 
 
 #_CONFIGH_DEP_PREP:
-#	@echo "$(BS_INFO_PREFIX) clearing dependancy file $(_CONFIGH_DEPEND_FILE)"
+#	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_CONFIGH_DEPEND_FILE)")
 #	$(BIN_MKDIR) -p $(dir $(_CONFIGH_DEPEND_FILE))
-#	echo "##" > $(_CONFIGH_DEPEND_FILE)
-#	echo "## Auto generated depend file for configh targets" >> $(_CONFIGH_DEPEND_FILE)
-#	echo "##" >> $(_CONFIGH_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_CONFIGH_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for configh targets" >> $(_CONFIGH_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_CONFIGH_DEPEND_FILE)
 
 
 #_CONFIGH_DEP_%:
 #_CONFIGH_DEP_%: _CONFIGH=$(BS_ARCH_TARGET_DIR)/$(*)
 #_CONFIGH_DEP_%:
 #_CONFIGH_DEP_%:
-#	@echo "$(BS_INFO_PREFIX) Rebuilding dependancy for configh target $(*) "
-#	@echo "## configh target: $(*)" >> $(_CONFIGH_DEPEND_FILE)
-#	@echo "$(_CONFIGH): " >> $(_CONFIGH_DEPEND_FILE)
-#	@echo "" >> $(_CONFIGH_DEPEND_FILE)
+#	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for configh target $(*)")
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## configh target: $(*)" >> $(_CONFIGH_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_CONFIGH): " >> $(_CONFIGH_DEPEND_FILE)
+#	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "" >> $(_CONFIGH_DEPEND_FILE)
 
 
 
-#
-# Env variable that bridges our settings to our autoconf and autoheader
-# boiler plate config.
-#
-buildsystem_autoconf_AUXTOOLS_DIR=$(AUTOCONF_AUXTOOLS_DIR)
-export buildsystem_autoconf_AUXTOOLS_DIR
 
 $(_CONFIGH_TARGETS):
 $(_CONFIGH_TARGETS): _T=$(notdir $(@))
@@ -89,20 +82,21 @@ $(_CONFIGH_TARGETS): _INPUT_FILES= \
 				$(BS_ROOT)/autoconf/autoconf/configure.in \
 				$(BS_ROOT)/autoconf/autoconf/install-sh \
 				$(BS_ROOT)/autoconf/autoconf/rules.mk.in \
-				$(BS_ROOT)/autoconf/autoconf/defines.mk.in
+				$(BS_ROOT)/autoconf/autoconf/defines.mk.in \
+				$(BIN_CONFIGGUESS) \
+				$(BIN_CONFIGSUB)
 $(_CONFIGH_TARGETS): 
 $(_CONFIGH_TARGETS):
-	@echo
-	@echo "$(BS_INFO_PREFIX)  Generating configh target $(_T)"
-	@echo "$(BS_INFO_PREFIX)      Target Name                    :  $(_T)"
-	@echo "$(BS_INFO_PREFIX)      Output File                    :  $@"
-	$(BIN_RM) -rf $(_TMP_DIR)
-	$(BIN_MKDIR) -p $(_TMP_DIR)
-	$(BIN_CP) $(_INPUT_FILES) $(_TMP_DIR)
-	$(BIN_CD) $(_TMP_DIR) && $(BIN_AUTOHEADER)
-	$(BIN_CD) $(_TMP_DIR) && $(BIN_AUTOCONF)
-	$(BIN_CD) $(_TMP_DIR) && ./configure
-	$(BIN_CP) $(_TMP_DIR)/config.h $@
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Generating configh target $(_T)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target Name                    :  $(_T)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Output File                    :  $@")
+	$(BS_CMDPREFIX_VERBOSE2) $(BS_CMDPREFIX_VERBOSE2) $(BIN_RM) -rf $(_TMP_DIR)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(_TMP_DIR)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_CP) $(_INPUT_FILES) $(_TMP_DIR)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_CD) $(_TMP_DIR) && $(BIN_AUTOHEADER)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_CD) $(_TMP_DIR) && $(BIN_AUTOCONF)
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_CD) $(_TMP_DIR) && ./configure
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_CP) $(_TMP_DIR)/config.h $@
 
 
 

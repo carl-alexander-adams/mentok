@@ -18,6 +18,8 @@
 %%
 
 void yyerror(char *s) {
+  /* hush compiler warnings */
+  (void) s;
   fprintf(stderr, "yyerror: '%s'\n", yytext);
 /*
   fprintf(stderr, "exiting due to error.\n\n");

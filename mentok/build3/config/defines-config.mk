@@ -1,5 +1,5 @@
 ifeq ($(BUILDSTAMP_COMMENT),)
-BUILDSTAMP_COMMENT=Copyright (c) $(BS_DATE_YEAR) Your_name_here. All rights reserved.
+BUILDSTAMP_COMMENT=Copyright (c) $(BS_DATE_YEAR) Symantec Corporation. All rights reserved.
 endif
 
 # numbers for date provided by the build system core are leading zero padded

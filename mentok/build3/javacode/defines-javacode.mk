@@ -16,4 +16,3 @@ endif
 ifeq ($(JC_CLASSPATH),)
 JC_CLASSPATH=$(JC_JAVASRCROOT):$(JC_JAVAHOME)/jre/lib/rt.jar:$(JC_JAVACCZIP)
 endif
-

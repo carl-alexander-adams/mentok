@@ -1,65 +1,77 @@
 <html> <head>
-<title>Build System 3.0</title>
+<title>Mentok Build System</title>
 </head>
 
 <body>
 <center>
-<h1>Build System 3.0</h1>
+<h1>Mentok Build System</h1>
 <br>
-<small><i>A.K.A. Project Mentok... "We don't borrow, we TAKE the mind."</i></small>
+<small><i>"We don't borrow, we TAKE the mind."</i></small>
 </center>
 <hr>
 
 <h2>Contents</h2>
 <ul>
-  <li><a href="#Goals">Goals</a>
-  <li><a href="#Requirements">Requirements</a>
-  <li><a href="#NewTree">Starting a new component tree with Build System 3</a>
-  <li><a href="#DesignNotes">Design Notes for Build System 3</a>
-  <li><a href="#Modules">Supported Modules</a>
   <li><a href="#License">License</a>
+  <li><a href="#Goals">Goals</a>
+  <li><a href="#NewTree">Starting a new component tree with the Mentok Build System</a>
+  <li><a href="#DesignNotes">Design Notes for the Mentok Build System</a>
+  <li><a href="#Modules">Supported Modules</a>
 </ul>
-  
-  
+
+
+<hr>
+<a name="License">
+<h2>License</h2>
+The license terms for the Mentok build system are detailed in the
+<a href="./LICENSE.html">LICENSE.html</a> file.
+
 <hr>
 <a name="Goals">
 <h2>Goals</h2>
-Build System 3 ("Build3" for short) is a ground-up effort to produce
-a system of Makefiles suitable for use in a release engineering environment.
-As such, build predictability and exact reproducibility are prized over
-automated portability via environment probing which can lead to different
-commands being executed during a build process based n users'
-environment settings. Build3 was build with the following secondary goals
-in mind:
+The Mentok Build System is a ground-up re-write of the make files used by
+portions of Recourse Technologies Inc. and Symantec and engineering.
+For historical reasons, the Mentok Build system is also know and refered 
+to as "Build3" or "Build System 3.0" for historical reasons, since it
+marked the thrid iteration of these make files. These make files have
+been released under a suitable public license to foster their adoption,
+garner public feedback and enhancements, and provide feedback to other
+projects in areas where Mentok stresses other tools to the breaking point
+(most notably, Gnu Make).
 
+The primary goals of this re-write are as follows:
 <ul>
   <li>De-tangle and document how things such as compiler and linker
-       flags are determined. It should be easy to figure out
+       flags are actually generated. It should be easy to figure out
        and change what compiler and compiler options
-       are used to compile or link any given target, and it should
+       are used to compiler or link any given target, and it should
        be easy to modify these on a per-target basis without
        effecting the whole component.
-  
-  <li>Implement a modular design. It should be easy to add the ability
+
+  <li>Clean up macro naming. This is being done simply to further the
+       ends of build system maintainability in the future by using
+       macro names that not only describe what data is in the macro, but
+       provide hints as to its intended usage and origin in the build
+       system.
+
+  <li>Introduce a modular design. It should be easy to add the ability
        to provide new pattern rules for 3rd party pre-processors, profiling
        tools, etc. Such additions to the build system should not
        require modification of unrelated rules.
-  
-  <li>Component chain reporting. When building a large software project that
-       may import binary components which themselves may have included other
-       components, conflicts in hidden dependencies can take place.
-       By providing a mechanism for a software component to export itself
-       along with a description of its unadvertised and hidden dependencies,
-       tracking down problems that can arise from component chaining is
-       greatly simplified.
- 
-  <li>Divorcing of the software component from the build system. By divorcing
-       the generic pattern rules and default configuration files from
-       any project specific customizations, it should be possible for
-       several different software components to share a single copy
-       of Build3 from a repository, minimizing the amount of repeat
-       maintenance that must be done on the build system itself. (After all,
-       the goal of software development is to develop software, not build systems.)
+
+  <li>Centralize build system source code repository. There simply
+       isn't a single good reason for every component to maintain
+       a copy of make code that is 99% held in common.
+
+  <li>Component chain reporting. Time has been wasted in the past debugging
+       problems in one component that turned our to be a bug in an imported
+       component that was fixed some time ago; while component chain
+       reporting does not prevent this problem, it can make debugging it
+       easier. With no dependency reporting between components it's not
+       even always obvious what code is being shipped in a given component
+       or product.
+
+       
 </ul>
 
 <p>
@@ -67,67 +79,63 @@ in mind:
 Also, the following goals were explicitly excluded from
 this build system re-write:
 <ul>
-  <li>Nothing. Mentok TAKES the mind of the user.
+  <li>Backward compatibility. Confused macro naming, directory space
+       collisions, and other issues lead to the decision to drop
+       backward compatibility with old makefiles. Migration shouldn't
+       be hard, but must be done by hand.
 </ul>
-
-
-<hr>
-<a name="Requirements">
-<h2>Requirements</h2>
-Build3 current depends on the following other software packages:
-<ul>
-  <li>Gnu Make 3.79.1
-  <li>Perl 5.6
-</ul>
-
   
 <hr>
 <a name="NewTree">
-<h2>Starting a new component tree with Build System 3.0</h2>
-Accomplishing the goal of centralized build3 source management
-requires that either all components share a source repository capable of modularized
-checkouts such that different components can be checked out with build3
-source from a common repository location, or that build3 be be
-published from the source code repository to a well known location that
-other components can reference (The build3 "Component" module provides
-tools for importing and exporting binary components that are quite suitable
-to this). These approaches can be adopted
-simultaneously by different components depending on individual component
-needs and source code management.
+<h2>Starting a new component tree with the Mentok Build System</h2>
+Installing a new component with Mentok is fairly easy, but not as easy is it
+really should be. Accomplishing the goal of centralized Mentok source management
+requires that either that all components share a source repository capable 
+of modularized checkouts such that different components can be checked out 
+with Mentok source from a common repository location, or that Mentok be 
+published from the source repository to a well known location that other components
+can reference. These approaches can be adopted simultaneously by different
+components depending on individual component needs and source code management.
 <p>
 The first approach provides a streamlined building
 procedure, but requires careful tag, branch, and module management of
-the build3 system in the source code repository to make sure that
-modifications propagated back to the build3 source repository from the
-needs of components do not break features or usage semantics of build3
-used by other components. This approach places a higher
-the maintainers of build3 in a given environment to be careful
-in making changes.
+the Mentok system in the source repository to make sure that
+modifications propagated back to the Mentok repository from the
+needs of components do not break features or usage semantics of Mentok
+needed by other components. This approach places a higher burden on
+release engineering and the maintainers of Mentok to be careful
+in making changes, but is very easy on individual component developers.
+Due to realities of source code management on site, we do not
+employ this approach at this time.
 <p>
-The 2nd approach has less of a problem with build3
-modification collisions since an external publishing mechanism,
-such as that provided by Build3's "Component" module, is expected
-to version or date-stamp static snap snots of build3. This comes at the cost
-of insisting that a somewhat awkward build3 bootstrapping procedure be
-performed in a component source code tree before build3 can be
-used to build the component in question.
+The 2nd approach has less of a problem with Mentok
+modification collisions since an external publishing mechanism is expected
+to version or date-stamp static snap snots of Mentok, but burdens the component
+using Mentok with a Mentok "bootstrapping" before the normal build process
+can be performed in the given component tree. The component repository and
+the "import/dist" mechanisms provided by the "component" Mentok module
+(documented below) provide a convenient mechanism for managing the
+Mentok repository in this manor at the bootstrapping cost of what
+amounts to a recursive copy command that must be executed after
+component check out and prior to normal component development builds.
 To make this process easier, a boiler plate component tree with
-basic build3 configuration files and code to bootstrap the build3 system
+basic Mentok configuration files and code to bootstrap the Mentok system
 from a component repository with a layout consistent with the
-tools provided by the "Component" build3 module is provided in
-the "build3/bootstrap" directory. 
+tools provided by the "Component" Mentok module is provided in
+the "build3/bootstrap" directory of any already bootstrapped component
+or copy of Mentok in the component repository.
 See the <a href="./component/component.html">"Component"</a>
-build3 module's documentation for details on the component repository
+Mentok module's documentation for details on the component repository
 and related pattern targets.
 <p>
 Regardless of which method is used to attach a given version
-of build3 to a component tree, the layout of a component tree
+of Mentok to a component tree, the layout of a component tree
 should be fairly uniform.  The following component tree
-layout sample encompasses both the strict requirements of the 
-build3 system, and serves as a reference to what is considered to
-be "best practices" by the developers of build3. Use of the terms
-"MUST", "MUST NOT", "SHOULD", and "SHOULD NOT" are to be interpreted
-as they are in IETF RFCs.
+layout encompasses both the strict requirements of the Mentok system, and 
+serves as a reference to what is considered to be "best practices"
+by the developers of Mentok. Use of the terms "MUST", "MUST NOT",
+"SHOULD", and "SHOULD NOT" are to be interpreted as they are
+in IETF RFCs.
 <p>
 <blockquote><table cellspacing="0" cellpadding="5" border="1">
 <tr valign="top" align="left">
@@ -155,14 +163,14 @@ leaf Makefiles.
 <i>&lt;Component&nbsp;root&gt;</i>/build3
 </td>
 <td>
-The directory in which the build3 system should be installed for use
+The directory in which the Mentok system should be installed for use
 by the component. This directory path MUST be assigned to the macro
 "BS_ROOT" by all leaf Makefiles. The name "build3" and location directly
 under the <i>&lt;Component&nbsp;root&gt;</i> are not strict requirements of
-build3, but represent standard convention.
+Mentok, but represent standard and historical convention.
 <p>
 Component developers should not have to modify the contents of this
-directory.  In component trees where build3 is attached via a bootstrapping
+directory.  In component trees where Mentok is attached via a bootstrapping
 mechanism external to the component's source code repository, this
 directory MUST NOT be checked into the components source code repository.
 In these cases it is considered a best practice to tell your source code
@@ -188,7 +196,7 @@ the details of import targets are not directly defined in this Makefile,
 but specified in a separate imports.mk file that is included into this
 Makefile.
 <p>
-Components that require a bootstrapping of build3 can also include
+Components that require a bootstrapping of Mentok can also include
 custom rules in this Makefile to facilitate auto-bootstrapping
 by taking advantage of some of the features of gnu make. Examples of
 such rules are included in the "build3/bootstrap/Makefile" boiler
@@ -209,7 +217,7 @@ to be specified in a stand alone file, and simply represents
 vestigial conventions inherited from Build System 1.0.
 <p>
 See the <a href="./component/component.html">"Component"</a>
-build3 module's documentation for details on import targets.
+Mentok module's documentation for details on import targets.
 </td>
 </tr>
 
@@ -218,15 +226,15 @@ build3 module's documentation for details on import targets.
 <i>&lt;Component&nbsp;root&gt;</i>/Makefile-build3.mk
 </td>
 <td>
-A stand alone Makefile that does not use the build3 system
+A stand alone Makefile that does not use the Mentok system
 at all, but rather provides simple "all" and "clean" targets
-to bootstrap build3 in component trees that require this step.
+to bootstrap Mentok in component trees that require this step.
 This Makefile is intentionally small and simplistic, and is not
-considered part of build3 proper since bootstrapping is
-considered an extra-build3 activity that is forced onto
+considered part of Mentok proper since bootstrapping is
+considered an extra-Mentok activity that is forced onto
 some component trees by a particular source code control
 environment. Even so, this file is included in the
-boiler plate component tree as reference build3 bootstrapping code.
+boiler plate component tree as reference Mentok bootstrapping code.
 <p>
 This file is not required in component trees that do not
 require a bootstrapping step.  In components that do
@@ -244,7 +252,7 @@ some environments.
 <i>&lt;Component&nbsp;root&gt;</i>/build3-config
 </td>
 <td>
-Directory for all per-component configuration of build3. This directory
+Directory for all per-component configuration of Mentok. This directory
 MUST be located directly under the <i>&lt;Component&nbsp;root&gt;</i> and
 MUST be named "build3-config".
 </td>
@@ -259,7 +267,7 @@ MUST be named "build3-config".
 Configuration file used by the <i>&lt;Component&nbsp;root&gt;</i>/Makefile-build3.mk
 bootstrapping code in the boiler plate component tree. Code outside the
 bootstrapping process MUST NOT depend on this file. As bootstrapping is
-considered an extra-build3 activity, this file is only required in component
+considered an extra-Mentok activity, this file is only required in component
 trees that require a bootstrapping step and use the boiler plate bootstrapping
 code in <i>&lt;Component&nbsp;root&gt;</i>/Makefile-build3.mk to accomplish it.
 </td>
@@ -270,10 +278,10 @@ code in <i>&lt;Component&nbsp;root&gt;</i>/Makefile-build3.mk to accomplish it.
 <i>&lt;Component&nbsp;root&gt;</i>/build3-config/defines.mk
 </td>
 <td>
-Component wide configuration file. Build3 includes make definitions
+Component wide configuration file. Mentok includes make definitions
 from this file or any file this file includes before evaluating any
 pattern rules in leaf Makefiles throughout the whole component tree.
-This is the expected location for a component to globally override build3
+This is the expected location for a component to globally override Mentok
 defaults such as compiler flags, default build attributes such as
 optimization of native code, etc.
 <p>
@@ -282,17 +290,17 @@ build variants which can be build concurrently on a given platform
 via component defined controls leveraging the functionally implied by
 the <a href="base/base.html">"Base"</a> module's "BS_VTAG" control macro.
 For example, a component could use the macro "MY_COMPONENT_VARIANT" to
-select different build3 configurations, and set the "BS_VTAG" to permit
+select different Mentok configurations, and set the "BS_VTAG" to permit
 these variant to coexist in a developer's component tree.
 <p>
 The following sample <i>&lt;Component&nbsp;root&gt;</i>/build3-config/defines.mk
-should give you an idea of how much the behavior of the core build3 modules
+should give you an idea of how much the behavior of the core Mentok modules
 can be controlled with a few lines of make code.
 <blockquote>
 <pre><tt>
 # Component wide defines file
 
-FLAGS_CC	+= -I$(COMPONENT_IMPORT_ARCH_TARGET_DIR)/include -I$(COMPONENT_ROOT)/include -D_MY_DEFINE
+FLAGS_CC	+= -I$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,some_compoent_name)/include -I$(COMPONENT_ROOT)/include -D_MY_DEFINE
 
 # Force all exe's built in this component to link in a given object by default.
 FLAGS_LD_EXE_LOADLIBS	+=$(COMPONENT_ROOT)/buildnum/$(BS_ARCH_TARGET_DIR)/buildnum.o
@@ -357,7 +365,7 @@ endif
 # Layer in build system modules not provided by the base build system.
 # This demonstrates how far the build system can be extended and configured.
 #
--include $(COMPONENT_ROOT)/build3-config/b3-project_custom/defines-project_custom.mk
+-include $(COMPONENT_ROOT)/build3-config/b3-blackbird/defines-blackbird.mk
 
 
 
@@ -371,11 +379,11 @@ endif
 <i>&lt;Component&nbsp;root&gt;</i>/build3-config/rules.mk
 </td>
 <td>
-Component wide configuration file. Build3 includes make rules 
+Component wide configuration file. Mentok includes make rules 
 from this file or any file this file includes before evaluating any
 pattern rules in leaf Makefiles throughout the whole component tree.
 This is the expected location for a component to layer in rules from
-custom build3 modules that may not be available by default.
+custom Mentok modules that may not be available by default.
 The following is a typical example of a i>&lt;Component&nbsp;root&gt;</i>/build3-config/rules.mk
 file:
 <blockquote>
@@ -387,7 +395,7 @@ file:
 #
 # Layer in build system modules not provided by the base build system.
 #
--include $(COMPONENT_ROOT)/build3-config/b3-project_custom/rules-project_custom.mk
+-include $(COMPONENT_ROOT)/build3-config/b3-blackbird/rules-blackbird.mk
 </tt>
 <pre>
 <blockquote>
@@ -404,9 +412,9 @@ file:
 Top level directory for components imported by the import
 pattern targets provided by the 
 <a href="./component/component.html">"Component"</a>
-build3 module.
+Mentok module.
 See the <a href="./component/component.html">"Component"</a>
-build3 module's documentation for more details.
+Mentok module's documentation for more details.
 <p>
 It is considered a best practice to tell your source code
 revision control system to ignore this directory. (e.g.: If you are using
@@ -424,9 +432,9 @@ CVS to manage <i>&lt;Component&nbsp;root&gt;</i>, you can add an entry to
 Top level directory for packaging and staging of build targets
 as packaged by the pattern targets provided by the 
 <a href="./packaging/packaging.html">"Packaging"</a>
-build3 module.
+Mentok module.
 See the <a href="./packaging/packaging.html">"Packaging"</a>
-build3 module's documentation for more details.
+Mentok module's documentation for more details.
 <p>
 It is considered a best practice to tell your source code
 revision control system to ignore this directory. (e.g.: If you are using
@@ -441,87 +449,47 @@ CVS to manage <i>&lt;Component&nbsp;root&gt;</i>, you can add an entry to
 
 <hr>
 <a name="DesignNotes">
-<h2>Design Notes for Build System 3.0</h2>
+<h2>Design Notes for the Mentok Build System</h2>
 
 <p>
-We need design notes for the overall build process, targets, phases/slices, 
-variants, attributes, and the distinction between these ideas. In short, you
-should be able to build any subtree of a build3 managed component by
-typing "make <i>&lt;target&gt;</i>" at the top of the subtree you wish
-to build. The currently available global targets are as follows:
-<ul>
-  <li><b>man</b> - Prints out build3's manual (this document).
-  <li><b>info</b> - Prints out the current values of all build3 macros.
-  <li><b>depends</b> - explicitly causes all build3 modules to rebuild their
-       dependency trees, even if no targets for that module are specified.
-  <li><b>target</b> - Build the primary targets of all build3
-       modules. 
-  <li><b>pretarget</b> - Perform any special pre build steps required
-       to build the targets of all modules. 
-  <li><b>posttarget</b> - Perform any special post build steps required
-       by all modules. 
-  <li><b>package</b> - Package the build targets from all modules
-       for redistribution.
-  <li><b>clean</b> - Remove build targets for all build3 modules.
-  <li><b>nuke</b> - Remove all build targets, dependency trees, and
-       imported components.
-  <li><b>all</b> - Synonymous with <b>target</b>
-</ul>
+Say something about builds system copy management, and the divorcing of
+the build dir from the component dir, and how this impacts configuration
+and usage of the build system.
 <p>
-I need a design note on "simple" targets here.
+Say something about overall build process, targets, phases/slices, 
+variants, attributes, and the distinction between these ideas.
 <p>
-I need a design note on "pattern" targets here.
+Say something about simple targets
 <p>
-I need a design note on targets and dependencies. here.
+Say something about pattern targets
+<p>
+say something about flag targets and dependencies.
 
 
 <hr>
 <a name="Modules">
 <h2>Build System Modules</h2>
-I need a design note on now the module design is implemented here.
+Say something about the modular design.
 <p>
-Design notes about writing and providing modules to extend the build
+Say something about writing and providing modules to extend the build
 system, include a word on the chicken and egg problem of importing
-additional modules, and ways around it, need to go here.
+additional modules, and ways around it.
 <p>
 <ul>
-  <li><a href="./base/base.html">Base</a>
-  <li><a href="./config/config.html">Configuration</a>
-  <li><a href="./recursion/recursion.html">Recursion</a>
-  <li><a href="./component/component.html">Component</a>
-  <li><a href="./codegen/codegen.html">Source Code Generation</a>
-  <li><a href="./nativecode/nativecode.html">Native Code</a>
-  <li><a href="./javacode/javacode.html">Java Code</a>
-  <li><a href="./packaging/packaging.html">Packaging</a>
-  <li><a href="./release-engineering/release-engineering.html">Release Engineering</a>
-  <li><a href="./autoconf/autoconf.html">Autoconf</a>
-  <li><a href="./doc/doc.html">Document Generation</a>
+  <li><a href="./base/base.html">Base</a></li>
+  <li><a href="./config/config.html">Configuration</a></li>
+  <li><a href="./recursion/recursion.html">Recursion</a></li>
+  <li><a href="./component/component.html">Component</a></li>
+  <li><a href="./codegen/codegen.html">Source Code Generation</a></li>
+  <li><a href="./nativecode/nativecode.html">Native Code</a></li>
+  <li><a href="./javacode/javacode.html">Java Code</a></li>
+  <li><a href="./packaging/packaging.html">Packaging</a></li>
+  <li><a href="./liveupdate/liveupdate.html">Live Update</a></li>
+  <li><a href="./release-engineering/release-engineering.html">Release Engineering</a></li>
+  <li><a href="./doc/doc.html">Document Generation</a></li>
+  <li><a href="./xmlmd/xmlmd.html">XML/Metadata</a></li>
 </ul>
 
 
 <hr>
-<a name="License">
-<h2>License</h2>
-<pre>
-Copyright (c) 2003 Symantec Corporation.
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-</pre>
-
 </body> </html>

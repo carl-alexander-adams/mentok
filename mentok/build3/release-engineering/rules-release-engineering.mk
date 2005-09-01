@@ -2,24 +2,24 @@
 # Module rules
 #
 releaseeng_man:
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) Build System Release Engineering Module Manual"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@$(BIN_BSCATMAN) $(BS_ROOT)/release-engineering/release-engineering.html
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Build System Release Engineering Module Manual")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	$(BS_CMDPREFIX_VERBOSE3) $(BIN_BSCATMAN) $(BS_ROOT)/release-engineering/release-engineering.html
 
 releaseeng_info:
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) Build System Release Engineering Module Macro Settings"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) DISTTAG                             $(DISTTAG)"
-	@echo "$(BS_INFO_PREFIX) STRIP                               $(STRIP)"
-	@echo "$(BS_INFO_PREFIX) DEBUG                               $(DEBUG)"
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Build System Release Engineering Module Macro Settings")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) DISTTAG                             $(DISTTAG)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) STRIP                               $(STRIP)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) DEBUG                               $(DEBUG)")
 
 
 #
@@ -47,7 +47,8 @@ all: target
 package: recursion_subdirs
 package: packaging_zip
 package: packaging_targz
-package: packaging_package
+package: packaging_packagefile
+package: packaging_packagedir
 
 dist: recursion_subdirs
 dist: component_dist

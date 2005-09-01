@@ -3,11 +3,11 @@ PACKAGE_ROOT=$(COMPONENT_ROOT)/package$(if $(strip $(BS_VTAG)),-$(strip $(BS_VTA
 endif
 
 ifeq ($(PACKAGE_TARGET_DIR),)
-PACKAGE_TARGET_DIR=$(PACKAGE_ROOT)/built/$(BS_PLATFORM_ARCH_FULL)
+PACKAGE_TARGET_DIR=$(PACKAGE_ROOT)/built/$(call _func_get_target_platform,$(PROJECT))
 endif
 
 
 ifeq ($(PACKAGE_RELEASE_DIR),)
-PACKAGE_RELEASE_DIR=$(PACKAGE_ROOT)/release/$(BS_PLATFORM_ARCH_FULL)
+PACKAGE_RELEASE_DIR=$(PACKAGE_ROOT)/release/$(call _func_get_target_platform,$(PROJECT))
 endif
 

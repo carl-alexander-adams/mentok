@@ -22,7 +22,7 @@ YACC_TARGETS=bar.tab.c
 
 
 # Specify executable pattern targets
-EXE_TARGETS=hello hello-pp hi hello2
+EXE_TARGETS=hello hello-pp hi hello2 simple-hello
 
 
 # Specify shared lib pattern targets
@@ -80,7 +80,9 @@ hello-pp.o_TOOLCHAIN=GNU
 hello-plusplus.o_TOOLCHAIN=GNU
 hello-pp_LD=$(BIN_GNU_CXX)
 
-hi_OBJS=hi.o  say-hi-IA32.o
+print-runtime-version.o_FCFLAGS=-D_GNU_SOURCE
+
+hi_OBJS=hi.o  say-hi-IA32.o print-runtime-version.o
 
 incobj.o_OBJS=foo.o say-hello.o
 incobj.o_TOOLCHAIN=VENDOR

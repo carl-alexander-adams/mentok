@@ -13,6 +13,11 @@ char *global_string = TESTSTRING_TEST1;
 
 int main(int argc, char ** argv, char ** env) 
 {
+    /* hush compiler warnings */
+    (void) argc;
+    (void) argv;
+    (void) env;
+    
     say_hello();
     empty();
     iempty(42);

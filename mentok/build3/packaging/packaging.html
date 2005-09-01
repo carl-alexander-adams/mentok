@@ -50,10 +50,13 @@ requested.
 <hr>
 <h2>Targets</h2>
 <ul>
-  <li><a href="#PACKAGE_TARGETS">PACKAGE_TARGETS</a>
+  <li><a href="#PACKAGEFILE_TARGETS">PACKAGEFILE_TARGETS</a>
+  <li><a href="#PACKAGEDIR_TARGETS">PACKAGEDIR_TARGETS</a>
   <li><a href="#TARGZ_TARGETS">TARGZ_TARGETS</a>
   <li><a href="#ZIP_TARGETS">ZIP_TARGETS</a>
-  <li><a href="#packaging_package">packaging_package</a>
+  <li><a href="#packaging_package">packaging_package (deprecated)</a>
+  <li><a href="#packaging_packagefile">packaging_packagefile</a>
+  <li><a href="#packaging_packagedir">packaging_packagedir</a>
   <li><a href="#packaging_targz">packaging_targz</a>
   <li><a href="#packaging_zip">packaging_zip</a>
   <li><a href="#packaging_info">packaging_info</a>     
@@ -63,8 +66,6 @@ requested.
 <hr>
 <h2>Functions</h2>
 <ul>
-  <li><a href="#PACKAGING_FUNC_GET_PACKAGE_REALTARGET">PACKAGING_FUNC_GET_PACKAGE_REALTARGET</a>
-  <li><a href="#PACKAGING_FUNC_GET_PACKAGE_FLAGTARGET">PACKAGING_FUNC_GET_PACKAGE_FLAGTARGET</a>
   <li><a href="#PACKAGING_FUNC_GET_TARGZ_REALTARGET">PACKAGING_FUNC_GET_TARGZ_REALTARGET</a>
   <li><a href="#PACKAGING_FUNC_GET_TARGZ_FLAGTARGET">PACKAGING_FUNC_GET_TARGZ_FLAGTARGET</a>
   <li><a href="#PACKAGING_FUNC_GET_ZIP_REALTARGET">PACKAGING_FUNC_GET_ZIP_REALTARGET</a>
@@ -72,62 +73,125 @@ requested.
 </ul>
 
 
+
+
 <hr>
-<a name="PACKAGE_TARGETS">
-<h2>PACKAGE_TARGETS</h2>
-<h3>PACKAGE_TARGETS Overview</h3>
-PACKAGE_TARGETS is the pattern target used to package
-files from a build into the component wide package target
-dir for eventual component roll up. In essence, PACKAGE_TARGETS
-is a glorified interface to the file copy command. Directories or
-files may be packaged with this pattern target.
-By default, the file packaged by a given PACKAGE_TARGETS pattern target
-will be $(BS_ARCH_TARGET_DIR)/<i>&lt;package target&gt;</i>. This may be overridden
-by the _PLATFORM and _FROM options.
+<a name="PACKAGEFILE_TARGETS">
+<h2>PACKAGEFILE_TARGETS</h2>
+<h3>PACKAGEFILE_TARGETS Overview</h3>
+PACKAGEFILE_TARGETS is the pattern target used to package
+files from a build into the component wide package
+directory for eventual component roll up. In essence, PACKAGEFILE_TARGETS
+is a glorified interface to the file copy command. Only files
+may be packaged with this pattern target; directories should be packaged
+with the <a href="#PACKAGEDIR_TARGETS">PACKAGEDIR_TARGETS</a>
+pattern target.
+By default, the file packaged by a given PACKAGEFILE_TARGETS pattern target
+will be <i>&lt;package file target&gt;</i> found in either the target
+dir for the build system's platform or the default
+native code tool chain's target platform. This may be overridden
+by the <i>&lt;package file target&gt;</i>
+<i>&lt;package file target&gt;</i>_FROM option.
 
 <p>
-PACKAGE_TARGETS will be built during the "posttarget" phase of a build.
-PACKAGE_TARGETS may be built in isolation by requesting the "packaging_package"
+PACKAGEFILE_TARGETS will be built during the "posttarget" phase of a build.
+PACKAGEFILE_TARGETS may be built in isolation by requesting the "packaging_packagefile"
 target.
-<h3>PACKAGE_TARGETS Options</h3>
+<h3>PACKAGEFILE_TARGETS Options</h3>
 <dl>
-  <dt><b><i>&lt;package target&gt;</i>_DEST</b></dt>
+  <dt><b><i>&lt;package file target&gt;</i>_DEST</b></dt>
   <dd>
-       Specifies the under $(PACKAGE_TARGET_DIR) to copy the
-       <i>&lt;package target&gt;</i> to. If the value of this option
-       ends with a "/", the destination is assumed to be a directory
-       into which the <i>&lt;package target&gt;</i> will be places,
-       otherwise the <i>&lt;package target&gt;</i>will have its name
-       changed to the value indicated by this option.
+       Specifies the file name and path under $(PACKAGE_TARGET_DIR) to copy the
+       <i>&lt;package file target&gt;</i> to. This option must specify a
+       file location and not a directory. The default value is
+       simply <i>&lt;package file target&gt;</i>.
        </dd><p>
        
-  <dt><b><i>&lt;package target&gt;</i>_PLATFORM</b></dt>
+  <dt><b><i>&lt;package file target&gt;</i>_FROM</b></dt>
   <dd>
-       Override just the platform portion of the full path
-       to the <i>&lt;package target&gt;</i> being packaged.
-       By default, the platform of a <i>&lt;package target&gt;</i>
-       is $(BS_PLATFORM_ARCH_FULL). $(BS_PLATFORM_NOARCH) is probably
-       the most useful value that can be assigned to this control.
-       </dd><p>
-
-  <dt><b><i>&lt;package target&gt;</i>_FROM</b></dt>
-  <dd>
-       Override the whole default source path to the
-       <i>&lt;package target&gt;</i>. Setting this option
-       makes setting the _PLATFORM option pointless.
-       This option can be used with a <i>&lt;package target&gt;</i>
+       Override the entire default source path to the
+       <i>&lt;package file target&gt;</i>. Setting this option
+       makes renders the _PLATFORM option moot.
+       This option can be used with a <i>&lt;package file target&gt;</i>
        to achieve the same behavior provided by the PACKAGE_RAW_TARGETS
        of the old build system.
        </dd><p>
        
-  <dt><b><i>&lt;package target&gt;</i>_SCRUB</b></dt>
+  <dt><b><i>&lt;package file target&gt;</i>_DEP</b></dt>
+  <dd>
+       Specify additional dependancies for the current target.
+       </dd><p>
+	
+</dl>
+
+<hr>
+<a name="PACKAGEDIR_TARGETS">
+<h2>PACKAGEDIR_TARGETS</h2>
+<h3>PACKAGEDIR_TARGETS Overview</h3>
+PACKAGEDIR_TARGETS is the pattern target used to package
+directories from a build into the component wide package
+directory for eventual component roll up. Only directories
+may be packaged with this pattern target; files should be packaged
+with the <a href="#PACKAGEFILE_TARGETS">PACKAGEFILE_TARGETS</a>
+pattern target.
+By default, the directory packaged by a given PACKAGEDIR_TARGETS pattern target
+will be <i>&lt;package dir target&gt;</i> found in either the target
+dir for the build system's platform or the default
+native code tool chain's target platform. This may be overridden
+by the <i>&lt;package dir target&gt;</i>
+<i>&lt;package dir target&gt;</i>_FROM option.
+
+
+<p>
+PACKAGEDIR_TARGETS will be built during the "posttarget" phase of a build.
+PACKAGEDIR_TARGETS may be built in isolation by requesting the "packaging_packagedir"
+target.
+<p>
+<b>WARNING:</b>
+PACKAGEDIR_TARGETS pattern targets WILL NOT be cleaned by building the "clean" target.
+These pattern targets will only be cleaned by building the "nuke" target.
+Furthermore, these targets will be remade with every build of the "posttarget" phase.
+These are side effects of directory targets potentially overlapping, and of not having
+their full contents enumerated to the build system for dependancy resolution.
+
+<h3>PACKAGEDIR_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;package dir target&gt;</i>_DEST</b></dt>
+  <dd>
+       Specifies the directory name and path under $(PACKAGE_TARGET_DIR) to copy the
+       <i>&lt;package dir target&gt;</i> to. This option must specify a
+       directory name. The default value is the basename
+       of the current target. If the target already exists, the current
+       target will be overlayed into the existing directory.
+       </dd><p>
+
+       
+  <dt><b><i>&lt;package dir target&gt;</i>_FROM</b></dt>
+  <dd>
+       Override the entire default source path to the
+       <i>&lt;package dir target&gt;</i>. Setting this option
+       makes renders the _PLATFORM option moot.
+       This option can be used with a <i>&lt;package dir target&gt;</i>
+       to achieve the same behavior provided by the PACKAGE_RAW_TARGETS
+       of the old build system.
+       </dd><p>
+       
+  <dt><b><i>&lt;package dir target&gt;</i>_SCRUB</b></dt>
   <dd>
        Specifies a list of files or directories to remove from the
        package once it has been copied to the $(PACKAGE_TARGET_DIR).
        This option is useful for cleaning out CVS directories or other
        ancillary files  when packaging directories.
+       <b>WARNING:</b>Use of the _SCRUB option for PACKAGEDIR_TARGETS
+       may have unintended consequences when multiple targets overlay into
+       the same directory.
        </dd><p>
        
+  <dt><b><i>&lt;package dir target&gt;</i>_DEP</b></dt>
+  <dd>
+       Specify additional dependancies for the current target.
+       </dd><p>
+	
 
 </dl>
 
@@ -243,10 +307,17 @@ target.
 
 
 <hr>
-<a name="packaging_package">
-<h2>packaging_package</h2>
-<h3>packaging_package Overview</h3>
-Simple target to trigger the building of PACKAGE_TARGETS
+<a name="packaging_packagefile">
+<h2>packaging_packagefile</h2>
+<h3>packaging_packagefile Overview</h3>
+Simple target to trigger the building of PACKAGEFILE_TARGETS
+pattern targets independent of the main build "posttarget" phase. 
+
+<hr>
+<a name="packaging_packagedir">
+<h2>packaging_packagedir</h2>
+<h3>packaging_packagedir Overview</h3>
+Simple target to trigger the building of PACKAGEDIR_TARGETS
 pattern targets independent of the main build "posttarget" phase. 
 
 <hr>
@@ -284,24 +355,6 @@ The <b>packaging_man</b> target will be built during the "man"
 phase of a build, and can be built in isolation by requesting
 the <b>packaging_man</b> target.
 
-<hr>
-<a name="PACKAGING_FUNC_GET_PACKAGE_REALTARGET">
-<h2>PACKAGING_FUNC_GET_PACKAGE_REALTARGET</h2>
-This function is provided to translate a package pattern target
-as it is named in the PACKAGE_TARGETS list to the
-real target that results from the pattern rules.
-
-<hr>
-<a name="PACKAGING_FUNC_GET_PACKAGE_FLAGTARGET">
-<h2>PACKAGING_FUNC_GET_PACKAGE_FLAGTARGET</h2>
-This function is provided to translate a package pattern target
-as it is named in the PACKAGE_TARGETS list to the
-flag target that is used to track dependencies on a given
-package pattern target. This flag target is probably of little
-use outside the the internals of the packaging build system module,
-since PACKAGING_FUNC_GET_PACKAGE_REALTARGET provides a better
-candidate for chaining a package target in the dependency
-list of another pattern target.
 
 <hr>
 <a name="PACKAGING_FUNC_GET_TARGZ_REALTARGET">
@@ -359,7 +412,7 @@ include $(BS_ROOT)/defines.mk
 
 moof_pkg_target=moof-tar1.tar.gz
 
-PACKAGE_TARGETS=foo-pkg1 $(moof_pkg_target)
+PACKAGEDIR_TARGETS=foo-pkg1 $(moof_pkg_target)
 TARGZ_TARGETS=moof-tar1
 
 

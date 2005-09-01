@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "hello.h"
+#include "say-hello.h"
 
 
 static char *object_static_global_string = TESTSTRING_TEST3;
