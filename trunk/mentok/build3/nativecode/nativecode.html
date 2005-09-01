@@ -20,13 +20,15 @@ C++, and assembler source files.
   <dd>
        Specifies the default tool chain to use.
        Curently recognized tool chains are "GNU"
-       "VENDOR", and "PURIFY".
+       "VENDOR", "PURIFY", "XC_CAVIUMMIPS64_LINUNX",
+       and "XC_CAVIUMMIPS64_SIMPLEEXECUTIVE",
+       
        </dd><p>
   <dt><b>NC_CONTROL_OPTIMIZE</b></dt>
   <dd>
        Specifies whether files are compiled with
        compiler optimizations by default. A value 
-       of "0" turns optimization off, an value
+       of "0" turns optimization off, a value
        of "1" turns optimization on.
        </dd><p>
        
@@ -34,7 +36,7 @@ C++, and assembler source files.
   <dd>
        Specifies whether files are compiled with
        debug symbols by default. A value 
-       of "0" turns debug symbols off, an value
+       of "0" turns debug symbols off, a value
        of "1" turns debug symbols on.
        </dd><p>
 	
@@ -42,7 +44,7 @@ C++, and assembler source files.
   <dd>
        Specifies whether files are compiled with
        profiling (prof/gprof) symbols by default. A
-       value of "0" turns profiling off, an value
+       value of "0" turns profiling off, a value
        of "1" turns profiling on.
        </dd><p>
 
@@ -50,7 +52,7 @@ C++, and assembler source files.
   <dd>
        Specifies whether files are compiled with
        coverage (e.g., gcov) symbols by default. A
-       value of "0" turns coverage off, an value
+       value of "0" turns coverage off, a value
        of "1" turns coverage on.
        </dd><p>
 
@@ -58,8 +60,25 @@ C++, and assembler source files.
   <dd>
        Specifies whether targets are stripped after
        they are built. A value of "0" turns
-       stripping off, an value of "1" turns
+       stripping off, a value of "1" turns
        stripping on.
+       </dd><p>
+
+  <dt><b>NC_CONTROL_NOASSERT</b></dt>
+  <dd>
+       Specifies whether targets are compiled
+       without asserts. A value of "0" leaves
+       asserts in, a value of "1" takes
+       out asserts.
+       </dd><p>
+
+  <dt><b>NC_CONTROL_REENTRANT</b></dt>
+  <dd>
+       Specifies whether targets are compiled
+       reentrant by default. A value of "0"
+       uses the default based on filenames,
+       a value of "1" makes the default behavior
+       to build objects reentrant.
        </dd><p>
 </dl>
 
@@ -75,6 +94,23 @@ C++, and assembler source files.
   <li><a href="#OBJ_AS_TARGETS">OBJ_AS_TARGETS</a>
   <li><a href="#nativecode_info">nativecode_info</a>
   <li><a href="#nativecode_man">nativecode_man</a>
+</ul>
+
+<hr>
+<h2>Functions</h2>
+<ul>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_FULL">NC_FUNC_GET_TOOLCHAIN_PLATFORM_FULL</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_1">NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_1</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_2">NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_2</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_3">NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_3</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_4">NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_4</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_5">NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_5</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_6">NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_6</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_7">NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_7</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_1">NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_1</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_2">NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_2</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_3">NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_3</a>
+  <li><a href="#NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_4">NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_4</a>
 </ul>
 
 <hr>
@@ -175,6 +211,7 @@ FLAGS_LD_EXE_LOADLIBS
        build from C, C++, or assembly source code, but may
        have <i>&lt;object target&gt;</i>_<i>&lt;OPTION&gt;</i> macros controling the
        the construction of these options if needed.
+       Defaults to "<i>&lt;exe target&gt;</i>.o".
        </dd><p>
 	
   <dt><b><i>&lt;exe target&gt;</i>_RAWOBJS</b></dt>
@@ -840,6 +877,14 @@ FLAGS_CC
 [ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CC_COV ]
 <br>
 [ FLAGS_CC_COV ]
+<br>
+[ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CC_NOASSERT ]
+<br>
+[ FLAGS_CC_NOASSERT ]
+<br>
+[ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CC_REENT ]
+<br>
+[ FLAGS_CC_REENT ]
 </blockquote>
 
 
@@ -861,6 +906,12 @@ FLAGS_CC
   <dd>
        Override the default compiler for
        for the current <i>&lt;object target&gt;</i> only.
+       </dd><p>
+	
+  <dt><b><i>&lt;object target&gt;</i>_REENT</b></dt>
+  <dd>
+       Override the default reentrant setting for the
+       current <i>&lt;object target&gt;</i> only.
        </dd><p>
 	
   <dt><b><i>&lt;object target&gt;</i>_DEP</b></dt>
@@ -897,6 +948,12 @@ FLAGS_CC
   <dd>
        Override FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CC_COV
        and FLAGS_CC_COV for the current <i>&lt;object target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;object target&gt;</i>_CFLAGS_NOASSERT</b></dt>
+  <dd>
+       Override FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CC_NOASSERT
+       and FLAGS_CC_NOASSERT for the current <i>&lt;object target&gt;</i>.
        </dd><p>
 </dl>
 
@@ -942,6 +999,14 @@ FLAGS_CXX
 [ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CXX_COV ]
 <br>
 [ FLAGS_CXX_COV ]
+<br>
+[ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CXX_NOASSERT ]
+<br>
+[ FLAGS_CXX_NOASSERT ]
+<br>
+[ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CXX_REENT ]
+<br>
+[ FLAGS_CXX_REENT ]
 </blockquote>
 
 
@@ -962,6 +1027,12 @@ FLAGS_CXX
   <dt><b><i>&lt;object target&gt;</i>_CXX</b></dt>
   <dd>
        Override the default compiler for
+       for the current <i>&lt;object target&gt;</i> only.
+       </dd><p>
+	
+  <dt><b><i>&lt;object target&gt;</i>_REENT</b></dt>
+  <dd>
+       Override the default reentrant setting for
        for the current <i>&lt;object target&gt;</i> only.
        </dd><p>
 	
@@ -999,6 +1070,12 @@ FLAGS_CXX
   <dd>
        Override FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CXX_COV
        and FLAGS_CXX_COV for the current <i>&lt;object target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;object target&gt;</i>_CXXFLAGS_NOASSERT</b></dt>
+  <dd>
+       Override FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CXX_NOASSERT
+       and FLAGS_CXX_NOASSERT for the current <i>&lt;object target&gt;</i>.
        </dd><p>
 </dl>
 
@@ -1126,6 +1203,144 @@ The <b>nativecode_man</b> target will be built during the "man"
 phase of a build, and can be built in isolation by requesting
 the <b>nativecode_man</b> target.
 
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_FULL">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_FULL(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the full platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_1">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_1(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the first fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_2">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_2(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the second fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_3">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_3(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the third fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_4">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_4(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the forth fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_5">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_5(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the fifth fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_6">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_6(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the sixth fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_7">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_7(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the seventh fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_1">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_1(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the first legacy fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_2">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_2(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the second legacy fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_3">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_3(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the third legacy fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_4">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_LEGACYFALLBACK_4(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return the forth legacy fallback platform name
+for which the specified toolchain generates object code.
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
+<hr>
+<a name="NC_FUNC_GET_TOOLCHAIN_PLATFORM_LIST">
+<h2>NC_FUNC_GET_TOOLCHAIN_PLATFORM_LIST(<i>&lt;toolchain&gt;</i>)</h2>
+This function will return a list of platform names
+for which the specified toolchain generates object code.
+This list will be in order of most specific to least specific
+forms of platform identification, and is suitable for
+_PLATFORM controls on IMPORT_TARGETS (See the
+<a href="../component/component.html">component module</a>
+for information on IMPORT_TARGETS).
+If the toolchain is unknown or does
+not specify override or cross compiling platform information,
+default values will be derived from the current build host by
+the Mentok <a href="../base/base.html">base</a> module.
+
 <hr>
 <h2>Example Makefile</h2>
 <bloclquote><pre><tt>
@@ -1171,6 +1386,7 @@ say-hello.o_CFLAGS_OPT=-DTEST_PER_OBJECT_CFLAGS_OPT
 say-hello.o_CFLAGS_DBG=-DTEST_PER_OBJECT_CFLAGS_DEBUG
 say-hello.o_CFLAGS_PROFILE=-DTEST_PER_OBJECT_CFLAGS_PROFILE
 say-hello.o_CFLAGS_COV=-DTEST_PER_OBJECT_CFLAGS_COV
+say-hello.o_CFLAGS_NOASSERT=-DTEST_PER_OBJECT_CFLAGS_NOASSERT
 
 foo.o_SRC=empty.c
 foo.o_TOOLCHAIN=VENDOR
@@ -1179,6 +1395,7 @@ foo.o_CFLAGS_OPT=-DTEST_PER_OBJECT_CFLAGS_OPT
 foo.o_CFLAGS_DBG=-DTEST_PER_OBJECT_CFLAGS_DEBUG
 foo.o_CFLAGS_PROFILE=-DTEST_PER_OBJECT_CFLAGS_PROFILE
 foo.o_CFLAGS_COV=-DTEST_PER_OBJECT_CFLAGS_COV
+foo.o_CFLAGS_NOASSERT=-DTEST_PER_OBJECT_CFLAGS_NOASSERT
 
 
 hello_OBJS=hello.o empty.o exercise-memory-debug.o say-hello.o

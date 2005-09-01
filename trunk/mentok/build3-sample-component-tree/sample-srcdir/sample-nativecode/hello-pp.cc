@@ -5,6 +5,11 @@ int main(int argc,
 	 char ** argv,
 	 char ** envv) {
 
+  /* hush compiler warnings */
+  (void) argc;
+  (void) argv;
+  (void) envv;
+
   hello_plusplus *hpp;
 
   hpp = new hello_plusplus();

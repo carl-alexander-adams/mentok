@@ -6,6 +6,11 @@ ifeq ($(BIN_AUTOHEADER),)
 BIN_AUTOHEADER=/usr/bin/autoheader
 endif
 
-ifeq ($(AUTOCONF_AUXTOOLS_DIR),)
-AUTOCONF_AUXTOOLS_DIR=/usr/share/automake-1.6
+
+ifeq ($(BIN_CONFIGGUESS),)
+BIN_CONFIGGUESS=/usr/share/libtool/config.guess
+endif
+
+ifeq ($(BIN_CONFIGSUB),)
+BIN_CONFIGSUB=/usr/share/libtool/config.sub
 endif

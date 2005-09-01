@@ -24,6 +24,20 @@ void *pempty(int i, int j) {
     double unused3;
     double unused4;
 
+    /* hush compiler warnings */
+    (void) i;
+    (void) j;
+    
+    (void) intiger;
+    (void) dbl;
+    (void) chr;
+    (void) point;
+    (void) msg;
+    (void) unused1;
+    (void) unused2;
+    (void) unused3;
+    (void) unused4;
+
     return NULL;
 }
 

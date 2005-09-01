@@ -33,7 +33,7 @@ posttarget:: target
 clean:: recursion 
 
 # target intended for scorched earth cleanup.
-nuke:: recursion
+nuke::
 
 # target to force dependancy regeneration
 depends:: recursion
@@ -57,7 +57,8 @@ man::
 # use of one does not imply the use of the other.
 #
 
-component_dist: packaging_package
+component_dist: packaging_packagefile
+component_dist: packaging_packagedir
 
 
 
@@ -69,14 +70,14 @@ component_dist: packaging_package
 man:: root_man
 
 root_man:
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX) Build System Manual"
-	@echo "$(BS_INFO_PREFIX) --------------------------------------------------"
-	@echo "$(BS_INFO_PREFIX)"
-	@echo "$(BS_INFO_PREFIX)"
-	@$(BIN_LYNX) -dump $(BS_ROOT)/buildsystem3.html
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Build System Manual")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	$(BS_CMDPREFIX_VERBOSE3) $(BIN_LYNX) -dump $(BS_ROOT)/buildsystem3.html
 
 #
 # Get base rules.
@@ -92,13 +93,13 @@ include $(COMPONENT_ROOT)/build3-config/rules.mk
 # Get modules' rules.
 #
 include $(BS_ROOT)/recursion/rules-recursion.mk
-include $(BS_ROOT)/component/rules-component.mk
 include $(BS_ROOT)/config/rules-config.mk
 include $(BS_ROOT)/codegen/rules-codegen.mk
 include $(BS_ROOT)/nativecode/rules-nativecode.mk
+include $(BS_ROOT)/component/rules-component.mk
 include $(BS_ROOT)/aliencode/rules-aliencode.mk
 include $(BS_ROOT)/javacode/rules-javacode.mk
 include $(BS_ROOT)/packaging/rules-packaging.mk
 include $(BS_ROOT)/release-engineering/rules-release-engineering.mk
-include $(BS_ROOT)/autoconf/rules-autoconf.mk
 include $(BS_ROOT)/doc/rules-doc.mk
+include $(BS_ROOT)/xmlmd/rules-xmlmd.mk

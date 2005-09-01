@@ -2,6 +2,10 @@ ifeq ($(BIN_CP),)
 BIN_CP=/usr/bin/cp
 endif
 
+ifeq ($(BIN_MV),)
+BIN_MV=/usr/bin/mv
+endif
+
 ifeq ($(BIN_TAR),)
 BIN_TAR=/usr/bin/tar
 endif
@@ -112,5 +116,9 @@ endif
 
 ifeq ($(BIN_WHOAMI),)
 BIN_WHOAMI=/usr/ucb/whoami
+endif
+
+ifeq ($(BIN_TEST),)
+BIN_TEST=/usr/bin/test
 endif
 

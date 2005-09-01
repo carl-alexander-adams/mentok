@@ -61,6 +61,12 @@ endif
 ifeq ($(FLAGS_GNU_CC_COV),)
 FLAGS_GNU_CC_COV=-fprofile-arcs -ftest-coverage
 endif
+ifeq ($(FLAGS_GNU_CC_NOASSERT),)
+FLAGS_GNU_CC_NOASSERT=-DNDEBUG
+endif
+ifeq ($(FLAGS_GNU_CC_REENT),)
+FLAGS_GNU_CC_REENT=-D_REENTRANT
+endif
 
 
 ifeq ($(FLAGS_GNU_CXX),)
@@ -92,6 +98,12 @@ FLAGS_GNU_CXX_PROFILE=-pg
 endif
 ifeq ($(FLAGS_GNU_CXX_COV),)
 FLAGS_GNU_CXX_COV=-fprofile-arcs -ftest-coverage
+endif
+ifeq ($(FLAGS_GNU_CXX_NOASSERT),)
+FLAGS_GNU_CXX_NOASSERT=-DNDEBUG
+endif
+ifeq ($(FLAGS_GNU_CXX_REENT),)
+FLAGS_GNU_CXX_REENT=-D_REENTRANT
 endif
 
 
@@ -244,13 +256,13 @@ endif
 
 
 ifeq ($(FLAGS_GNU_STRIP_EXE),)
-FLAGS_GNU_STRIP_EXE=--verbose --strip-unneeded
+FLAGS_GNU_STRIP_EXE= --strip-unneeded
 endif
 ifeq ($(FLAGS_GNU_STRIP_SHLIB),)
-FLAGS_GNU_STRIP_SHLIB=--verbose --discard-all
+FLAGS_GNU_STRIP_SHLIB= --discard-all
 endif
 ifeq ($(FLAGS_GNU_STRIP_LIB),)
-FLAGS_GNU_STRIP_LIB=--verbose --discard-all
+FLAGS_GNU_STRIP_LIB= --discard-all
 endif
 
 
@@ -316,6 +328,12 @@ endif
 ifeq ($(FLAGS_VENDOR_CC_COV),)
 FLAGS_VENDOR_CC_COV=-fprofile-arcs -fmem-report
 endif
+ifeq ($(FLAGS_VENDOR_CC_NOASSERT),)
+FLAGS_VENDOR_CC_NOASSERT=-DNDEBUG
+endif
+ifeq ($(FLAGS_VENDOR_CC_REENT),)
+FLAGS_VENDOR_CC_REENT=-D_REENTRANT
+endif
 
 ifeq ($(FLAGS_VENDOR_CXX),)
 FLAGS_VENDOR_CXX=-W \
@@ -325,6 +343,7 @@ FLAGS_VENDOR_CXX=-W \
 	-Wpointer-arith \
 	-Wsign-compare \
 	-Winline \
+	-Waggregate-return \
 	-Wmissing-prototypes \
 	-Wunused
 #	-v \
@@ -346,6 +365,12 @@ FLAGS_VENDOR_CXX_PROFILE=-pg
 endif
 ifeq ($(FLAGS_VENDOR_CXX_COV),)
 FLAGS_VENDOR_CXX_COV=-fprofile-arcs -ftest-coverage
+endif
+ifeq ($(FLAGS_VENDOR_CXX_NOASSERT),)
+FLAGS_VENDOR_CXX_NOASSERT=-DNDEBUG
+endif
+ifeq ($(FLAGS_VENDOR_CXX_REENT),)
+FLAGS_VENDOR_CXX_REENT=-D_REENTRANT
 endif
 
 
@@ -497,13 +522,13 @@ endif
 
 
 ifeq ($(FLAGS_VENDOR_STRIP_EXE),)
-FLAGS_VENDOR_STRIP_EXE=--verbose --strip-unneeded
+FLAGS_VENDOR_STRIP_EXE= --strip-unneeded
 endif
 ifeq ($(FLAGS_VENDOR_STRIP_SHLIB),)
-FLAGS_VENDOR_STRIP_SHLIB=--verbose --discard-all
+FLAGS_VENDOR_STRIP_SHLIB= --discard-all
 endif
 ifeq ($(FLAGS_VENDOR_STRIP_LIB),)
-FLAGS_VENDOR_STRIP_LIB=--verbose --discard-all
+FLAGS_VENDOR_STRIP_LIB= --discard-all
 endif
 
 #
@@ -574,6 +599,12 @@ endif
 ifeq ($(FLAGS_PURIFY_CC_COV),)
 FLAGS_PURIFY_CC_COV=-fprofile-arcs -fmem-report
 endif
+ifeq ($(FLAGS_PURIFY_CC_NOASSERT),)
+FLAGS_PURIFY_CC_NOASSERT=-DNDEBUG
+endif
+ifeq ($(FLAGS_PURIFY_CC_REENT),)
+FLAGS_PURIFY_CC_REENT=-D_REENTRANT
+endif
 
 
 ifeq ($(FLAGS_PURIFY_CXX),)
@@ -584,6 +615,7 @@ FLAGS_PURIFY_CXX=-W \
 	-Wpointer-arith \
 	-Wsign-compare \
 	-Winline \
+	-Waggregate-return \
 	-Wmissing-prototypes \
 	-Wunused
 #	-v \
@@ -605,6 +637,12 @@ FLAGS_PURIFY_CXX_PROFILE=-pg
 endif
 ifeq ($(FLAGS_PURIFY_CXX_COV),)
 FLAGS_PURIFY_CXX_COV=-fprofile-arcs -fmem-report
+endif
+ifeq ($(FLAGS_PURIFY_CXX_NOASSERT),)
+FLAGS_PURIFY_CXX_NOASSERT=-DNDEBUG
+endif
+ifeq ($(FLAGS_PURIFY_CXX_REENT),)
+FLAGS_PURIFY_CXX_REENT=-D_REENTRANT
 endif
 
 
@@ -789,6 +827,12 @@ endif
 ifeq ($(FLAGS_CC_COV),)
 FLAGS_CC_COV=
 endif
+ifeq ($(FLAGS_CC_NOASSERT),)
+FLAGS_CC_NOASSERT=
+endif
+ifeq ($(FLAGS_CC_REENT),)
+FLAGS_CC_REENT=
+endif
 
 
 ifeq ($(FLAGS_CXX),)
@@ -805,6 +849,12 @@ FLAGS_CXX_PROFILE=
 endif
 ifeq ($(FLAGS_CXX_COV),)
 FLAGS_CXX_COV=
+endif
+ifeq ($(FLAGS_CXX_NOASSERT),)
+FLAGS_CXX_NOASSERT=
+endif
+ifeq ($(FLAGS_CXX_REENT),)
+FLAGS_CXX_REENT=
 endif
 
 
