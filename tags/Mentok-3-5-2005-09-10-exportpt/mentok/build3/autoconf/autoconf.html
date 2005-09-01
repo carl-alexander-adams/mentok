@@ -1,0 +1,109 @@
+<html> <head>
+<title>Build System Autoconf Module</title>
+</head>
+
+<body>
+<h1>Build System Autoconf Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Autoconf build system module provides the
+ability to run autoconf to generate config.h files
+for source code that still requires this.
+<p>
+This module is provided to support legacy code.
+New code should not depend on autoconf.
+<hr>
+<h2>Macros and Controls</h2>
+
+
+<dl>
+  <!--
+  <dt><b>BUILDSTAMP_NAME</b></dt>
+  <dd>
+       The global default \"name\" to use when generating a buildstamp target.
+       The value of this macro should be a string.
+       </dd><p>
+       -->
+</dl>
+
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#CONFIGH_TARGETS">CONFIGH_TARGETS</a>
+  <li><a href="#autoconf_configh">autoconf_configh</a>
+  <li><a href="#autoconf_info">autoconf_info</a>
+  <li><a href="#autoconf_man">autoconf_man</a>
+</ul>
+	
+<hr>
+<a name="CONFIGH_TARGETS">
+<h2>CONFIGH_TARGETS</h2>
+<h3>CONFIGH_TARGETS Overview</h3>
+CONFIGH_TARGETS is the pattern target to create autoconf
+style "config.h" files.  The resulting source code files from
+build stamp targets are placed in the BS_ARCH_TARGET_DIR.
+<p>
+CONFIGH_TARGETS will be built during the "pretarget" phase of a build.
+CONFIGH_TARGETS may be built in isolation by requesting the "autoconf_configh"
+target.
+
+<h3>CONFIGH_TARGETS Options</h3>
+<dl>
+  <!--
+  <dt><b><i>&lt;configh target&gt;</i>_NAME</b></dt>
+  <dd>Specify the \"name\" of the current <i>&lt;configh target&gt;</i>.
+       </dd><p>
+       -->
+
+</dl>
+
+<hr>
+<a name="autoconf_configh">
+<h2>autoconf_configh</h2>
+<h3>autoconf_configh Overview</h3>
+Simple target to trigger the building of CONFIGH_TARGETS
+pattern targets independent of the main build "pretarget" phase. 
+
+<hr>
+<a name="autoconf_info">
+<h2>autoconf_info</h2>
+<h3>autoconf_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the autoconf module of
+the build system. The <b>autoconf_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>autoconf_info</b> target.
+
+<hr>
+<a name="autoconf_man">
+<h2>autoconf_man</h2>
+<h3>autoconf_man Overview</h3>
+Simple target to display usage information and help pertaining to 
+the autoconf module of the build system.
+The <b>autoconf_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>autoconf_man</b> target.
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+# The source root of this component
+COMPONENT_ROOT=../..
+
+# The root of the build system
+BS_ROOT=$(COMPONENT_ROOT)/../build3
+
+# Bootstrap Build system definitions.
+include $(BS_ROOT)/defines.mk
+
+CONFIGH_TARGETS=configure-foo.h
+
+
+# Finally, include the rules to make the build system go.
+include $(BS_ROOT)/rules.mk
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>

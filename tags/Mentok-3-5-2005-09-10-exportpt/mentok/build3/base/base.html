@@ -1,0 +1,419 @@
+<html> <head>
+<title>Build System Base Module</title>
+</head>
+
+<body>
+<h1>Build System Base Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Build System Base Module provides the build
+system with basic macros and system information
+that should be sufficient for bootstrapping
+other build system modules. This information
+can also be used by build system users to
+make platform adjustments in their build targets.
+
+<hr>
+<h2>Macros and Controls</h2>
+<dl>
+  <dt><b>BS_ROOT</b></dt>
+  <dd>
+       This macro MUST be set in every Makefile, and indicates
+       the location of the build system directory, typically "build3".
+       </dd><p>
+
+  <dt><b>COMPONENT_ROOT</b></dt>
+  <dd>
+       This macro MUST be set in every Makefile, and indicates
+       the root location of the source tree of the component
+       using the build system.
+       </dd><p>
+
+
+  <dt><b>BS_VERBOSE</b></dt>
+  <dd>
+       This macro controls the verbosity of make. "0" is the least verbose,
+       "1" is more verbose, etc.
+       </dd><p>
+
+
+  <dt><b>BS_VTAG</b></dt>
+  <dd>
+       This macro can be set by products to tag a
+       build with a variant name.  Different build variants
+       will have their build targets put into different target
+       directories, allowing a single build tree to simultaniously
+       maintain debug and optimized builds, build with different
+       compiler settings, etc. 
+       </dd><p>
+
+  <dt><b>BS_ROOT_TARGET_DIR</b></dt>
+  <dd>
+       This macro is set by the build system and indicates
+       the relative path to the root target dir.
+       </dd><p>
+
+  <dt><b>BS_ARCH_TARGET_DIR</b></dt>
+  <dd><b>DEPRECATED: use the <a href="#BS_FUNC_GEN_TARGET_DIR">BS_FUNC_GEN_TARGET_DIR</a>function.</b>
+       <br>
+       This macro is set by the build system and indicates
+       the relative path to the architecture specific target
+       directory.
+       </dd><p>
+
+  <dt><b>BS_NOARCH_TARGET_DIR</b></dt>
+  <dd>
+       <b>DEPRECATED: use the <a href="#BS_FUNC_GEN_TARGET_DIR">BS_FUNC_GEN_TARGET_DIR</a>function.</b>
+       <br>
+       This macro is set by the build system and indicates
+       the relative path to the architecture neutral target
+       directory.
+       </dd><p>
+       
+</dl>
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#base_info">base_targetsdirs</a>
+  <li><a href="#base_info">base_nuke</a>
+  <li><a href="#base_info">base_info</a>
+  <li><a href="#base_man">base_man</a>
+</ul>
+	
+<hr>
+<h2>Functions</h2>
+<ul>
+  <li><a href="#BS_FUNC_GEN_TARGET_DIR">BS_FUNC_GEN_TARGET_DIR</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_FULL">BS_FUNC_GEN_PLATFORM_FULL</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_FALLBACK1">BS_FUNC_GEN_PLATFORM_FALLBACK1</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_FALLBACK2">BS_FUNC_GEN_PLATFORM_FALLBACK2</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_FALLBACK3">BS_FUNC_GEN_PLATFORM_FALLBACK3</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_FALLBACK4">BS_FUNC_GEN_PLATFORM_FALLBACK4</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_FALLBACK5">BS_FUNC_GEN_PLATFORM_FALLBACK5</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_FALLBACK6">BS_FUNC_GEN_PLATFORM_FALLBACK6</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_FALLBACK7">BS_FUNC_GEN_PLATFORM_FALLBACK7</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK1">BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK1</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK2">BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK2</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK3">BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK3</a>
+  <li><a href="#BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK4">BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK4</a>
+</ul>
+
+
+
+<hr>
+<a name="base_targetdirs">
+<h2>base_targetdirs</h2>
+<h3>base_targetdirs Overview</h3>
+Simple target create dirs for targets created
+by other build rules.
+The <b>base_targetdirs</b> target will be built
+during the "pretarget" phase of a build,
+and can be built in isolation by requesting the 
+<b>base_targetdirs</b> target.
+
+
+<hr>
+<a name="base_nuke">
+<h2>base_nuke</h2>
+<h3>base_nuke Overview</h3>
+Simple target to remove target dirs created
+base_targetdirs.
+The base_nuke target will be built
+during the "nuke" phase of a build,
+and can be built in isolation by requesting the 
+<b>base_nuke</b> target. The "nuke" build phase
+capabilities provided by the base module should
+be addaquate for for most modules, freeing
+module writers from having to provide their own
+commands for the "nuke" build phase.
+
+
+<hr>
+<a name="base_info">
+<h2>base_info</h2>
+<h3>base_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the base module of
+the build system. The <b>base_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>base_info</b> target.
+
+<hr>
+<a name="base_man">
+<h2>base_man</h2>
+<h3>base_man Overview</h3>
+Simple target to display usage information and help pertaining to 
+the base module of the build system.
+The <b>base_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>base_man</b> target.
+
+<hr>
+<a name="BS_FUNC_GEN_TARGET_DIR">
+<h2>BS_FUNC_GEN_TARGET_DIR(<i>&lt;platform&gt;</i>)</h2>
+This function will return the architecture appropriate target directory
+for products of the make process. This fuction takes one argument,
+which is the name of the platform in question. Suitable values
+for this argument may be constructed with
+<a href="#BS_FUNC_GEN_PLATFORM_FULL">BS_FUNC_GEN_PLATFORM_FULL</a>,
+or taken from global build host system defaults BS_PLATFORM_ARCH_FULL
+or BS_PLATFORM_NOARCH.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_FULL">
+<h2>BS_FUNC_GEN_PLATFORM_FULL(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the most canonical
+form of the platform name string.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_FALLBACK1">
+<h2>BS_FUNC_GEN_PLATFORM_FALLBACK1(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the first fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_FALLBACK2">
+<h2>BS_FUNC_GEN_PLATFORM_FALLBACK2(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the second fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_FALLBACK3">
+<h2>BS_FUNC_GEN_PLATFORM_FALLBACK3(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the third fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_FALLBACK4">
+<h2>BS_FUNC_GEN_PLATFORM_FALLBACK4(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the fourth fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_FALLBACK5">
+<h2>BS_FUNC_GEN_PLATFORM_FALLBACK5(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the fifth fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_FALLBACK6">
+<h2>BS_FUNC_GEN_PLATFORM_FALLBACK6(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the sixth fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_FALLBACK7">
+<h2>BS_FUNC_GEN_PLATFORM_FALLBACK7(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the seventh fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK1">
+<h2>BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK1(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the first legacy fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK2">
+<h2>BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK2(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the second legacy fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK3">
+<h2>BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK3(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the third legacy fallback value.
+
+<hr>
+<a name="BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK4">
+<h2>BS_FUNC_GEN_PLATFORM_LEGACYFALLBACK4(
+<i>&lt;OS name&gt;</i>,
+<i>&lt;OS major&gt;</i>,
+<i>&lt;OS minor&gt;</i>,
+<i>&lt;OS patch&gt;</i>,
+<i>&lt;machine instruciton set&gt;</i>,
+<i>&lt;machine type&gt;</i>,
+<i>&lt;runtime name&gt;</i>,
+<i>&lt;runtime major&gt;</i>,
+<i>&lt;runtime minor&gt;</i>,
+<i>&lt;runtime patch&gt;</i>)</h2>
+
+This function will generate a normalized platform name string from the
+various elements that are used to identify the operating system, runtime
+environments, and hardware architecture. The version of the platform
+name string generated by this function is the fourth legacy fallback value.
+
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+# The source root of this component
+COMPONENT_ROOT=../..
+
+# The root of the build system
+BS_ROOT=$(COMPONENT_ROOT)/../build3
+
+# Boostrap Build system definitions.
+include $(BS_ROOT)/defines.mk
+
+
+#
+# Base module provides no pattern targets, so no
+# additional macros need be specified in Makefiles.
+#
+
+
+# Finally, include the rules to make the build system go.
+include $(BS_ROOT)/rules.mk
+
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>
