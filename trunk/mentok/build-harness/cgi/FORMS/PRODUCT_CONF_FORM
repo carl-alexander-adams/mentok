@@ -1,0 +1,41 @@
+<TABLE BGCOLOR="#FFFF00" BORDER=0 ALIGN=CENTER WIDTH=80% CELLSPACING=0 CELLPADDING=1>
+  <TR ALIGN=MIDDLE>
+    <TD ALIGN=CENTER>
+      <FONT COLOR="#990000" FACE="Arial,Helvetica"><B>
+        Confirm Build Request
+      </B></FONT>
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+      <TABLE BGCOLOR="#000000" BORDER=0 CELLPADDING=9 CELLSPACING=9 ALIGN=CENTER WIDTH=100%>
+        <TR ALIGN=MIDDLE>
+          <TD ALIGN=CENTER>
+            <P>
+            <FONT COLOR="#FFFF99" FACE="Arial,Helvetica"><BR>
+              Are you absolutely, positively, beyond doubt, sure that you
+              wish to build <B> [% vars.product %] </B> ?
+          </TD>
+        </TR>
+        <TR ALIGN=MIDDLE>
+          <TD ALIGN=CENTER>
+
+              <FORM METHOD=POST ACTION="[% env.REQUEST_URI %]">
+
+              [% FOREACH val = vars %]
+              <INPUT TYPE=HIDDEN NAME="[% val.key %]" VALUE="[% val.value %]">
+              [% END %]
+
+              <INPUT TYPE="submit" NAME="GO" VALUE="Build It!">
+
+              </FORM>
+            </FONT><BR>
+            <P>
+          </TD>
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>
+
+

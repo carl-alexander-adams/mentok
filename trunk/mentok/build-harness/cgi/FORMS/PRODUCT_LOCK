@@ -1,0 +1,34 @@
+<TABLE BGCOLOR="#FF0000" BORDER=0 ALIGN=CENTER WIDTH=80% CELLSPACING=0 CELLPADDING=1>
+  <TR ALIGN=MIDDLE>
+    <TD ALIGN=CENTER>
+      <FONT COLOR="#FFFF00" FACE="Arial,Helvetica"><B>
+        !ERROR!
+      </B></FONT>
+    </TD>
+  </TR>
+  <TR ALIGN=MIDDLE>
+    <TD ALIGN=CENTER>
+      <TABLE BGCOLOR="#000000" BORDER=0 CELLPADDING=9 CELLSPACING=9 ALIGN=CENTER WIDTH=100%>
+        <TR ALIGN=MIDDLE>
+          <TD ALIGN=CENTER>
+            <FONT COLOR="#FFFF00" FACE="Arial,Helvetica">
+            Failed to launch build of [% product %]
+            </FONT>
+          </TD>
+        </TR>
+        <TR ALIGN=MIDDLE>
+          <TD ALIGN=CENTER>
+           <FONT COLOR="#FFFF00" FACE="Arial,Helvetica">
+
+             Sorry, [% product %] is already building at this time - a
+             lock file was detected. <BR> If you believe this to be in error,
+             please contact CM.
+
+           </FONT>
+
+          </TD>
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>

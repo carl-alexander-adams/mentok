@@ -1,0 +1,14 @@
+
+[% IF ! buildid %]
+You must specify a Build ID<P>
+[% END %]
+
+[% IF ! patchnum %]
+You must specify a Patch num<P>
+[% END %]
+
+[% IF ! product %]
+You must specify a Product<P>
+[% END %]
+
+
