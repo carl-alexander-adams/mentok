@@ -1,0 +1,100 @@
+
+
+
+<TABLE BORDER=0>
+
+<FORM METHOD=POST ACTION=[% env.REQUEST_URI %]>
+
+<TR>
+ <TD>Burn From:</TD>
+ <TD>
+  <SELECT NAME="source">
+  [% FOREACH op = source_op %]
+  <OPTION NAME=[% op %]> [% op %]
+  [% END %]
+ </TD>
+</TR>
+
+<TR> 
+ <TD>Speed to burn at: </TD>
+ <TD><INPUT TYPE=TEXT NAME="speed" VALUE="[% speed %]"></TD>
+</TR>
+
+<TR>
+ <TD>Output Verbose information</TD>
+ <TD><INPUT TYPE=checkbox NAME="verbose" VALUE="ON"></TD>
+</TR>
+
+<TR>
+ <TD COLSPAN=2>Fill in <B>ONE</B> of the four sections below</TD>
+</TR>
+
+<TR>
+ <TD COLSPAN=2 ALIGN=RIGHT><B>Option</B></TD>
+</TR>
+<TR>
+ <TD>Directory</TD>
+ <TD><INPUT TYPE=TEXT NAME="directory"></TD>
+</TR>
+<TR>
+ <TD>Tag (Filename)</TD>
+ <TD><INPUT TYPE=TEXT NAME="tag"></TD>
+</TR>
+<TR>
+ <TD>Volume Name (Name of CD)</TD>
+ <TD><INPUT TYPE=TEXT NAME="volume"></TD>
+</TR>
+<TR>
+ <TD>Archive ISO Image</TD>
+ <TD><INPUT TYPE=checkbox NAME="backup" VALUE="ON"></TD>
+</TR>
+
+<TR>
+ <TD COLSPAN=2 ALIGN=RIGHT><B>Option</B></TD>
+</TR>
+<TR>
+ <TD>Path to ISO Image</TD>
+ <TD><INPUT TYPE=TEXT NAME="isoimage"></TD>
+</TR>
+
+<TR>
+ <TD COLSPAN=2 ALIGN=RIGHT><B>Option</B></TD>
+</TR>
+<TR>
+ <TD>Product</TD>
+ <TD><SELECT NAME="product">
+ [% FOREACH p = products %]
+ <OPTION NAME=[% p %]> [% p %]
+ [% END %]
+ </TD>
+</TR>
+<TR>
+ <TD>Build ID</TD>
+ <TD><INPUT TYPE=TEXT NAME="buildid"></TD>
+</TR>
+
+<TR>
+ <TD COLSPAN=2 ALIGN=RIGHT><B>Option</B></TD>
+</TR>
+<TR>
+ <TD>Product</TD>
+ <TD><SELECT NAME="product">
+ [% FOREACH p = products %]
+ <OPTION NAME=[% p %]> [% p %]
+ [% END %]
+ </TD>
+</TR>
+<TR>
+ <TD>Patch ID</TD>
+ <TD><INPUT TYPE=TEXT NAME=patchid></TD>
+</TR>
+
+
+<TR>
+ <TD>Load CD and click "Burn!"</TD>
+ <TD><INPUT TYPE=SUBMIT NAME="action" VALUE="Burn!"></TD>
+</TR>
+
+</TABLE>
+
+</FORM>

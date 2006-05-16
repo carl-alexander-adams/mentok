@@ -1,0 +1,42 @@
+<FORM METHOD=POST ACTION="[% env.REQUEST_URI %]">
+
+If you need to have other groups put on this list, please
+contact Release, and specify all necessary variables. <P>
+
+<TABLE BORDER=0 CELLPADDING=9 CELLSPACING=9 WIDTH=90% BGCOLOR="#000000" ALIGN=CENTER>
+<TR ALIGN=MIDDLE>
+ <TD>
+
+  <TABLE BORDER=0 CELLPADDING=9 CELLSPACING=9 WIDTH=90% BGCOLOR="#000000" ALIGN=CENTER>
+   <TR>
+   <TD></TD><TD>
+
+   <SELECT NAME=pregroup onchange=submit()>
+    [% FOREACH p = grpind.keys %]
+       [% IF group == p %]
+          <OPTION NAME="[% p %]" SELECTED> [% p %]
+       [% ELSE %]
+          <OPTION NAME="[% p %]"> [% p %]
+       [% END %]
+    [% END %]
+   </SELECT>
+
+   </TD>
+   </TR>
+
+   [% FOREACH p = items %]
+      [% p %]
+   [% END %]
+
+   <TR><TD></TD><TD>
+   <INPUT TYPE=SUBMIT NAME=group VALUE="[% group %]">
+   </TD>
+   </TR>
+ 
+  </TABLE>
+ </TD>
+</TR>
+
+</TABLE>
+
+</FORM>
