@@ -1,0 +1,80 @@
+<TR>
+ <TD>
+  <FONT FACE="Arial,Helvetica" COLOR="#FFFFFF">
+  <TABLE ALIGN=CENTER BGCOLOR="#FFFF00" WIDTH=90% CELLPADDING=1 CELLSPACING=0 BORDER=0>
+   <TR>
+    <TD ALIGN=CENTER><FONT COLOR="#990000">
+     <B>  Available [% prod %] builds in download area </B>
+      </FONT>
+    </TD>
+   </TR>
+   <TR>
+    <TD ALIGN=CENTER>
+     <TABLE BGCOLOR="#000000" WIDTH=100% CELLPADDING=5 CELLSPACING=5 BORDER=0>
+       <TR>
+        <TD>
+ <FORM METHOD=POST ACTION=[% env.REQUEST_URI %]>
+
+    <TABLE BORDER=0 CELLSPACING=6 CELLPADDING=5 BGCOLOR="#000000">
+        <TR>
+          <TD ALIGN=center><FONT COLOR="#CCFF66">Builds availabe in EXTERNAL download area</FONT>
+          </TD>
+        </TR>
+
+        [% FOREACH f = ebuilds %]
+        <TR>
+          <TD ALIGN=LEFT>[% f %]
+          </TD>
+          <TD ALIGN=RIGHT>
+             <INPUT TYPE=HIDDEN NAME="area" VALUE="ext">
+             <INPUT TYPE=HIDDEN NAME="build" VALUE="[% f %]">
+             <INPUT TYPE=SUBMIT NAME="remove" VALUE="remove">
+          </TD> 
+        </TR>
+        [% END %]
+
+     </TABLE>
+
+        </TD>
+       </TR>
+       <TR>
+        <TD>
+
+
+    <TABLE BORDER=0 CELLSPACING=6 CELLPADDING=5 BGCOLOR="#000000">
+        <TR>
+          <TD ALIGN=center><FONT COLOR="#CCFF66">Builds available in INTERNAL download area</FONT>
+          </TD>
+        </TR>
+
+        [% FOREACH f = ibuilds %]
+        <TR>
+          <TD ALIGN=LEFT>[% f %]
+          </TD>
+          <TD ALIGN=RIGHT>
+             <INPUT TYPE=HIDDEN NAME="product" VALUE=[% prod %]>
+             <INPUT TYPE=HIDDEN NAME="area" VALUE="int">
+             <INPUT TYPE=HIDDEN NAME="build" VALUE="[% f %]">
+             <INPUT TYPE=SUBMIT NAME="remove" VALUE="remove">
+          </TD> 
+        </TR>
+        [% END %]
+
+     </TABLE>
+         </FONT>
+
+        </TD>
+      </TR>
+     </TABLE>
+   </FORM>
+   
+    </TD>
+   </TR>
+  </TABLE>
+
+
+
+
+<BR>
+
+</FONT>

@@ -1,0 +1,25 @@
+
+<BR>
+<TABLE BGCOLOR="#FFCC00" BORDER=0 ALIGN=CENTER WIDTH=80% CELLSPACING=0 CELLPADDING=1>
+  <TR ALIGN=MIDDLE>
+    <TD ALIGN=CENTER>
+      <FONT COLOR="#990000" FACE="Arial,Helvetica"><B>
+        Online Build System
+      </B></FONT>
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+      <TABLE BGCOLOR="#000000" BORDER=0 CELLPADDING=9 CELLSPACING=9 ALIGN=CENTER WIDTH=100%>
+        <TR ALIGN=MIDDLE>
+          <TD ALIGN=CENTER>
+            <P>
+            <FONT COLOR="#FFFF99" FACE="Arial,Helvetica"><BR>
+	     - SPIN A BUILD -
+            </FONT><BR>
+            <P>
+          </TD>
+        </TR>
+        <TR ALIGN=MIDDLE>
+          <TD ALIGN=CENTER>
+
