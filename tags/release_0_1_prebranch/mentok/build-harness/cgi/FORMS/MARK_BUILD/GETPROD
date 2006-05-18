@@ -1,0 +1,31 @@
+<TABLE WIDTH=80% CELLSPACING=0 CELLPADDING=1 ALIGN=CENTER BORDER=0 BGCOLOR="#FFFF33">
+  <TR ALIGN=MIDDLE>
+    <TD ALIGN=CENTER>
+     <FONT SIZE=2 FACE="Arial,Helvetica" COLOR="#990000"><B>
+      Select a product from the following list:
+     </B></FONT>
+    </TD>
+  </TR>
+  <TR ALIGN=MIDDLE>
+   <TD ALIGN=CENTER>
+     <TABLE WIDTH=100% CELLSPACING=5 CELLPADDING=5 ALIGN=CENTER BORDER=0 BGCOLOR="#000000">
+      <TR ALIGN=MIDDLE>
+        <TD ALIGN=CENTER>
+        <FONT FACE="Arial,Helvetica" COLOR="#FFFFFF">
+	<FORM METHOD=POST ACTION=[% env.REQUEST_URI %]>
+   	<select name="product" onchange="submit()">
+    	[% FOREACH option = products %]
+      	   <option>[% option %]</option>
+    	[% END %]
+   	</select>
+   	<INPUT TYPE=SUBMIT NAME="product" VALUE="SELECT">
+	</FORM>
+        </FONT>
+        </TD>
+       </TR>
+     </TABLE>
+   </TD>
+  </TR>
+</TABLE>
+<BR>
+<BR>

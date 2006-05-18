@@ -1,0 +1,63 @@
+
+<FONT FACE="Arial,Helvetica" COLOR="#FFFFFF">
+<TABLE BORDER=0 BGCOLOR="#FFFF00" CELLPADDING=1 CELLSPACING=0 WIDTH=90%>
+  <TR>
+    <TD>
+      <TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100% BGCOLOR="#FFFF00">
+        <TR> 
+          <TD align=center><FONT COLOR="#990000"><b> Push a [% product %] build to download area </B></FONT>
+          </TD>
+        </TR>
+
+        <TR>
+          <TD VALIGN=top>
+  	    <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100% BGCOLOR="#000000">
+              <TR>
+                <TD>
+
+  	          <TABLE BORDER=0 CELLSPACING=6 CELLPADDING=5 WIDTH=100% BGCOLOR="#000000">
+  	            <TR>
+   		      <TD><FONT COLOR="#CCFF66">Build ID</FONT></TD>
+   		      <TD><FONT COLOR="#CCFF66">State</FONT></TD>
+   		      <TD><FONT COLOR="#CCFF66">Name</FONT></TD>
+   		      <TD><FONT COLOR="#CCFF66">Owner</FONT></TD>
+   		      <TD><FONT COLOR="#CCFF66">Identifier</FONT></TD>
+  	            </TR>
+
+	            [% FOREACH var = builds %]
+
+                    <TR>
+                      <FORM METHOD=POST ACTION=[% env.REQUEST_URI %]>
+   		      <TD>[% var.key %]</TD>
+   		      <TD>[% var.value.state %]</TD>
+   		      <TD>[% var.value.name %]</TD>
+   		      <TD>
+    		        <INPUT TYPE=HIDDEN NAME="build" VALUE="[% var.key %]">
+    		        <INPUT TYPE=HIDDEN NAME="product" VALUE="[% product %]">
+    		        <INPUT TYPE=HIDDEN NAME="name" VALUE="[% var.value.name %]">
+    		        <INPUT TYPE=SUBMIT NAME="push_to_int" VALUE="push (int)">
+    		        <INPUT TYPE=SUBMIT NAME="push_to_ext" VALUE="push (ext)">
+   		      </TD>
+   		      <TD>
+    		        <INPUT TYPE=TEXT NAME="nameas">
+   		      </TD>
+   		      </FORM>
+  	            </TR>
+
+	            [% END %]
+
+                  </TABLE>
+              </TD>
+            </TR>
+          </TABLE>
+        </TD>
+       </TR>
+     </TABLE>
+   </TD>
+  </TR>
+</TABLE>
+</FONT>
+
+
+
+<!-- no end of /TR for next form -->
