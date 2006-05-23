@@ -31,10 +31,10 @@ require Exporter;
                 wallclock unlock_file lock_age lazy_convert
 	        gmake_errors eat_keep check_for_errors
 	        write_keep get_build_date_next b_system dos2unix
-                katana
+                katana print_S evaluate_hash
                );
 
-@EXPORT_OK = qw( get_stamp b_system );
+@EXPORT_OK = qw( get_stamp b_system print_S );
 $VERSION   = 1.10;
 
 =head1 REQUIREMENTS
@@ -1056,6 +1056,61 @@ sub katana {
    close(CRC);
  
    return $crc;
+
+}
+
+sub print_S {
+
+   my $string = $@;
+
+   print get_stamp() . "$string";
+
+   return 0;
+
+}
+
+sub print_V {
+  
+  my $string = $@;
+
+  if ( defined($run{'verbose'}) && $run{'verbose'} ) {
+     print get_stamp() . "$string";
+  }
+
+  return 0;
+
+}
+
+### defaults, config, smush these together into run, taking
+### run over config over defaults
+
+sub evaluate_hash {
+
+   my $def_ref = shift;
+   my $con_ref = shift;
+   my $run_ref = shift; 
+
+   my %lrun; 
+
+   foreach my $key (sort keys %{$def_ref}) {
+      $lrun{$key} = $def_ref{$key};
+   }
+
+   foreach $key ( sort keys %{$con_ref}) {
+      $lrun{$key} = $con_ref{$key};
+   }
+
+   foreach $key ( sort keys %{$run_ref}) {
+      if ( defined ($run_ref{$key}) && $run_ref{$key} ) {
+         $lrun{$key} = $run_ref{$key};
+      }
+   }
+
+   foreach $key ( sort keys %lrun ) {
+      $run_ref{$key} = $lrun{$key};
+   }
+
+   return 0;   
 
 }
 

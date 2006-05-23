@@ -175,7 +175,7 @@ $VERSION   = 1.50;
 
 $vcs_verbose   = 0;
 
-use lib qw(/home/mhall/cvs/mentok/scripts);
+use lib qw(/home/mhall/workplay/mentok/mentok/build-harness/scripts);
 
 use Cwd;
 use cvs;
