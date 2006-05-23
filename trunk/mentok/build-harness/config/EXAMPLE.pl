@@ -1,41 +1,29 @@
 
+### Anything in here can be duplicated, or changed from the Defaults.
+
 ## Platforms [desc here]
 
 # REQUIRED: platforms
 # 'hostname' => 'arch'
 
-%platforms = (
-              '<hostname>'  => '<Arch>',
-);
-
-# Raw array of hosts. 
-@buildhosts = keys(%platforms);
-# How long until we give up on a host. 
-$alarmwait  = 60*180; # 180 mins
+$config{'platforms'}  = ( '<hostname>'  => '<Arch>', );
+$config{'buildhosts'} = keys $config{'platforms'};
+$config{'alarmwait'}  = 60 * 180;
 
 # REQUIRED:projectname
-$projectname = 'preomni';
+$config{'projectname'} = 'preomni';
 
 # REQUIRED: buildroot
-$buildroot   = "/home/builds/$projectname";
-# REQUIRED: statusdir
-$statusdir   = "$buildroot/\$ddir/status";
-# REQUIRED: toolsdir
-$toolsdir    = '/home/builds/scripts';
+$config{'buildroot'} = "/home/builds/$config{'projectname'}";
 
-#
-# For our webserver - used in buildreport.pl
-# OPTIONAL
-#
-$urlprefix  = "/eng/$projectname/builds";
-$outputfile = "$buildroot/summary.html";
-$pkgdir     = "$ddir/package";
+# REQUIRED: statusdir ... will get eval'ed in buildall to pickup correct $ddir
+$config{'statusdir'} = "$buildroot/\$ddir/status";
+
+# REQUIRED: toolsdir
+$config{'toolsdir'}  = '/home/builds/scripts';
 
 # Who we send email to on build status
-$notify     = "<someone_who_cares>\@.com";
-
-# LEGACY: configs ()
-@configs = ( '<projectname>' );
+$config{'notify'}    = "<someone_who_cares>\@.com";
 
 # REQUIRED: SCvar (Source Control Variable)
 
@@ -59,16 +47,23 @@ $notify     = "<someone_who_cares>\@.com";
                     _P4PASSWD   => 'p4passwd',
                     _P4ROOT     => '/home/builds/SomeCodeBase/templates',
                    },
+	  SCvar3 => {
+                    name     => 'SomeCodeFrom_SVN',
+                    method   => 'svn',
+                    branch   => 'branches',
+                    tag      => 'tags',
+                    svnmod   => 'trunk',
+                    base_url => 'your.server.com/svn',
+                    svnmeth  => 'https',
+                 },
 );
 
-#
+
 # This is a config file with a separate client_build_sequence
 # to be run for each host. 
 # REQUIRED: maincmd
-#
-%maincmd    = (
-            'hostname'     => 'special_config_file',
-);
+
+$config{'maincmd'} = ( 'hostname'     => 'special_config_file', );
 
 # REQUIRED: client_build_sequence
 
@@ -89,6 +84,8 @@ $notify     = "<someone_who_cares>\@.com";
 # ARBLOGFILE, an arbitrary logfile, otherwise will form from command/target
 #	can embed code
 
+### XXX local-lize this block to use short vars for cleanliness.
+
 @client_build_sequence = (
         [ "", "", "$gmake", "-f Makefile.build", "", "", 
           "", "", "" ],
@@ -104,15 +101,18 @@ $notify     = "<someone_who_cares>\@.com";
 #
 # FLUFF: buildtool
 # This is the script that picks things up on the client side.
-$buildtool   = "$toolsdir/runbuild.pl";
+$config{'buildtool'} = "$config{'toolsdir'}/runbuild.pl";
 # REQUIRED: cmdline
-$cmdline     = "$buildtool";
+$config{'cmdline'} = $config{'buildtool'};
 
 # OPTIONAL PRUNE_AFTER (Check Defaults.pl for default value)
 # Our prunes.pl uses this to detemine whether or not to reap builds.
-$PRUNE_AFTER=15;
+$config{'prune_after'} = 15;
 
 # OPTIONAL (To override the normal disting mechanism)
+
+### XXX Rewrite alt dist to be in client_build_sequence form.
+
 @altdist = ("directory", "command", 
             "directory", "command"); 
 
