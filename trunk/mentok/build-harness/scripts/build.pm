@@ -28,10 +28,10 @@ require Exporter;
 
 @EXPORT    = qw(send_email exit_err get_stamp lock_file send_to_log 
                 get_build_date set_status get_status treerev treediff
-                wallclock unlock_file lock_age lazy_convert
+                wallclock unlock_file lock_age 
 	        gmake_errors eat_keep check_for_errors
 	        write_keep get_build_date_next b_system dos2unix
-                katana print_S evaluate_hash
+                print_S print_V evaluate_hash where run_commands
                );
 
 @EXPORT_OK = qw( get_stamp b_system print_S );
@@ -823,7 +823,20 @@ sub eat_keep {
 ### write_keep needs the mkkeep shell script - install
 ### later.
 
-sub write_keep { }
+sub write_keep { 
+
+   my $path = shift; 
+   $file = "$path/.keep";
+
+   open(KEEP, ">$file" ) || do { 
+      print get_stamp() . " Unable to touch $file into place!\n";
+      return 0;
+   };
+   close(KEEP);
+
+   ### XXX chown and chmod for web system to manipulate
+
+}
 
 
 
@@ -1113,5 +1126,249 @@ sub evaluate_hash {
    return 0;   
 
 }
+
+### XXX Need to rewrite this a bit so that we output logs to the correct
+### XXX log dir - also need to pass in %run
+
+### # client_build_sequence
+
+# RUNDIR|USER|COMMAND|ARGS|TARGETS|IGNOREERROR|ENVS|ARBLOGFILE
+
+#
+# @client_build_sequence = ( [ "","", "$gmake", "-f Makefile.build", "", "", "", "", ], );
+#
+
+sub run_commands {
+
+   my $ar_ref  = shift; 
+   my $postfix = shift || ''; 
+
+   my ($run_dir, $eff_user, $command, $args, $target,
+       $out_err, $cline, $bs_cline, $out_file, $command_basename);
+    
+   my ($starttime, $endtime, $ruletime, $disttime);
+
+   my $depth = 0;
+   my @subs = ();
+    
+   print get_stamp () . " [$host] Current directory is " . Cwd::getcwd () . "\n";
+
+   my $iter = "00";
+
+   foreach ( @{$ar_ref} ) {
+
+      my $stored_command = $_;
+      $run_dir = $eff_user = $command = $args = $target = $ignore_errors = 
+         $out_err = $cline = $bs_cline = $out_file = $command_basename = "";
+   
+      # Directory where command will run
+      if ($stored_command->[0]) {
+         $run_dir = "$stored_command->[0]";
+         eval " \$run_dir = \"$run_dir\" ";
+      }
+
+      # Effective user of the command (sudo)
+      if ($stored_command->[1]) { 
+         $eff_user = $stored_command->[1]; 
+         eval " \$eff_user = \"$eff_user\" ";
+      }
+   
+      # Command name
+      if ($stored_command->[2]) {
+         $command = $stored_command->[2];
+         eval " \$command = \"$command\" ";
+      } 
+      else { # this is an impossible situation to deal with
+         print get_stamp () . "Build System: FATAL: Stored command missing \n";
+         return 1;
+      }
+   
+      # Command arguements
+      if ($stored_command->[3]) {
+         if ($command =~ /make/) {
+            if ($makeargs) {
+               $args = "$makeargs $stored_command->[3]";
+            } else { $args = "$makeargs $stored_command->[3]"; }
+         } else { $args = $stored_command->[3]; }
+         eval " \$args = \"$args\" ";
+      } else { $args = "$makeargs" if ($command =~ /make/); }
+   
+      # Any targets (make style)
+      if ($stored_command->[4]) {
+         $target = $stored_command->[4];
+         eval " \$target = \"$target\" ";
+      }
+
+      # ignore errors bit
+      if (defined ( $stored_command->[5] ) ) {
+         $ignore_errors = $stored_command->[5];
+      }
+
+      # Dynamic ENV variables, set these before running cmd
+      # Expect 'VAR=baz:bar|VAR=foo|VAR=xyzzy' input
+      if ($stored_command->[6]) {
+         @envs = split(/\|/, $stored_command->[6]);
+         foreach $ea (@envs) {
+            ($e,$a) = split(/=/,$ea);
+            eval " \$a = \"$a\" ";
+            $ENV{$e} = $a;
+         }
+      }
+ 
+      # arbitrary log file, use this for logfile name.
+      if ($stored_command->[7]) {
+         $logf = $stored_command->[7];
+         eval " \$logf = \"$logf\" ";
+         $out_file = $logdir . "/" . $iter . "_" . $postfix . "_" . $logf;
+      }
+      else {
+         ($command_basename) = $command =~ /^(\S+)/;
+         chomp ($command_basename = `basename $command_basename`);
+ 
+         if ($target) {
+            my $buff = $target; $buff =~ s#/#_#g;
+            $out_file = $logdir . "/" . $iter . "_" . $postfix . "_" . 
+			$command_basename . "_" .  $buff . ".txt";
+         }
+         else {
+            $out_file  = $logdir . "/" . $iter . "_" . $postfix . "_" . 
+			$command_basename . "_" . ".txt";
+         }
+      }
+
+      if ($target =~ /package/) {
+         $packagestatus = 'starting';
+      }
+   
+      $out_err = " > $out_file " . "2>\&1";
+
+      $cline = "$eff_user $command $args $target";
+
+      eval " \$cline = \"$cline\" ";
+   
+      $bs_cline = "$cline $out_err";
+   
+      ### XXX  set_status(\%statusvar, "running $command $target");
+   
+      $starttime = new Benchmark;
+
+      # If a dir was specified for the command, 
+      # count the depth and cd to the dir before 
+      # running our command 
+
+      my $run_cwd = Cwd::getcwd ();
+
+      if ($run_dir) {
+         print get_stamp () . " [$host] Run dir specified as $run_dir \n";
+         if (! ($run_dir =~ m#^/#) ) {
+            @subs = split (/\//, $run_dir);
+            $depth = scalar(@subs);
+            $run_dir = "./$run_dir";
+         }
+         unless (chdir ("$run_dir")) {
+            print get_stamp() . " [$host] : Could not chdir to $run_dir \n";
+            print get_stamp() . " [$host] Currently in " . Cwd::getcwd() . "\n";
+            return 0;
+         } 
+         else { 
+           print get_stamp() . " [$host] Going $depth level(s) to $run_dir \n"; 
+           print get_stamp() . " [$host] Currently in " . Cwd::getcwd() . "\n";
+         }
+      }
+
+   
+      if (b_system ("$bs_cline") ){
+         print get_stamp () . " [$host] $bs_cline failed.\n";
+         if ($ignore_errors) { 
+            print get_stamp() . " [$host] Ignore error set, continuing.\n";
+         }
+         if ( ! $ignore_errors ) {
+            return 1;
+         }
+      }
+   
+      $endtime = new Benchmark;
+
+      $buildtime = wallclock($endtime, $starttime);
+   
+      print get_stamp () . " [$host] $command $target finished. [$buildtime] \n\n";
+
+      # If product config specifies a fail_criteria, check the log file
+      # for errors. If we find errors in the log files, we stop right here.
+
+      if (defined (@fail_criteria)) {
+         my $errors = check_for_errors ("$out_file", \@fail_criteria); 
+         if ($errors) {
+            print get_stamp () . " WARNING: Errors detected in $out_file. \n";
+            foreach my $k (keys %{$errors}) {
+               print "++++++++++ ERROR $k ++++++++++ \n\n";
+               print "$errors->{$k} \n";
+            }
+            print get_stamp () . " ERRORS DETECTED IN BUILD LOG \n";
+            b_system ("/bin/touch $buildroot/$ddir/$host/ERRORS ");
+            foreach $fc (@fail_criteria) { 
+               ### XXX Redo this into perl
+	       b_system ("/bin/grep -n '$fc' $out_file >> $buildroot/$ddir/$host/ERRORS "); 
+            }
+         }
+      }
+
+      unless (chdir ("$run_cwd")) {
+         print get_stamp () . " [$host] Could not chdir back to $run_cwd.\n";
+         return 1;
+      }
+   
+   # Record command run time in our buildtrack hash
+   ### XXX $buildtrack{$buildseq++} = ["$eff_user $command $args $target", "$buildtime"];
+   
+   ### XXX set_status(\%statusvar, "finished $command $target");
+
+   $iter++;
+
+   }
+
+   return 0;
+
+}
+
+
+
+
+
+
+
+
+my $svn = '';
+my $p4  = '';
+my $cvs = '';
+
+sub where {
+
+   $targ = shift;
+
+   my $found = 0;
+
+   if ( ! -x $targ ) {
+      my @paths = split(/:/,$ENV{'PATH'});
+      foreach (@paths) {
+         if ( -x "$_/$targ" ) {
+            print "*** Using '$_/$targ' for version subsystem.\n";
+            if ( $targ =~ /svn/)    { $svn = "$_/$targ"; }
+            elsif ( $targ =~ /p4/)  { $p4  = "$_/$targ"; }
+            elsif ( $targ =~ /cvs/) { $cvs = "$_/$targ"; }
+            return ("$_/$targ");
+         }
+      }
+   }
+   else { $found = 1; return $targ; }
+
+   unless ($found) {
+      print "*** No $targ found!\n";
+   }
+
+   return 0;
+
+}
+
 
 1;

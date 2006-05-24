@@ -30,10 +30,10 @@ use Cwd;
 @EXPORT_OK = qw();
 $VERSION   = 1.10;
 
-use lib qw(/home/builds/scripts);
+use lib qw(.);
 use build;
 
-my $svn = '/usr/local/bin/svn';
+my $svn = where('svn'); 
 my $svn_verbose = 0;
 
 #############################################################

@@ -23,12 +23,10 @@ use lib qw(/home/builds/scripts);
 use build;
 use Cwd;
 
+my $p4 = where('p4');
 my $perforce_verbose = 0;
 
-my $p4 = '/usr/local/bin/p4';
-
 #####################################################################
-
 
 sub perforce_status { }
 

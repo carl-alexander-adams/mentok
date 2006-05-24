@@ -167,7 +167,7 @@ require Exporter;
 @EXPORT    = qw(
 	        code_co code_tag get_method code_env
 	        code_cleanup code_treerev code_treediff 
-		code_verbose code_info
+		code_verbose code_info 
                );
 
 @EXPORT_OK = qw();
@@ -178,9 +178,10 @@ $vcs_verbose   = 0;
 use lib qw(/home/mhall/workplay/mentok/mentok/build-harness/scripts);
 
 use Cwd;
+
+use svn;
 use cvs;
 use perforce;
-use svn;
 use build;
 
 ### solely for setting verbose flag.
@@ -207,19 +208,16 @@ operations.
 
 sub code_env { 
 
-   if ( defined %main::SCvar) {
-      $lref = \%main::SCvar;
-   }
-   else {
-      print get_stamp() . " No \%SCvar found in code_env!\n";
-      return 0;
-   }
-                                                                                
+   my $lref = shift; 
+
    foreach $key (sort keys %{$lref}) {
       if ($key =~ /^SC/) { # new style!
-         $new = 1;
          $llref = \%{$lref->{$key}};
          $method = $llref->{'method'};
+         unless ( $method ) {
+            print get_stamp() . " No method defined in found SCVar - FIX CONF.\n";
+            return 0;
+         }
          $err = &{$method . '_env'}(@_,$llref); 
          unless($err) {
             print get_stamp() . " Problems setting ENV " .
@@ -229,15 +227,6 @@ sub code_env {
       }
    }
 
-   unless ($new) { # oldstyle
-      $method = $lref->{'method'};
-      $err = &{$method . '_env'}(@_,$lref); 
-      unless($err) {
-         print get_stamp() . " Problems setting ENV -- Aborting.\n";
-         return 0;
-      }
-   }
-                                                                                
    return 1;
 
 }
@@ -261,24 +250,16 @@ all SCVar's in the $main:: space and perform the appropriate actions.
 
 sub code_co { 
 
+   my $lref  = shift; 
    my $rev   = shift;
    my $redir = shift;
 
-   my ($lref, $llref, $new);
+   my ($llref);
 
    $new = 0;
 
-   if ( defined %main::SCvar) {
-      $lref = \%main::SCvar;
-   }
-   else {
-      print get_stamp() . " No \%SCvar found in code_co!\n";
-      return 0;
-   }
-
    foreach $key (sort keys %{$lref}) {
       if ($key =~ /^SC/) { # new style!
-         $new = 1;
          $llref = \%{$lref->{$key}};
          $err = code_work($rev, $redir, $llref, 'co');
          unless($err) { 
@@ -287,14 +268,6 @@ sub code_co {
             return 0;
          } 
       }
-   }
-
-   unless ($new) { # oldstyle
-      $err = code_work($rev, $redir, $lref, 'co');
-      unless($err) { 
-         print get_stamp() . " Problems checking out -- Aborting.\n";
-         return 0;
-      } 
    }
 
    return 1;
@@ -359,23 +332,13 @@ needed.
 
 sub code_tag { 
 
+   my $lref  = shift; 
    my $rev   = shift;
    my $redir = shift;
-   my ($lref, $llref, $new);
-                                                                                
-   $new = 0;
-                                                                                
-   if ( defined %main::SCvar) {
-      $lref = \%main::SCvar;
-   }
-   else {
-      print get_stamp() . " No \%SCvar found in code_tag!\n";
-      return 0;
-   }
+   my ($llref);
                                                                                 
    foreach $key (sort keys %{$lref}) {
       if ($key =~ /^SC/) { # new style!
-         $new = 1;
          $llref = \%{$lref->{$key}};
          $err = code_work($rev, $redir, $llref, 'tag');
          unless($err) {
@@ -386,37 +349,19 @@ sub code_tag {
       }
    }
                                                                                 
-   unless ($new) { # oldstyle
-      $err = code_work($rev, $redir, $lref, 'tag');
-      unless($err) {
-         print get_stamp() . " Problems tagging -- Aborting.\n";
-         return 0;
-      }
-   }
-                                                                                
    return 1;
 
 }
 
 sub code_cleanup { 
 
+   my $lref  = shift;
    my $redir = shift;
                                                                                 
-   my ($lref, $llref, $new);
-                                                                                
-   $new = 0;
-                                                                                
-   if ( defined %main::SCvar) {
-      $lref = \%main::SCvar;
-   }
-   else {
-      print get_stamp() . " No \%SCvar found in code_cleanup!\n";
-      return 0;
-   }
+   my ($llref);
                                                                                 
    foreach $key (sort keys %{$lref}) {
       if ($key =~ /^SC/) { # new style!
-         $new = 1;
          $llref = \%{$lref->{$key}};
          $err = code_work('', $redir, $llref, 'cleanup');
          unless($err) {
@@ -424,14 +369,6 @@ sub code_cleanup {
                $llref->{'name'} . " -- Aborting.\n";
             return 0;
          }
-      }
-   }
-                                                                                
-   unless ($new) { # oldstyle
-      $err = code_work('', $redir, $lref, 'cleanup');
-      unless($err) {
-         print get_stamp() . " Problems checking out -- Aborting.\n";
-         return 0;
       }
    }
                                                                                 
@@ -474,23 +411,13 @@ code_treediff for comparing the output generated by this function.
 
 sub code_treerev {
 
+   my $lref    = shift;
    my $outfile = shift;
    my $redir   = '';
-   my ($lref, $llref, $new);
-                                                                                
-   $new = 0;
-                                                                                
-   if ( defined %main::SCvar) {
-      $lref = \%main::SCvar;
-   }
-   else {
-      print get_stamp() . " No \%SCvar found in code_tag!\n";
-      return 0;
-   }
+   my ($llref);
                                                                                 
    foreach $key (sort keys %{$lref}) {
       if ($key =~ /^SC/) { # new style!
-         $new = 1;
          $llref = \%{$lref->{$key}};
          $err = code_work($outfile, $redir, $llref, 'treerev');
          unless($err) {
@@ -498,14 +425,6 @@ sub code_treerev {
                $llref->{'name'} . " -- Aborting.\n";
             return 0;
          }
-      }
-   }
-                                                                                
-   unless ($new) { # oldstyle
-      $err = code_work($outfile, $redir, $lref,'treerev');
-      unless($err) {
-         print get_stamp() . " Problems checking out -- Aborting.\n";
-         return 0;
       }
    }
                                                                                 
@@ -720,9 +639,9 @@ sub find_piece {
       }
    }
 
-   # still here?  old style.
+   # still here?  old style. now deprecated, return undef instead of $lref
 
-   return $lref;
+   return undef;
 
 }
 
@@ -737,6 +656,7 @@ sub find_piece {
 
 sub code_info {
 
+   my $lref    = shift;
    my $outfile = shift;
 
    print get_stamp() . " Opening $outfile for info dump.\n";
@@ -746,15 +666,6 @@ sub code_info {
       return 0;
    };
 
-   if ( defined %main::SCvar) {
-      $lref = \%main::SCvar;
-   }
-   else {
-      print get_stamp() . " No \%SCvar found in code_tag!\n";
-      close(OUT);
-      return 0;
-   }
-                                                                                
    foreach $key (sort keys %{$lref}) {
       if ($key =~ /^SC/) { # new style!
          # maybe replace this with a method specific function later

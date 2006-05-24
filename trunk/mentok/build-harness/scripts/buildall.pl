@@ -33,6 +33,7 @@ GetOptions("config|c=s"               => \$run{'configfile'},
            "verbose|v"                => \$run{'verbose'},
          );
 
+### XXX replace all mkdirs with File::Path
 
 unless ( $run{'configfile'} ) {
    usage();
@@ -186,7 +187,7 @@ unless ( chdir ("$run{'coderoot'}") ) {
 
 print_S " Beginning ENV initialization of code checkout.\n";
 
-unless ( code_env() ) {
+unless ( code_env(\%SCVar) ) {
    print_S "Failed ENV init!\n";
    cleanup(1);
    exit_err(1,"Initialization of code_env failed");
@@ -224,7 +225,7 @@ print_S "Checking out source template.\n";
 
 my $t0 = new Benchmark;
 
-unless (code_co("$run{'tag'}", "$run{'redir_co'}") ) {
+unless (code_co(\%SCVar, "$run{'tag'}", "$run{'redir_co'}") ) {
    cleanup(1);
    exit_err(1, "There were errors during code checkout process. $!");
 }
@@ -251,7 +252,7 @@ if ( $run{'dist'} ) {
 
    print_S "Applying tag ($run{'disttag'})\n";
 
-   unless ( code_tag("$run{'disttag'}", "$run{'redir_tag'}") ) {
+   unless ( code_tag(\%SCVar, "$run{'disttag'}", "$run{'redir_tag'}") ) {
       cleanup(1);
       exit_err(1, "Unable to tag source with $run{'disttag'}");
    }
@@ -276,7 +277,7 @@ if ( $run{'dist'} ) {
 
 print_S "Running tree revision for $run{'projectname'}\n";
 
-unless ( code_treerev("$run{'revlog'}") ) {
+unless ( code_treerev(\%SCVar, "$run{'revlog'}") ) {
    print_S "*** Warning : Errors running treerev for $run{'projectname'}\n";
 }
 else {
@@ -464,18 +465,11 @@ maildone();
 
 exit(0);
 
-
-
-
-
-
-
-
-
-
+##############################################################################
 
 
 ##############################################################################
+
 sub handle_alarm {
 
    print_S "More than $run{'alarmwait'} seconds have passed\n";
@@ -513,7 +507,7 @@ sub cleanup {
    ### Clean up any rev. control related stuff (delete P4 clients ..etc)
    print_S  "Beginning cleanup routine for Source Control.\n";
 
-   unless ( code_cleanup() ) {
+   unless ( code_cleanup(\%SCVar) ) {
       print_S "Cleanup routine for Source Control failed!\n";
    }
    print_S "Finished cleanup routine for Source Control.\n";

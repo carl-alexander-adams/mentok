@@ -20,10 +20,10 @@ use Cwd;
 @EXPORT_OK = qw();
 $VERSION   = 1.10;
 
-use lib qw(/home/builds/scripts);
+use lib qw(.);
 use build;
 
-my $cvs = '/usr/local/bin/cvs';
+my $cvs = where('cvs');
 my $cvs_verbose = 0;
 
 #############################################################
