@@ -76,20 +76,22 @@ $(_CONFIGH_TARGETS): _T=$(notdir $(@))
 $(_CONFIGH_TARGETS):
 $(_CONFIGH_TARGETS): _TMP_DIR=$(BS_ARCH_TARGET_DIR)/$(_T)-tmpdir
 $(_CONFIGH_TARGETS): _INPUT_FILES= \
-				$(BS_ROOT)/autoconf/autoconf/SOURCETREE \
-				$(BS_ROOT)/autoconf/autoconf/acconfig.h \
-				$(BS_ROOT)/autoconf/autoconf/aclocal.m4 \
-				$(BS_ROOT)/autoconf/autoconf/configure.in \
-				$(BS_ROOT)/autoconf/autoconf/install-sh \
-				$(BS_ROOT)/autoconf/autoconf/rules.mk.in \
-				$(BS_ROOT)/autoconf/autoconf/defines.mk.in \
+				$(if $($(_T)_SOURCETREE_FROM),$($(_T)_SOURCETREE_FROM),$(BS_ROOT)/autoconf/autoconf/SOURCETREE) \
+				$(if $($(_T)_ACCONFIG.H_FROM),$($(_T)_ACCONFIG.H_FROM),$(BS_ROOT)/autoconf/autoconf/acconfig.h) \
+				$(if $($(_T)_ACLOCAL.M4_FROM),$($(_T)_ACLOCAL.M4_FROM),$(BS_ROOT)/autoconf/autoconf/aclocal.m4) \
+				$(if $($(_T)_CONFIGURE.IN_FROM),$($(_T)_CONFIGURE.IN_FROM),$(BS_ROOT)/autoconf/autoconf/configure.in) \
+				$(if $($(_T)_INSTALL-SH_FROM),$($(_T)_INSTALL-SH_FROM),$(BS_ROOT)/autoconf/autoconf/install-sh) \
+				$(if $($(_T)_RULES.MK.IN_FROM),$($(_T)_RULES.MK.IN_FROM),$(BS_ROOT)/autoconf/autoconf/rules.mk.in) \
+				$(if $($(_T)_DEFINES.MK.IN_FROM),$($(_T)_DEFINES.MK.IN_FROM),$(BS_ROOT)/autoconf/autoconf/defines.mk.in) \
 				$(BIN_CONFIGGUESS) \
 				$(BIN_CONFIGSUB)
+$(_CONFIGH_TARGETS): 
 $(_CONFIGH_TARGETS): 
 $(_CONFIGH_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Generating configh target $(_T)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target Name                    :  $(_T)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Output File                    :  $@")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Input Files                    :  $(_INPUT_FILES)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BS_CMDPREFIX_VERBOSE2) $(BIN_RM) -rf $(_TMP_DIR)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(_TMP_DIR)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_CP) $(_INPUT_FILES) $(_TMP_DIR)

@@ -17,7 +17,7 @@ BUILDSTAMP_REVISION_PATCH=$(VERSION_PATCH)
 BUILDSTAMP_REVISION_STRING=$(PRODUCTNUM)-$(BS_DATE_YEAR)$(BS_DATE_MONTH)$(BS_DATE_DAY)$(BS_DATE_HOUR)$(BS_DATE_MINUTE)$(BS_DATE_SECOND)-$(NC_CONTROL_DEBUG)$(NC_CONTROL_STRIP)$(if $(BS_VTAG),-$(BS_VTAG))
 
 # Default flags someone might want to set.
-#FLAGS_CC = -D_REENTRANT -I$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,some_compoent_name)/include
+#FLAGS_CC = -D_REENTRANT -I$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,some_component_name)/include
 FLAGS_CC = -D_REENTRANT
 
 # This is how you would force a build number to be linked into all "final" targes.

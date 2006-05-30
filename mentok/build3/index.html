@@ -300,7 +300,7 @@ can be controlled with a few lines of make code.
 <pre><tt>
 # Component wide defines file
 
-FLAGS_CC	+= -I$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,some_compoent_name)/include -I$(COMPONENT_ROOT)/include -D_MY_DEFINE
+FLAGS_CC	+= -I$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,some_component_name)/include -I$(COMPONENT_ROOT)/include -D_MY_DEFINE
 
 # Force all exe's built in this component to link in a given object by default.
 FLAGS_LD_EXE_LOADLIBS	+=$(COMPONENT_ROOT)/buildnum/$(BS_ARCH_TARGET_DIR)/buildnum.o
@@ -488,6 +488,7 @@ additional modules, and ways around it.
   <li><a href="./release-engineering/release-engineering.html">Release Engineering</a></li>
   <li><a href="./doc/doc.html">Document Generation</a></li>
   <li><a href="./xmlmd/xmlmd.html">XML/Metadata</a></li>
+  <li><a href="./aliencode/aliencode.html">Alien Code</a></li>
 </ul>
 
 

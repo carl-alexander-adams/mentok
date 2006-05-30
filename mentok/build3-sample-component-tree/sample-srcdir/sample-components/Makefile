@@ -41,3 +41,10 @@ foo_REEXPORT=mhnet mhnet-crossplatform
 
 
 include $(BS_ROOT)/rules.mk
+
+target::
+	@$(BIN_ECHO) "import dir for mhnet                : $(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,mhnet)"
+	@$(BIN_ECHO) "import dir for mhnet-crossplatform  : $(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,mhnet-crossplatform)"
+	@$(BIN_ECHO) "import dir for blackbird-mh         : $(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,blackbird-mh)"
+	@$(BIN_ECHO) "import dir for boguscomp1           : $(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,boguscomp1)"
+	@$(BIN_ECHO) "import dir for boguscomp2           : $(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,boguscomp2)"

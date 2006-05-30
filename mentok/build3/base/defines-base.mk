@@ -16,19 +16,23 @@ ifeq ($(BIN_SHADOWTREE),)
 BIN_SHADOWTREE=$(BS_ROOT)/util/shadowtree.pl
 endif
 
-BS_OS_HOSTNAME:=$(shell $(BIN_PLATFORMUTIL) -n)
-BS_OS_NAME:=$(shell $(BIN_PLATFORMUTIL) -s)
-BS_OS_REVMAJOR:=$(shell $(BIN_PLATFORMUTIL) -M)
-BS_OS_REVMINOR:=$(shell $(BIN_PLATFORMUTIL) -N)
-BS_OS_REVPATCH:=$(shell $(BIN_PLATFORMUTIL) -P)
-BS_OS_RUNTIMEOLDNAME:=$(shell $(BIN_PLATFORMUTIL) -R)
-BS_OS_RUNTIMENAME:=$(shell $(BIN_PLATFORMUTIL) -w)
-BS_OS_RUNTIMEREVMAJOR:=$(shell $(BIN_PLATFORMUTIL) -x)
-BS_OS_RUNTIMEREVMINOR:=$(shell $(BIN_PLATFORMUTIL) -y)
-BS_OS_RUNTIMEREVPATCH:=$(shell $(BIN_PLATFORMUTIL) -z)
-BS_OS_MACHINETYPE:=$(shell $(BIN_PLATFORMUTIL) -m)
-BS_OS_MACHINEPROC:=$(shell $(BIN_PLATFORMUTIL) -p)
-BS_OS_MACHINEINSTSET:=$(shell $(BIN_PLATFORMUTIL) -i)
+
+_platformutil_output:=$(shell $(BIN_PLATFORMUTIL) -a -d ' ')
+
+BS_OS_HOSTNAME:=$(word 1,$(_platformutil_output))
+BS_OS_NAME:=$(word 2,$(_platformutil_output))
+BS_OS_REVMAJOR:=$(word 3,$(_platformutil_output))
+BS_OS_REVMINOR:=$(word 4,$(_platformutil_output))
+BS_OS_REVPATCH:=$(word 5,$(_platformutil_output))
+BS_OS_RUNTIMENAME:=$(word 6,$(_platformutil_output))
+BS_OS_RUNTIMEREVMAJOR:=$(word 7,$(_platformutil_output))
+BS_OS_RUNTIMEREVMINOR:=$(word 8,$(_platformutil_output))
+BS_OS_RUNTIMEREVPATCH:=$(word 9,$(_platformutil_output))
+BS_OS_RUNTIMEOLDNAME:=$(word 10,$(_platformutil_output))
+BS_OS_MACHINETYPE:=$(word 11,$(_platformutil_output))
+BS_OS_MACHINEPROC:=$(word 12,$(_platformutil_output))
+BS_OS_MACHINEINSTSET:=$(word 13,$(_platformutil_output))
+
 
 
 #
@@ -37,10 +41,10 @@ BS_OS_MACHINEINSTSET:=$(shell $(BIN_PLATFORMUTIL) -i)
 # from the build machine environment. Cross compliers need to do this.
 #
 # args: OS name, OS rev major, OS rev minor, OS rev patch
-bs_FUNC_GEN_OS_FULL=$(strip $(1))-$(strip $(2))$(if $(3),.$(strip $(3)))$(if $(4),.$(strip $(4)))
+bs_FUNC_GEN_OS_FULL=$(strip $(1))-$(strip $(2))$(if $(strip $(3)),.$(strip $(3)))$(if $(strip $(4)),.$(strip $(4)))
 
 # args: OS name, OS rev major, OS rev minor
-bs_FUNC_GEN_OS_FALLBACK_1=$(strip $(1))-$(strip $(2))$(if $(3),.$(strip $(3)))
+bs_FUNC_GEN_OS_FALLBACK_1=$(strip $(1))-$(strip $(2))$(if $(strip $(3)),.$(strip $(3)))
 
 # args: OS name, OS rev major
 bs_FUNC_GEN_OS_FALLBACK_2=$(strip $(1))-$(strip $(2))
@@ -50,13 +54,13 @@ bs_FUNC_GEN_OS_FALLBACK_3=$(strip $(1))
 
 
 # args: runtime name, runtime rev major, runtime rev minor, runtime rev patch
-bs_FUNC_GEN_RUNTIME_FULL=$(strip $(1))$(if $(2),-$(strip $(2)))$(if $(3),.$(strip $(3)))$(if $(4),.$(strip $(4)))
+bs_FUNC_GEN_RUNTIME_FULL=$(strip $(1))$(if $(strip $(2)),-$(strip $(2)))$(if $(strip $(3)),.$(strip $(3)))$(if $(strip $(4)),.$(strip $(4)))
 
 # args: runtime name, runtime rev major, runtime rev minor
-bs_FUNC_GEN_RUNTIME_FALLBACK_1=$(strip $(1))$(if $(2),-$(strip $(2)))$(if $(3),.$(strip $(3)))
+bs_FUNC_GEN_RUNTIME_FALLBACK_1=$(strip $(1))$(if $(strip $(2)),-$(strip $(2)))$(if $(strip $(3)),.$(strip $(3)))
 
 # args: runtime name, runtime rev major
-bs_FUNC_GEN_RUNTIME_FALLBACK_2=$(strip $(1))$(if $(2),-$(strip $(2)))
+bs_FUNC_GEN_RUNTIME_FALLBACK_2=$(strip $(1))$(if $(strip $(2)),-$(strip $(2)))
 
 # args: runtime name
 bs_FUNC_GEN_RUNTIME_FALLBACK_3=$(strip $(1))

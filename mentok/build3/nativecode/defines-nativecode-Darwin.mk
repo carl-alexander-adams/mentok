@@ -252,15 +252,16 @@ ifeq ($(FLAGS_GNU_AR_LIB_LOADLIBS_COV),)
 FLAGS_GNU_AR_LIB_LOADLIBS_COV=
 endif
 
-
+# Since we couldn't get the GNU version of strip to compile correctly
+# on the mac we're using the vendor version.
 ifeq ($(FLAGS_GNU_STRIP_EXE),)
-FLAGS_GNU_STRIP_EXE= --strip-unneeded
+FLAGS_GNU_STRIP_EXE= $(FLAGS_VENDOR_STRIP_EXE)
 endif
 ifeq ($(FLAGS_GNU_STRIP_SHLIB),)
-FLAGS_GNU_STRIP_SHLIB= --discard-all
+FLAGS_GNU_STRIP_SHLIB= $(FLAGS_VENDOR_STRIP_SHLIB)
 endif
 ifeq ($(FLAGS_GNU_STRIP_LIB),)
-FLAGS_GNU_STRIP_LIB= --discard-all
+FLAGS_GNU_STRIP_LIB= $(FLAGS_VENDOR_STRIP_SHLIB)
 endif
 
 
@@ -520,13 +521,13 @@ endif
 
 
 ifeq ($(FLAGS_VENDOR_STRIP_EXE),)
-FLAGS_VENDOR_STRIP_EXE= --strip-unneeded
+FLAGS_VENDOR_STRIP_EXE= -x
 endif
 ifeq ($(FLAGS_VENDOR_STRIP_SHLIB),)
-FLAGS_VENDOR_STRIP_SHLIB= --discard-all
+FLAGS_VENDOR_STRIP_SHLIB= -x
 endif
 ifeq ($(FLAGS_VENDOR_STRIP_LIB),)
-FLAGS_VENDOR_STRIP_LIB= --discard-all
+FLAGS_VENDOR_STRIP_LIB= -x
 endif
 
 #

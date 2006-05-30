@@ -3,7 +3,7 @@ XML_VALIDATE_CLASS=Validate
 endif
 
 ifeq ($(XML_VALIDATE_CP),)
-XML_VALIDATE_CP=$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,bb-master-md)/tools/validate:$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,bb-master-md)/tools/validate/xercesImpl.jar
+XML_VALIDATE_CP=$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,bb-md-validate)/tools/validate:$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,bb-md-validate)/tools/validate/xercesImpl.jar
 endif
 
 ifeq ($(XML_VALIDATE_JAVAFLAGS),)
@@ -19,11 +19,11 @@ XML_TRANSFORM_CLASS=Transform
 endif
 
 ifeq ($(XML_TRANSFORM_CP),)
-XML_TRANSFORM_CP=$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,bb-master-md)/tools/transform
+XML_TRANSFORM_CP=$(call COMPONENT_FUNC_IMPORT_COMPUTE_TARGETDIR,bb-md-validate)/tools/transform
 endif
 
 ifeq ($(XML_TRANSFORM_JAVAFLAGS),)
-XML_TRANSFORM_JAVAFLAGS=-client
+XML_TRANSFORM_JAVAFLAGS=-client -DentityExpansionLimit=1000000
 endif
 
 ifeq ($(XML_TRANSFORM_CMD),)
