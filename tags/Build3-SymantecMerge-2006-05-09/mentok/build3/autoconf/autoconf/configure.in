@@ -1,0 +1,172 @@
+AC_INIT(SOURCETREE)
+AC_CONFIG_HEADER(config.h)
+AC_PREREQ(2.10)
+
+AC_CANONICAL_SYSTEM
+
+# gotta have gmake for our builds
+AC_PATH_PROGS(GMAKE, gmake, not found,
+	$PATH:/usr/bin:/usr/local/bin:/bin)
+if test "x$GMAKE" = "xnot found" ; then
+ AC_MSG_ERROR(gmake not found)
+fi
+
+
+# some of the external components need make too
+AC_PATH_PROGS(MAKE, make, not found,
+	$PATH:/usr/bin:/usr/local/bin:/bin)
+if test "x$MAKE" = "xnot found" ; then
+ AC_MSG_ERROR(make not found)
+fi
+
+
+# basic compiler tests
+AC_PROG_CC
+#CFLAGS="-g3 -Wall"
+AC_PROG_GCC_TRADITIONAL
+AC_ISC_POSIX
+AC_C_CONST
+AC_C_INLINE
+AC_CHECK_SIZEOF(unsigned long, 4)
+AC_C_BIGENDIAN
+
+if test -n "$(WORDS_BIGENDIAN)"; then
+ENDIAN=ENDIAN_BIG
+else
+ENDIAN=ENDIAN_LITTLE
+fi
+
+AC_TYPE_SIGNAL
+AC_TYPE_SIZE_T
+AC_TYPE_UID_T
+AC_TYPE_SOCKLEN_T
+
+AC_MSG_CHECKING([that the compiler works])
+AC_TRY_RUN([ main(int ac, char **av) { return 0; } ],
+    AC_MSG_RESULT(yes),
+    AC_MSG_RESULT(no)
+    AC_MSG_ERROR(Could not compile and run even a trivial ANSI C program - check
+ CC.),
+    AC_MSG_ERROR(Could not compile and run even a trivial ANSI C program - check
+ CC.))
+
+# check some local libs & headers
+AC_CHECK_LIB(c_r, pthread_create, [ AC_DEFINE(HAVE_PTHREAD) LIBS="$LIBS -pthread" ])
+AC_CHECK_LIB(pthread, pthread_create, [ AC_DEFINE(HAVE_PTHREAD) LIBS="$LIBS -lpthread" ])
+AC_CHECK_FUNC(pthread_rwlock_init, AC_DEFINE(HAVE_PTHREAD_RWLOCK))
+AC_CHECK_FUNC(thr_create, AC_DEFINE(HAVE_SOLTHREADS))
+
+AC_CHECK_LIB(nsl, inet_ntoa)
+AC_CHECK_LIB(inet, inet_ntoa)
+AC_CHECK_LIB(socket, socket)
+AC_CHECK_FUNCS(inet_ntop)
+
+AC_HAVE_HEADERS(unistd.h)
+
+# find an ld
+AC_PATH_PROGS(LD, ld, not found, /usr/ccs/bin:/opt/bin:/bin:/usr/sbin:/usr/bin)  
+if test "x$LD" = "xnot found" ; then
+  AC_MSG_WARN(ld not found in search path.. looking for it)
+  if test -f /usr/bin/ld ; then
+    LD="/usr/bin/ld"
+  else
+    AC_MSG_ERROR(ld not found)
+  fi
+fi
+
+# find the vendor CC
+AC_PATH_PROGS(VENDOR_CC, cc, not found, /opt/SUNWspro/bin:$PATH)
+if test "x$VENDOR_CC" = "xnot found" ; then
+    AC_MSG_ERROR(vendor cc not found)
+fi
+
+
+# find lex and yacc
+AC_PROG_YACC
+
+AC_PATH_PROGS(LEX, flex, not found)  
+if test "x$LEX" = "xnot found" ; then
+  AC_MSG_WARN(flex not found in search path.. looking for it)
+  if test -f /usr/local/bin/flex ; then
+    LEX="/usr/local/bin/flex"
+  else
+    AC_MSG_ERROR(lex not found)
+  fi
+fi
+
+
+# find the home of java
+AC_MSG_CHECKING(location of java )
+if test -f /usr/local/java/bin/java ; then
+  JAVAHOME="/usr/local/java"
+  AC_MSG_RESULT(/usr/local/java)
+elif test -f /usr/java/bin/java ; then
+  JAVAHOME="/usr/java"
+  AC_MSG_RESULT(/usr/java)
+else
+  AC_MSG_RESULT(not found)
+  AC_MSG_WARN(couldn't find java)
+fi
+
+AC_PATH_PROGS(JAVACC, javacc, not found,
+	/usr/local/bin:/usr/local/javacc/bin:/usr/local/java/bin:/usr/java/bin:/usr/javacc/bin:$PATH) 
+if test "x$JAVACC" = "xnot found" ; then
+ AC_MSG_WARN(javacc not found)
+fi
+
+AC_PATH_PROGS(JAVACCZIP, JavaCC.zip, not found,
+	/usr/local/javacc:/usr/local/java:/usr/java:/usr/javacc:$CLASSPATH) 
+if test "x$JAVACCZIP" = "xnot found" ; then
+ AC_MSG_WARN(JavaCC.zip not found)
+fi
+
+AC_PATH_PROGS(JIKES, jikes, not found,
+	/usr/java/bin:/usr/local/bin:/usr/local/java/bin:$PATH)
+if test "x$JIKES" = "xnot found" ; then
+ AC_MSG_WARN(jikes not found)
+fi
+
+
+# find some other generic tools we need
+AC_PATH_PROGS(CP, cp, not found, $PATH:/bin)  
+if test "x$CP" = "xnot found" ; then
+ AC_MSG_ERROR(cp not found)
+fi
+
+AC_PATH_PROGS(RM, rm, not found, $PATH:/bin)  
+if test "x$RM" = "xnot found" ; then
+ AC_MSG_ERROR(rm not found)
+fi
+
+AC_PATH_PROGS(TAR, tar, not found, $PATH:bin)
+if test "x$TAR" = "xnot found" ; then
+ AC_MSG_ERROR(tar not found)
+fi
+
+AC_PATH_PROGS(SED, sed, not found, $PATH:bin)
+if test "x$SED" = "xnot found" ; then
+ AC_MSG_ERROR(sed not found)
+fi
+
+AC_PATH_PROGS(GZIP, gzip, not found,
+	$PATH:/usr/java/bin:/usr/local/bin:/usr/local/java/bin:/bin)
+if test "x$GZIP" = "xnot found" ; then
+ AC_MSG_ERROR(gzip not found)
+fi
+
+AC_SUBST(VENDOR_CC)
+AC_SUBST(CFLAGS)
+AC_SUBST(LDFLAGS)
+AC_SUBST(LIBS)
+AC_SUBST(DEFS)
+AC_SUBST(JAVAHOME)
+AC_SUBST(JAVACC)
+AC_SUBST(JAVACCZIP)
+AC_SUBST(JIKES)
+AC_SUBST(CP)
+AC_SUBST(RM)
+AC_SUBST(SED)
+AC_SUBST(ENDIAN)
+
+AC_OUTPUT(defines.mk rules.mk)
+

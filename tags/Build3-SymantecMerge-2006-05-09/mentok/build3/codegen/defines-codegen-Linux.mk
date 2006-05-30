@@ -1,0 +1,18 @@
+ifeq ($(BIN_LEX),)
+BIN_LEX=/usr/bin/flex
+endif
+
+ifeq ($(BIN_YACC),)
+BIN_YACC=/usr/local/bison-2.0/bin/bison
+endif
+
+
+ifeq ($(FLAGS_LEX),)
+FLAGS_LEX=
+endif
+
+ifeq ($(FLAGS_YACC),)
+FLAGS_YACC=-y -d
+endif
+
+
