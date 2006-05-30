@@ -8,28 +8,46 @@
 #
 
 use Getopt::Std;
-$config_delim = "|";
 
 sub print_usage {
   print("Usage:\n".
 	"$0\n".
-	"\t[-n]  Display the machine name\n".
-	"\t[-s]  Display the OS name\n".
-	"\t[-M]  Display the OS major revision\n".
-	"\t[-N]  Display the OS minor revision\n".
-	"\t[-P]  Display the OS patch revision\n".
-	"\t[-R]  Display the OS runtime ID string (backward compatibility with older versions that didn't break this down by name and revision)\n".
-	"\t[-w]  Display the OS runtime Name\n".
-	"\t[-x]  Display the OS runtime major revision\n".
-	"\t[-y]  Display the OS runtime minor revision\n".
-	"\t[-z]  Display the OS runtime patch revision\n".
-	"\t[-m]  Display the machine type\n".
-	"\t[-p]  Display the machine processor family\n".
-	"\t[-i]  Display the machine/OS optimal instruction set\n".
-	"\t[-a]  Display all system attributes\n".
-	"\t[-3]  Display the \"Mentok\" fully qualified platform ID string\n".
-	"\t[-l]  Display output in long format\n".
-	"\t[-h]  Display help message\n");
+	"\t[-n]          Display the machine name\n".
+	"\t[-s]          Display the OS name\n".
+	"\t[-M]          Display the OS major revision\n".
+	"\t[-N]          Display the OS minor revision\n".
+	"\t[-P]          Display the OS patch revision\n".
+	"\t[-R]          Display the OS runtime ID string (backward compatibility with\n".
+	"\t                  older versions that didn't break this down by name and revision)\n".
+	"\t[-w]          Display the OS runtime Name\n".
+	"\t[-x]          Display the OS runtime major revision\n".
+	"\t[-y]          Display the OS runtime minor revision\n".
+	"\t[-z]          Display the OS runtime patch revision\n".
+	"\t[-m]          Display the machine type\n".
+	"\t[-p]          Display the machine processor family\n".
+	"\t[-i]          Display the machine/OS optimal instruction set\n".
+
+	"\t[-a]          Display all system attributes\n".
+        "\t                  Fields will be displayed in the following order:\n".
+	"\t                      - Machine name\n".
+	"\t                      - OS name\n".
+	"\t                      - OS major revision number\n".
+	"\t                      - OS minor revision number\n".
+	"\t                      - OS patch revision number\n".
+	"\t                      - OS runtime name\n".
+	"\t                      - OS runtime major revision number\n".
+	"\t                      - OS runtime minor revision number\n".
+	"\t                      - OS runtime patch revision number\n".
+	"\t                      - OS runtime old name\n".
+	"\t                      - Machine type\n".
+	"\t                      - Machine processor\n".
+	"\t                      - Machine instruction set\n".
+	"\t                      - Mentok (\"build 3\") platform name string\n".
+	"\t[-d <delim>]  Specify a delimiter to use when printing multiple fields.\n".
+	"\t                  The current delimiter is \"$config_delim\"\n".
+	"\t[-3]          Display the \"Mentok\" fully qualified platform ID string\n".
+	"\t[-l]          Display output in long format\n".
+	"\t[-h]          Display help message\n");
 }
 
 sub normalize {
@@ -46,7 +64,8 @@ sub normalize {
 # Main
 #
 
-getopts('ansNMPRmpih3wxyzl');
+
+getopts('3ad:hilmMnNpPRswxyz');
 $display_machineName = $opt_n || $opt_a;
 $display_OSName = $opt_s  || $opt_a;
 $display_OSRevMajor = $opt_M  || $opt_a;
@@ -61,6 +80,14 @@ $display_OSRuntimeRevMajor = $opt_x  || $opt_a;
 $display_OSRuntimeRevMinor = $opt_y  || $opt_a;
 $display_OSRuntimeRevPatch = $opt_z  || $opt_a;
 $display_build3Platform = $opt_3 || $opt_a;
+
+if ($opt_d) {
+  $config_delim = $opt_d;
+}
+else {
+  $config_delim = '|';
+}
+
 $display_all = $opt_a;
 if ($opt_l) {
   $display_format = 'long';
@@ -149,7 +176,14 @@ elsif ($result_OSName eq "Linux") {
   ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
     = split(/\./,$tmp_rev,3);
 }
-
+elsif ($result_OSName eq "Darwin") {
+  $result_OSRuntimeName = normalize(`/usr/bin/sw_vers -productName`);
+  $tmp_rev = `/usr/bin/sw_vers -productVersion`;
+  ($result_OSRuntimeRevMajor, 
+   $result_OSRuntimeRevMinor, 
+   $result_OSRuntimeRevPatch) = split(/\./, $tmp_rev, 3);
+  $result_OSRuntimeOldName = $result_OSRuntimeName . '-' . $tmp_rev
+}
 
 #
 # Build3's platform name.

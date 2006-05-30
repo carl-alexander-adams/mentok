@@ -142,6 +142,9 @@ foreach $dst (keys(%shadow_copies)) {
 
   copy($shadow_copies{$dst}, $dst)
     || die "could not copy file $shadow_src to $shadow_dst";
+
+  @stat_info = stat($shadow_copies{$dst});
+  chmod(($stat_info[2] & 0x1ff), $dst);
 }
 
 sub Util_computeRelativePath {

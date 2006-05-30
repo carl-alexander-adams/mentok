@@ -48,7 +48,7 @@ $(EN_BDIRS): _PKGDST=$(ABS_TARGET)$(if $($(_T)_PKGSUBDIR),/$($(_T)_PKGSUBDIR),)
 $(EN_BDIRS):
 	$(BIN_MKDIR) -p $(BDIR)
 	-$(RM) -rf $(ABS_TARGET)/$(_T)
-	$(MAKE) -C $(_SLVDIR) nuke
+	$(MAKE) -C $(_SLVDIR) nuke $(ALL_IMPORTS_FROM)
 	$(MAKE) -C $(_SLVDIR) $(ALL_IMPORTS_FROM)
 	$(MAKE) -C $(_SLVDIR) package \
 		PACKAGE_TARGET_DIR=$(_PKGDST) \

@@ -1,4 +1,4 @@
-IMPORT_TARGETS=mhnet mhnet-crossplatform blackbird-mh # this_component_doesnt_exist
+IMPORT_TARGETS=mhnet mhnet-crossplatform blackbird-mh boguscomp1
 
 
 this_component_doesnt_exist_REV=2003-07-18

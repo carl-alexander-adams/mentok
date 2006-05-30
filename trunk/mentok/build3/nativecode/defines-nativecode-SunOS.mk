@@ -259,13 +259,13 @@ endif
 
 
 ifeq ($(FLAGS_GNU_STRIP_EXE),)
-FLAGS_GNU_STRIP_EXE=---strip-unneeded
+FLAGS_GNU_STRIP_EXE= --strip-unneeded
 endif
 ifeq ($(FLAGS_GNU_STRIP_SHLIB),)
-FLAGS_GNU_STRIP_SHLIB=--discard-all
+FLAGS_GNU_STRIP_SHLIB= --discard-all
 endif
 ifeq ($(FLAGS_GNU_STRIP_LIB),)
-FLAGS_GNU_STRIP_LIB=--discard-all
+FLAGS_GNU_STRIP_LIB= --discard-all
 endif
 
 

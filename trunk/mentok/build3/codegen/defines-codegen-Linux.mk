@@ -3,7 +3,7 @@ BIN_LEX=/usr/bin/flex
 endif
 
 ifeq ($(BIN_YACC),)
-BIN_YACC=/usr/bin/bison
+BIN_YACC=/usr/local/bison-2.0/bin/bison
 endif
 
 
