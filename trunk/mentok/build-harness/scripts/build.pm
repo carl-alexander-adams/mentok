@@ -1140,18 +1140,22 @@ sub evaluate_hash {
 
 sub run_commands {
 
+   my $run_ref = shift;
    my $ar_ref  = shift; 
+   my $fail_ref = shift; 
    my $postfix = shift || ''; 
 
    my ($run_dir, $eff_user, $command, $args, $target,
        $out_err, $cline, $bs_cline, $out_file, $command_basename);
     
    my ($starttime, $endtime, $ruletime, $disttime);
+   
+   my $host = $run{'host'} || '';
 
    my $depth = 0;
    my @subs = ();
     
-   print get_stamp () . " [$host] Current directory is " . Cwd::getcwd () . "\n";
+   print_S "[$host] Current directory is "; print Cwd::getcwd() . "\n";
 
    my $iter = "00";
 
@@ -1235,10 +1239,6 @@ sub run_commands {
 			$command_basename . "_" . ".txt";
          }
       }
-
-      if ($target =~ /package/) {
-         $packagestatus = 'starting';
-      }
    
       $out_err = " > $out_file " . "2>\&1";
 
@@ -1256,22 +1256,16 @@ sub run_commands {
       # count the depth and cd to the dir before 
       # running our command 
 
-      my $run_cwd = Cwd::getcwd ();
+      my $run_cwd = Cwd::getcwd();
 
       if ($run_dir) {
          print get_stamp () . " [$host] Run dir specified as $run_dir \n";
-         if (! ($run_dir =~ m#^/#) ) {
-            @subs = split (/\//, $run_dir);
-            $depth = scalar(@subs);
-            $run_dir = "./$run_dir";
-         }
          unless (chdir ("$run_dir")) {
-            print get_stamp() . " [$host] : Could not chdir to $run_dir \n";
+            print_S  "[$host] : Could not chdir to $run_dir \n";
             print get_stamp() . " [$host] Currently in " . Cwd::getcwd() . "\n";
             return 0;
          } 
          else { 
-           print get_stamp() . " [$host] Going $depth level(s) to $run_dir \n"; 
            print get_stamp() . " [$host] Currently in " . Cwd::getcwd() . "\n";
          }
       }
@@ -1291,13 +1285,13 @@ sub run_commands {
 
       $buildtime = wallclock($endtime, $starttime);
    
-      print get_stamp () . " [$host] $command $target finished. [$buildtime] \n\n";
+      print_S  "[$host] $command $target finished. [$buildtime] \n\n";
 
       # If product config specifies a fail_criteria, check the log file
       # for errors. If we find errors in the log files, we stop right here.
 
-      if (defined (@fail_criteria)) {
-         my $errors = check_for_errors ("$out_file", \@fail_criteria); 
+      if (defined ($fail_ref)) {
+         my $errors = check_for_errors ("$out_file", $fail_ref); 
          if ($errors) {
             print get_stamp () . " WARNING: Errors detected in $out_file. \n";
             foreach my $k (keys %{$errors}) {
@@ -1331,17 +1325,6 @@ sub run_commands {
 
 }
 
-
-
-
-
-
-
-
-my $svn = '';
-my $p4  = '';
-my $cvs = '';
-
 sub where {
 
    $targ = shift;
@@ -1352,19 +1335,11 @@ sub where {
       my @paths = split(/:/,$ENV{'PATH'});
       foreach (@paths) {
          if ( -x "$_/$targ" ) {
-            print "*** Using '$_/$targ' for version subsystem.\n";
-            if ( $targ =~ /svn/)    { $svn = "$_/$targ"; }
-            elsif ( $targ =~ /p4/)  { $p4  = "$_/$targ"; }
-            elsif ( $targ =~ /cvs/) { $cvs = "$_/$targ"; }
             return ("$_/$targ");
          }
       }
    }
-   else { $found = 1; return $targ; }
-
-   unless ($found) {
-      print "*** No $targ found!\n";
-   }
+   else { return $targ; }
 
    return 0;
 
