@@ -1299,11 +1299,11 @@ sub run_commands {
                print "$errors->{$k} \n";
             }
             print get_stamp () . " ERRORS DETECTED IN BUILD LOG \n";
-            b_system ("/bin/touch $buildroot/$ddir/$host/ERRORS ");
-            foreach $fc (@fail_criteria) { 
-               ### XXX Redo this into perl
-	       b_system ("/bin/grep -n '$fc' $out_file >> $buildroot/$ddir/$host/ERRORS "); 
-            }
+#            b_system ("/bin/touch $buildroot/$ddir/$host/ERRORS ");
+#            foreach $fc (@fail_criteria) { 
+#               ### XXX Redo this into perl
+#	       b_system ("/bin/grep -n '$fc' $out_file >> $buildroot/$ddir/$host/ERRORS "); 
+#            }
          }
       }
 
