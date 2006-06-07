@@ -7,6 +7,7 @@
 
 use lib qw('.'); 
 
+use strict;
 use warnings;
 use Getopt::Long;
 use Benchmark;
@@ -16,7 +17,17 @@ use File::Copy::Recursive;
 use build;
 use vcs;
 
-use vars qw(%run);
+#########################################################################
+### These variables will come in from the various config files, mostly ##
+### from the product config file ########################################
+#########################################################################
+
+use vars qw(%run %defaults %config);
+use vars qw(%SCVar @precommands @postcommands);
+
+#########################################################################
+### set our final defaults, and then read command line
+#########################################################################
 
 $run{'reqdir'}      = '/home/builds/config';
 $run{'master_lock'} = '/home/builds/master.lck';
@@ -32,8 +43,6 @@ GetOptions("config|c=s"               => \$run{'configfile'},
            "suffix|s=s"               => \$run{'suffix'},
            "verbose|v"                => \$run{'verbose'},
          );
-
-### XXX replace all mkdirs with File::Path
 
 unless ( $run{'configfile'} ) {
    usage();
@@ -65,7 +74,7 @@ if ( evaluate_hash(\%defaults, \%config, \%run) ) {
    exit_err(1, "Errors making \%run hash - fatal exit.");
 }
 
-$run{'ddir'} = get_build_date_next(get_build_date(), $run{'buildroot'});
+$run{'ddir'} = get_build_date_next(get_build_date(), "$run{'buildroot'}");
 
 unless ( $run{'ddir'} ) {
    print_S "Unable to generate date_dir for our purposes!";
@@ -76,7 +85,7 @@ unless ( $run{'ddir'} ) {
 ### Make the DDIR directory. #########################################
 ######################################################################
 
-unless ( mkdir ( "$run{'buildroot'}/$run{'ddir'}", 0777 ) ) {
+unless ( mkpath ("$run{'buildroot'}/$run{'ddir'}", 0, 0755 ) ) { 
    print_S "Problems creating $run{'ddir'} for in $run{'buildroot'}\n";
    exit_err(1, "Fatal error creating $run{'ddir'} for use.");
 }
@@ -96,11 +105,35 @@ $run{'redir_tag'}      = "1>>$run{'buildroot'}/$run{'ddir'}/taglog.txt 2>&1";
 $run{'redir_pre'}      = "1>>$run{'buildroot'}/$run{'ddir'}/precmd.txt 2>&1";
 $run{'redir_post'}     = "1>>$run{'buildroot'}/$run{'ddir'}/postcmd.txt 2>&1";
 
-print_S "Redirecting to my logfiles at this moment.\n";
+######################################################################
+### set a status dir to output text files that contain status info ###
+### for other things to read / parse #################################
+######################################################################
+      
+$run{'statusdir'} = "$run{'buildroot'}/$run{'ddir'}/statusdir";
+
+unless ( mkpath ("$run{'statusdir'}", 0, 0755 ) ) { 
+   print_S "Problems creating $run{'statusdir'} in $run{'buildroot'}\n";
+   exit_err(1, "Fatal error creating $run{'statusdir'} for use.");
+}
+
+######################################################################
+### with that set, time to setup our status variable for our host ####
+######################################################################
+
+my (%statusvar); 
+
+$statusvar{'host'}      = $run{'host'};
+$statusvar{'ddir'}      = $run{'ddir'};
+$statusvar{'statusdir'} = $run{'statusdir'};
+
+set_status(\%statusvar, "Redirecting to my log files");
 
 ######################################################################
 ### Time to redirect our output. #####################################
 ######################################################################
+
+print_S "Redirecting to my logfiles at this moment.\n";
 
 open(BLOG, ">$run{'build_all_log'}") || do {
    print_S "Failed to open $run{'build_all_log'}.";
@@ -120,7 +153,7 @@ select(BLOG); $| = 1;
 print_S "Log file $run{'build_all_log'} successfully opened.\n";
 print_S "This build was launched by - $run{'user'}\n";
 
-### XXX Status updates and status for hosts / launcher ###############
+set_status(\%statusvar, "Redirected to my logfiles");
 
 ######################################################################
 ### Attempt to prohibit other builds from attempting to build the ####
@@ -141,11 +174,13 @@ if ( ! lock_file($run{'lock'})) {
    close(LFILE);
 
    splash_message("$run{'projectname'} is LOCKED by another process.");
-   print_S "Lockfile information to follow : \n\n"; print "@lockinf"; print_S "";
+   print_S "Lockfile information to follow :\n\n"; print "@lockinf"; print_S "";
 
    exit_err(1, "Unable to lock build for $run{'projectname'}");
 
 }
+
+set_status(\%statusvar, "Locked for $run{'projectname'}");
 
 ### Project is locked. Proceed. #####################################
 
@@ -164,15 +199,13 @@ print_S "Using dir - $run{'ddir'} \n";
 
 $run{'coderoot'} = "$run{'buildroot'}/$run{'ddir'}/template";
 
-### XXX Do the lastbuild- newest- links in a separate script
-
 #####################################################################
 ### Make our template dir, and cd into there ########################
 #####################################################################
 
-unless ( mkdir ("$run{'coderoot'}", 0777 ) ) {
+unless ( mkpath ( "$run{'coderoot'}", 0, 0755) ) { 
    cleanup(1);
-   exit_err(1, "Unable to mkdir for source code! $!");
+   exit_err(1, "Unable to mkpath for source code! $!");
 }
 
 unless ( chdir ("$run{'coderoot'}") ) {
@@ -180,10 +213,11 @@ unless ( chdir ("$run{'coderoot'}") ) {
    exit_err(1, "Unable to chdir into $run{'coderoot'} $!");
 }
 
-
 #####################################################################
 ### Check out our code, from the defined SCVar<X> in the SCVar ######
 #####################################################################
+
+set_status(\%statusvar, "Beginning Code ENV");
 
 print_S " Beginning ENV initialization of code checkout.\n";
 
@@ -192,6 +226,8 @@ unless ( code_env(\%SCVar) ) {
    cleanup(1);
    exit_err(1,"Initialization of code_env failed");
 }
+
+set_status(\%statusvar, "Code ENV Complete");
 
 #####################################################################
 ### Drop a TAGBUILD or VARIANT file as appropriate for the build ####
@@ -221,6 +257,8 @@ if (defined ($run{'variant'}) && $run{'variant'} ) {
 ### Time to check out the source code ###############################
 #####################################################################
 
+set_status(\%statusvar, "Checking out code");
+
 print_S "Checking out source template.\n";
 
 my $t0 = new Benchmark;
@@ -236,6 +274,7 @@ $run{'code_co_time'} = wallclock($t1, $t0);
 
 print_S "Code checkout complete [ $run{'code_co_time'} ] \n";
 
+set_status(\%statusvar, "Code checkout complete");
 
 #####################################################################
 ### If "dist" is specified, meaning we are pushing ourselves from a #
@@ -289,25 +328,50 @@ else {
 ### of same tag/branch was so we can see what files changed #########
 #####################################################################
 
-### XXX Do our treediff in here - need to figure out last build of
-### XXX lasttag - maybe we should do that here. OR change how we
-### XXX do it - update a file perhaps? rather than having to move and
-### XXX remove symlinks?
+$run{'lastbuildfile'}  = "$run{'buildroot'}/lastbuild";
+$run{'lastbuildfile'} .= "-$run{'tag'}" if $run{'tag'};
+
+if ( -f "$run{'lastbuildfile'}" ) {
+   if ( open(LB, "<$run{'lastbuildfile'}") ) {
+      while( <LB> ) { chomp; $run{'lb'} = $_; } 
+      close(LB);
+      $run{'prerevlog'} = "$run{'buildroot'}/$run{'lb'}/revlog.txt";   
+      code_treediff("$run{'prerevlog'}", "$run{'revlog'}", "$run{'difflog'}");
+   }
+   else {
+      print_S "*** Warning: Couldn't open $run{'lastbuildfile'} lastbuild\n";
+   }
+}
+
+if ( open(LB, ">>$run{'lastbuildfile'}") ) {
+   print LB "$run{'ddir'}\n";
+   close(LB);
+}
+else {
+   print_S "*** Warning: Couldn't write back to $run{'lastbuildfile'}\n";
+}
+
+### XXX Include some maintenance here to make sure file does not
+### get too big? 
 
 #####################################################################
 ### Now we're at the post-checkout phase, right before we actually ##
 ### launch builds - so now we run our precmd's ######################
 #####################################################################
 
-### XXX Need to make function to run things in client_build_seq
-### XXX style
+if ( defined ( @precommands) ) { 
+   unless ( run_commands ( \%run, \@precommands, '', 'pre' ) ) {
+      print_S "Errors running precommands.\n";
+      exit_err(1, "Errors with precommands - exiting.");
+   }
+}
 
 #####################################################################
 ### Now we copy the template dir into the host dir, and then launch #
 ### the build to that host with its own pristine copy of the src ####
 #####################################################################
 
-my %pids = (); my $pid;
+my %pids = (); my %cstat = (); my $pid;
 my ($enable, $eargs);
 my $local_special;
 
@@ -341,10 +405,12 @@ foreach my $host ( sort @{$run{'buildhosts'}} ) {
    elsif (defined ($pid)) {
       ### child
 
+      $statusvar{'host'} = $host;
+
       print_S "Copying source for [$host]\n";
     
-      unless ( mkdir ("$run{'buildroot'}/$run{'ddir'}/$host", 0777) ) {
-         exit_err(1, "[$host child] Unable to mkdir source dir. $!");
+      unless ( mkpath ("$run{'buildroot'}/$run{'ddir'}/$host", 0, 0755) ) {
+         exit_err(1, "[$host child] Unable to mkpath source dir. $!");
       }
 
       unless ( chdir ("$run{'buildroot'}/$run{'ddir'}/$host") ) {
@@ -358,28 +424,14 @@ foreach my $host ( sort @{$run{'buildhosts'}} ) {
          exit_err(1, "[$host child] Unable to copy template dir into host dir. $!"); 
       }
 
-      ### XXX why set these? they are lost soon. purely for setting our status?
-
-      $run{'statusdir'} = "$run{'buildroot'}/$run{'ddir'}/$host/statusdir";
-      $run{'logdir'} = "$run{'buildroot'}/$run{'ddir'}/$host/logs";
-
       unless ( -d 'logs' ) {
-         unless ( mkdir ('logs', 0777) ) {
+         unless ( mkpath ('logs', 0, 0755) ) { 
             exit_err(1,"[$host child] Unable to make my logs dir! $!");
          }
       }
 
-      unless ( -d 'statusdir' ) {
-         unless ( mkdir ('statusdir', 0777) ) {
-            exit_err(1, "[$host child] Unable to make my statusdir. $!");
-         }
-      }
+      set_status(\%statusvar, "Launching to $host");
 
-      ### XXX Set our status. 
-
-      print_S "[$host child] Launching myself to $host.\n";
-
-      ### XXX Need to eval
       my $cmdline = $run{'cmdline'};
 
       $cmdline .= ' -dist' if $run{'dist'};
@@ -394,6 +446,8 @@ foreach my $host ( sort @{$run{'buildhosts'}} ) {
       $cmdline .= " --cvstag=$run{'tag'}" if $run{'tag'};
       $cmdline .= " --special_gmake_args=$local_special" if $local_special;
       $cmdline .= " --ddir=$run{'ddir'}";
+
+      eval " \$cmdline = \"$cmdline\" ";
 
       print_S "[$host child] Launching to $host with '$cmdline'\n";
 
@@ -415,27 +469,33 @@ foreach my $host ( sort @{$run{'buildhosts'}} ) {
 $SIG{'ALRM'} = \&handle_alarm;
 alarm($run{'alarmwait'});
 
-### XXX Copy ourselves to appropriate lastbuild stuff
-### XXX Symlink to latest? 
-
 #######################################################################
 ### At this point, we sit around and wait for builds to complete ######
 #######################################################################
 
-while ( $p = wait() ) {
-   last if ($p == -1);
+while ( $pid = wait() ) {
+   last if ($pid == -1);
 
-   ### XXX More status redo stuff
+   $statusvar{'host'} = $pids{$pid};
+   my $status = get_status(\%statusvar);
+   print_S "Build on host $pids{$pid} has completed [ $status ]\n";
+   $cstat{$pids{$pid}} = $status;
 
-   # $statusvar{'host'} = $pids{$p};
-   # my $status = get_status(\%statusvar);
-   # print_S "Build on host $pids{$p} has completed [ $status ]\n";
-   # $cstat{$pids{$p}} = $status;
-
-   delete($pids{$p});
+   delete($pids{$pid});
 }
 
 alarm(0);
+
+#######################################################################
+### Now we run any post commands that were defined ####################
+#######################################################################
+
+if ( defined ( @postcommands) ) {
+   unless ( run_commands ( \%run, \@postcommands, '', 'post' ) ) {
+      print_S "Errors running postcommands.\n";
+      exit_err(1, "Errors with postcommands - exiting.");
+   }
+}
 
 #######################################################################
 ### Now we launch our buildreport script so that it makes a simple ####
@@ -443,17 +503,8 @@ alarm(0);
 #######################################################################
 
 print_S "Generating build report from buildall\n";
-
 b_system("$run{'buildreport'} --config=$run{'config'}");
-
 print_S "Done generating build report\n";
-
-#######################################################################
-### Now we run any post commands that were defined ####################
-#######################################################################
-
-### XXX Again, the client_build_sequence like runner function of this
-### XXX item
 
 #######################################################################
 ### Cleanup ###########################################################
@@ -477,9 +528,8 @@ sub handle_alarm {
 
    foreach my $k (keys(%pids)) {
       print_S " ...  $pids{$k} is still running\n";
-### XXX More status fixups
-#      $statusvar{'host'} = $pids{$k};
-#      set_status(\%statusvar, 'failed: timeout');
+      $statusvar{'host'} = $pids{$k};
+      set_status(\%statusvar, 'failed: timeout');
    }
    print "\n";
 
@@ -563,6 +613,7 @@ EOF
 ##############################################################################
 
 ### XXX Fix maildone to fix up the status hash, etc. 
+### XXX Fix to pass in by ref.
 
 sub maildone {
 
@@ -576,7 +627,7 @@ sub maildone {
 
    ($compstat, $FAILPLATS) = get_cstat();
 
-   my $subject = "$projectname Build ($run{'ddir'}) completed: $compstat";
+   my $subject = "$run{'projectname'} Build ($run{'ddir'}) completed: $compstat";
    my $rcpt    = "";
 
    if ( $run{'notify'} ) {
@@ -603,8 +654,8 @@ sub maildone {
    $body .= "Build was spun by $run{'user'}. \n\n\n";
 
    $body .= "Build failed on:\n$FAILPLATS\n" if ($compstat =~ /^FAILED$/);
-   $body .= "Details of this build are available at : \n\n";
-   $body .= "$baseurl/$projectname/summary.html\n";
+#   $body .= "Details of this build are available at : \n\n";
+#   $body .= "$baseurl/$projectname/summary.html\n";
 
    if ( ! send_email($server, $sender, $rcpt, $subject, $body) ) {
       print get_stamp() . " Error sending buildreport mail. Dumping STDOUT\n";
