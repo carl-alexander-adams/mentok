@@ -6,18 +6,22 @@
 ############################################################################
 
 use lib qw('.');
+use lib qw(/home/builds/scripts2);
 use warnings;
 use Getopt::Long;
 use Benchmark;
+use File::Path;
 use Cwd;
 
 use build;
 
 $| = 1;
 
-use vars qw(%run);
+use vars qw(%run %defaults %config);
 
-$run{'reqdir'}      = '/home/builds/config';
+use vars qw(@fail_criteria @dist_fail_criteria);
+
+$run{'reqdir'}      = '/home/builds/config2';
 $run{'master_lock'} = '/home/builds/master.lck';
 
 ############################################################################
@@ -34,8 +38,8 @@ GetOptions("config|c=s"               => \$run{'configfile'},
            "cvstag|tag|label=s"       => \$run{'tag'},
            "email|e=s"                => \$run{'email'},
            "dist|d"                   => \$run{'dist'},
-           "VARIANT|variant|var=s"    => \$run{'variant'},
-           "DISTTAG|disttag=s"        => \$run{'disttag'},
+           "VARIANT|var=s"            => \$run{'variant'},
+           "DISTTAG=s"                => \$run{'disttag'},
            "user|u=s"                 => \$run{'user'},
            "special_gmake_args|sga=s" => \$run{'special_gmake_args'},
            "host|h=s"                 => \$run{'hostforce'},
@@ -56,10 +60,6 @@ if ( ( ! $run{'configfile'} ) || ( ! $run{'ddir'} ) ) {
    exit_err(1, "Missing critical args.");
 }
 
-if ( (! $run{'buildroot'} ) ||  (! $run{'projectname'} ) ) {
-   exit_err(1, "Don't run me directly! Use buildall whenever possible!\n");
-}
-
 #######################################################################
 ### source our defaults and our config file
 #######################################################################
@@ -67,7 +67,8 @@ if ( (! $run{'buildroot'} ) ||  (! $run{'projectname'} ) ) {
 eval { require "$run{'reqdir'}/Defaults.pl"; };
 if ($@) { exit_err(1, "Error with config Defaults.pl."); }
 
-eval { require "$run{'reqdir'}/$run{'configfile'}"; };
+### XXX fix with a path check first.
+eval { require "$run{'configfile'}"; };
 if($@) { exit_err(1, "Errors with config files $run{'configfile'}, $@"); }
 
 #######################################################################
@@ -91,8 +92,6 @@ if (defined ($run{'hostforce'} ) && $run{'hostforce'} ) {
    $run{'host'} = $run{'hostforce'}; # override the `hostname` call from configfile.
 }
 
-### XXX last build stuff again. Need to see why runbuild even CARES about this
-
 $run{'lockfile'} = "$run{'buildroot'}/$run{'host'}.lck";
 
 ######################################################################
@@ -101,6 +100,16 @@ $run{'lockfile'} = "$run{'buildroot'}/$run{'host'}.lck";
 
 $run{'basedir'} = "$run{'buildroot'}/$run{'ddir'}/$run{'host'}";
 $run{'logdir'}  = "$run{'basedir'}/logs";
+### must match buildall to be useful
+$run{'statusdir'} = "$run{'buildroot'}/$run{'ddir'}/statusdir";
+
+my (%statusvar);
+
+$statusvar{'host'}      = $run{'host'};
+$statusvar{'ddir'}      = $run{'ddir'};
+$statusvar{'statusdir'} = $run{'statusdir'};
+
+$run{'statusref'} = \%statusvar;
 
 $run{'runlog'}  = "$run{'logdir'}/runbuildlog.txt";
 $run{'precmd'}  = "$run{'logdir'}/precmdlog.txt";
@@ -120,13 +129,13 @@ unless ( chdir ( "$run{'basedir'}" ) ) {
 print_S " [$run{'host'}] Setting up my logfiles.\n";
 
 unless ( -d 'logs' ) {
-   unless ( mkdir ("logs", 0777) ) {
+   unless ( mkpath ("logs", 0, 0775) ) {
       exit_err(1, "Unable to make my logs dir! $!");
    }
 }
 
 unless ( -d "$run{'statusdir'}" ) {
-   unless ( mkdir ("$run{'statusdir'}", 0777) ) {
+   unless ( mkpath ("$run{'statusdir'}", 0, 0775) ) {
       exit_err(1, "Unable to make my status dir! $!");
    }
 }
@@ -151,26 +160,34 @@ select((select(STDOUT), $| = 1)[0]);
 
 print_S "runbuild log opened for $run{'host'}\n";
 
+### XXX fix (undefs / warnings)
 print <<EOF;
 
 Debug Output Follows :
 
 config                  : $run{'configfile'}
 ddir                    : $run{'ddir'}
-cvstag                  : $run{'tag'}
-dist                    : $run{'dist'}
-user                    : $run{'user'}
-DISTTAG                 : $run{'disttag'}
-VARIANT                 : $run{'variant'}
-special_gmake_args      : $run{'special_gmake_args'}
-host                    : $run{'host'}
 
 EOF
 
+#cvstag                  : $run{'tag'}
+#dist                    : $run{'dist'}
+#user                    : $run{'user'}
+#DISTTAG                 : $run{'disttag'}
+#VARIANT                 : $run{'variant'}
+#special_gmake_args      : $run{'special_gmake_args'}
+#host                    : $run{'host'}
+
+#EOF
+
+
+######################################################################
+### check for our host lockfile
+######################################################################
 
 unless ( lock_file("$run{'lockfile'}") ) {
 
-   unless (lock_age("$run{'$lockfile'}") > 2) {
+   unless (lock_age("$run{'lockfile'}") > 2) {
       set_status(\%statusvar, "failed: already running - lockfile present");
       exit_err(1, "Already running on $run{'host'} or stale lockfile ($run{'lockfile'})");
    }
@@ -186,7 +203,7 @@ unless ( lock_file("$run{'lockfile'}") ) {
 
 print_S "Building $run{'projectname'}\n";
 
-my $cwd  = Cwd::getcwd ();
+$run{'cwd'} = Cwd::getcwd();
 
 if ("$run{'startdir'}") {
    print_S "Start dir defined as $run{'startdir'} \n";
@@ -196,12 +213,12 @@ if ("$run{'startdir'}") {
 } 
 else {
    unless ( chdir ('src') ) {  # start dir is not defined, try src
-      print get_stamp () . " Unable to chdir to src (hardcoded) \n";
-      print get_stamp () . " Will try \".\" \n";
+      print_S  "Unable to chdir to src (hardcoded) \n";
+      print_S "Will try \".\" \n";
       $run{'startdir'} = '.';
    } 
    else { 
-      print_S "Starting in " . Cwd::getcwd() . "\n"; 
+      print_S "Starting in $run{'cwd'}\n"; 
    }
 }
 
@@ -233,9 +250,9 @@ if ( ! @client_build_sequence ) {
 ### run our client_build_sequence commands and output to log files
 ######################################################################
 
-if ( ! run_commands (\%run, \@client_build_sequence, \@fail_criteria, 'rb') ) {
+if ( run_commands (\%run, \@client_build_sequence, \@fail_criteria, 'rb') ) {
    print_S "Error running runbuild commands - please see the logs.\n";
-   ### XXX cleanup and exit?
+   cleanup_and_exit(1);
 }
 
 
@@ -266,9 +283,8 @@ if ( $run{'dist'} ) {
 
    if ( defined (@altdist) && @altdist ) {
 
-     ### XXX altdist is now treated like a cbs
      ### XXX DOC @dist_fail_criteria 
-      if ( ! run_commands(\%run, \@altdist, \@dist_fail_criteria, 'ad') ) {
+      if ( run_commands(\%run, \@altdist, \@dist_fail_criteria, 'ad') ) {
          print_S "Error running altdist commands - please see the logs.\n";
          ### XXX cleanup and exit?
       }
@@ -296,6 +312,8 @@ cleanup_and_exit(0);
 ### XXX come back and fix this up - need to work on where we log / how
 ### XXX we parse logs. 
 
+### XXX fix this to take \%run
+
 sub cleanup_and_exit {
 
    my $error = shift;
@@ -313,7 +331,7 @@ sub cleanup_and_exit {
    print get_stamp() . " Runbuild shutting down.\n";
 
    if ($error) {
-      unlock_file($lockfile);
+      unlock_file("$run{'lockfile'}");
       print get_stamp() . " Exiting: $mesg\n";
       exit $error;
    }
@@ -347,7 +365,7 @@ sub cleanup_and_exit {
 #
 #   ### XXX Need to set host's final status here somehow.
 #
-   unlink($lockfile);
+   unlock_file("$run{'lockfile'}");
 
    exit ($error);
 

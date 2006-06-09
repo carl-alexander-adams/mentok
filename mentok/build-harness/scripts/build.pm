@@ -210,7 +210,8 @@ sub lock_file {
    if ( ! $lockmesg ) { $lockmesg = ""; }
 
    if ( $locked ) {
-      print HANDLE "$$ " . localtime(time) ."\n$lockmesg\n";
+      $lockmesg = "$$ " . localtime(time) . "\n$lockmesg\n";
+      syswrite(HANDLE,$lockmesg);
       close(HANDLE);
       return 1;
    }
@@ -399,7 +400,6 @@ sub treediff {
       return 0;
    };
 
-
    unless ($outfile eq 'STDOUT') {
       open(OF, ">$outfile") || do {
          print get_stamp() . " [treediff] Unable to open $outfile! $!\n";
@@ -476,37 +476,6 @@ sub treediff {
 
 }
 
-##########################################################
-
-### Needed here?!!
-### XXX 
-
-sub getlog {
-
-  my ($file, $rev) = @_;
-  my ($line, $comment);
-
-  open(LOG, "cvs -q log -r$rev $file|") || do {
-     print get_stamp() . 
-        " [treediff] Unable to open cvs log for rev $rev and file $file\n";
-     return;
-  };
-
-  while(defined ($_ = <LOG>) ) {
-    last if (/^description:/);
-  }
-  while(defined ($line = <LOG>) ) {
-    if ($line =~ /^====/) {
-      $comment .= "\n";
-      last;
-    }
-    $comment .= $line;
-  }
-  close(LOG);
-
-  return $comment;
-}
-
 ###########################################################
 ###
 ### set the status.
@@ -566,7 +535,7 @@ sub set_status {
    }
 
    if (! -d $statusdir ) {
-      if ( ! system("$mkdir $statusdir") ) {
+      unless ( mkdir ("$statusdir", 0777) ) {
          print get_stamp() . " [set_status] Unable to create $statusdir! $!\n";
          return 0;
       }
@@ -970,11 +939,13 @@ sub check_for_errors {
       if (/$pattern/) { ## error detected
          $buff .= $_;
          $error_msgs{++$errors} = "$buff";
-      } else {
+      } 
+      else {
          if ($count > $lines) {
             $buff = '';
             $count = 0;
-         } else {
+         } 
+         else {
             $buff .= "$_";
             $count ++;
          }
@@ -982,9 +953,12 @@ sub check_for_errors {
    }
 
    close (LOG);
+
    if ($errors) {
       return \%error_msgs ;
-   } else { return 0; }
+   } 
+
+   return 0; 
 
 }
 
@@ -1007,7 +981,7 @@ success, 0 otherwise.
 sub dos2unix {
    
    my $file 		= shift;
-   my $dos2unix		= "/bin/dos2unix";
+   my $dos2unix		= where("dos2unix");
 
    if (! $file || ! -f $file) {
       print get_stamp () . " dos2unix: Input file not specified" .
@@ -1016,7 +990,7 @@ sub dos2unix {
    }
 
    if (! -x "$dos2unix") { 
-      print get_stamp() . " dos2unix does not exist at $dos2unix\n";
+      print get_stamp() . " dos2unix does not found\n";
       return 0;
    }
 
@@ -1025,6 +999,7 @@ sub dos2unix {
       return (0);
    }   
 
+   ### XXX fix the mv to perlish
    if (b_system ("mv $file.UNIX $file")) {
       print get_stamp () . " dos2unix: mv $file.UNIX $file returned error.\n";
       return (0);
@@ -1034,63 +1009,17 @@ sub dos2unix {
 
 }
 
-=item B<katana($file)>
-
-This will call out to the katana program (a Saber replacement for *nix)
-and return the appropriate CRC value, or undef if something goes wrong.
-
-=cut
-
-sub katana {
-
-   my $file        = shift; 
-   my $katana_prog = '/usr/local/bin/katana';
-   my $crc         = undef;
-
-   if (! $file || ! -f $file) {
-      print get_stamp() . "katana: file not specified or does not exist!\n";
-      return undef;
-   }
-
-   if (! -x "$katana_prog") {
-      print get_stamp() . " katana does not exist at $katana_prog\n";
-      return undef;
-   }
-
-   open(CRC, "$katana_prog $file |") || do {
-         print "Can't call katana on $$file ! $? $!\n";
-         return undef;
-   };
-
-   while(defined ($line = <CRC>)) {
-      ($crc) = $line =~ /CRC : (\S+)/;
-   }
-
-   close(CRC);
- 
-   return $crc;
-
-}
-
 sub print_S {
 
-   my $string = $@;
+   my $arg;
+ 
+   while (@_) { $arg .= shift; }
 
-   print get_stamp() . "$string";
+   chomp($arg);
+
+   print get_stamp() . " $arg" . "\n";
 
    return 0;
-
-}
-
-sub print_V {
-  
-  my $string = $@;
-
-  if ( defined($run{'verbose'}) && $run{'verbose'} ) {
-     print get_stamp() . "$string";
-  }
-
-  return 0;
 
 }
 
@@ -1106,21 +1035,21 @@ sub evaluate_hash {
    my %lrun; 
 
    foreach my $key (sort keys %{$def_ref}) {
-      $lrun{$key} = $def_ref{$key};
+      $lrun{$key} = $def_ref->{$key};
    }
 
    foreach $key ( sort keys %{$con_ref}) {
-      $lrun{$key} = $con_ref{$key};
+      $lrun{$key} = $con_ref->{$key};
    }
 
    foreach $key ( sort keys %{$run_ref}) {
       if ( defined ($run_ref{$key}) && $run_ref{$key} ) {
-         $lrun{$key} = $run_ref{$key};
+         $lrun{$key} = $run_ref->{$key};
       }
    }
 
    foreach $key ( sort keys %lrun ) {
-      $run_ref{$key} = $lrun{$key};
+      $run_ref->{$key} = $lrun{$key};
    }
 
    return 0;   
@@ -1138,22 +1067,39 @@ sub evaluate_hash {
 # @client_build_sequence = ( [ "","", "$gmake", "-f Makefile.build", "", "", "", "", ], );
 #
 
+### XXX clean this up
+
 sub run_commands {
 
    my $run_ref = shift;
    my $ar_ref  = shift; 
+
+   ### fail criteria array
    my $fail_ref = shift; 
+
+   ### more of a prefix of a name to uniquely set off log files
    my $postfix = shift || ''; 
 
    my ($run_dir, $eff_user, $command, $args, $target,
        $out_err, $cline, $bs_cline, $out_file, $command_basename);
     
-   my ($starttime, $endtime, $ruletime, $disttime);
-   
-   my $host = $run{'host'} || '';
+   my ($starttime, $endtime);
 
-   my $depth = 0;
-   my @subs = ();
+   my ($set_status, $sref);
+   
+   my $host     = $run_ref->{'host'} || '';
+   my $makeargs = $run_ref->{'makeargs'};
+   my $logdir   = $run_ref->{'logdir'};
+
+   if (defined ($run_ref->{'statusref'})) { 
+      $set_status = 1;
+      $sref = $run_ref->{'statusref'};
+   }
+
+   if ( ! $logdir ) {
+      print_S "Logdir is not defined - needs to be set!\n";
+      return 1;
+   }
     
    print_S "[$host] Current directory is "; print Cwd::getcwd() . "\n";
 
@@ -1162,8 +1108,10 @@ sub run_commands {
    foreach ( @{$ar_ref} ) {
 
       my $stored_command = $_;
+
       $run_dir = $eff_user = $command = $args = $target = $ignore_errors = 
-         $out_err = $cline = $bs_cline = $out_file = $command_basename = "";
+         $check = $out_err = $cline = $bs_cline = $out_file = 
+	 $command_basename = "";
    
       # Directory where command will run
       if ($stored_command->[0]) {
@@ -1248,13 +1196,9 @@ sub run_commands {
    
       $bs_cline = "$cline $out_err";
    
-      ### XXX  set_status(\%statusvar, "running $command $target");
+      set_status($sref, "running $command $target") if $set_status;
    
       $starttime = new Benchmark;
-
-      # If a dir was specified for the command, 
-      # count the depth and cd to the dir before 
-      # running our command 
 
       my $run_cwd = Cwd::getcwd();
 
@@ -1263,21 +1207,17 @@ sub run_commands {
          unless (chdir ("$run_dir")) {
             print_S  "[$host] : Could not chdir to $run_dir \n";
             print get_stamp() . " [$host] Currently in " . Cwd::getcwd() . "\n";
-            return 0;
+            return 1;
          } 
          else { 
            print get_stamp() . " [$host] Currently in " . Cwd::getcwd() . "\n";
          }
       }
 
-   
-      if (b_system ("$bs_cline") ){
-         print get_stamp () . " [$host] $bs_cline failed.\n";
+      if ( $check = b_system ("$bs_cline") ){
+         print get_stamp () . " [$host] command failed.\n";
          if ($ignore_errors) { 
             print get_stamp() . " [$host] Ignore error set, continuing.\n";
-         }
-         if ( ! $ignore_errors ) {
-            return 1;
          }
       }
    
@@ -1285,12 +1225,12 @@ sub run_commands {
 
       $buildtime = wallclock($endtime, $starttime);
    
-      print_S  "[$host] $command $target finished. [$buildtime] \n\n";
+      print_S  "[$host] $command $target finished. [$buildtime] [RC: $check]\n";
 
       # If product config specifies a fail_criteria, check the log file
       # for errors. If we find errors in the log files, we stop right here.
 
-      if (defined ($fail_ref)) {
+      if ( $check && defined ($fail_ref) && @{$fail_ref}) {
          my $errors = check_for_errors ("$out_file", $fail_ref); 
          if ($errors) {
             print get_stamp () . " WARNING: Errors detected in $out_file. \n";
@@ -1306,16 +1246,23 @@ sub run_commands {
 #            }
          }
       }
+      elsif ($check) { # errors, but no @fail_criteria 
+         print_S "*** Warning: Not checking for errors in log file.\n";
+      }
 
       unless (chdir ("$run_cwd")) {
          print get_stamp () . " [$host] Could not chdir back to $run_cwd.\n";
+         return 1;
+      }
+
+      if ( $check ) { # error checking set, error encountered, do not ignore
          return 1;
       }
    
    # Record command run time in our buildtrack hash
    ### XXX $buildtrack{$buildseq++} = ["$eff_user $command $args $target", "$buildtime"];
    
-   ### XXX set_status(\%statusvar, "finished $command $target");
+   set_status($sref, "finished $command $target") if $set_status;
 
    $iter++;
 
