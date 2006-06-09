@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
 #########################################################################
 ### This is 'buildall' - which handles the directory creation, checking #
@@ -6,13 +6,13 @@
 #########################################################################
 
 use lib qw('.'); 
+use lib qw(/home/builds/scripts2);
 
-use strict;
-use warnings;
 use Getopt::Long;
 use Benchmark;
 use File::Path;
-use File::Copy::Recursive;
+use File::Copy::Recursive qw(fcopy rcopy dircopy fmove rmove dirmove);;
+use Net::Ping;
 
 use build;
 use vcs;
@@ -29,7 +29,7 @@ use vars qw(%SCVar @precommands @postcommands);
 ### set our final defaults, and then read command line
 #########################################################################
 
-$run{'reqdir'}      = '/home/builds/config';
+$run{'reqdir'}      = '/home/builds/config2';
 $run{'master_lock'} = '/home/builds/master.lck';
 
 GetOptions("config|c=s"               => \$run{'configfile'},
@@ -60,9 +60,10 @@ $run{'user'} = $run{'user'} || $ENV{'USER'} || 'buildsystem-default';
 ### Source config files. 
 
 eval { require "$run{'reqdir'}/Defaults.pl"; };
-if($@) { exit_err(1, "Errors with config Defaults.pl."); }
+if($@) { exit_err(1, "Errors with config Defaults.pl. $@"); }
 
-eval { require "$run{'reqdir'}/$run{'configfile'}"; };
+### XXX fix with a path check first
+eval { require "$run{'configfile'}"; };
 if($@) { exit_err(1, "Errors with config files $run{'configfile'}, $@"); }
 
 #######################################################################
@@ -73,6 +74,8 @@ if ( evaluate_hash(\%defaults, \%config, \%run) ) {
    print_S "Unable to validate / combine config vars into \%run hash";
    exit_err(1, "Errors making \%run hash - fatal exit.");
 }
+
+if ( ! defined ($run{'tag'}) ) { $run{'tag'} = ''; }
 
 $run{'ddir'} = get_build_date_next(get_build_date(), "$run{'buildroot'}");
 
@@ -127,13 +130,15 @@ $statusvar{'host'}      = $run{'host'};
 $statusvar{'ddir'}      = $run{'ddir'};
 $statusvar{'statusdir'} = $run{'statusdir'};
 
+$run{'statusref'} = \%statusvar;
+
 set_status(\%statusvar, "Redirecting to my log files");
 
 ######################################################################
 ### Time to redirect our output. #####################################
 ######################################################################
 
-print_S "Redirecting to my logfiles at this moment.\n";
+print_S("Redirecting to my logfiles at this moment.\n");
 
 open(BLOG, ">$run{'build_all_log'}") || do {
    print_S "Failed to open $run{'build_all_log'}.";
@@ -150,8 +155,8 @@ open(STDERR, ">&BLOG") || do {
 
 select(BLOG); $| = 1;
 
-print_S "Log file $run{'build_all_log'} successfully opened.\n";
-print_S "This build was launched by - $run{'user'}\n";
+print_S("Log file $run{'build_all_log'} successfully opened.\n");
+print_S("This build was launched by - $run{'user'}\n");
 
 set_status(\%statusvar, "Redirected to my logfiles");
 
@@ -160,7 +165,7 @@ set_status(\%statusvar, "Redirected to my logfiles");
 ### same project at the same time. ###################################
 ######################################################################
 
-print_S "Attempting to lock [$run{'projectname'}].\n";
+print_S("Attempting to lock [$run{'projectname'}].\n");
 
 $run{'lock'} = "$run{'buildroot'}/$run{'projectname'}.lck";
 
@@ -189,8 +194,8 @@ set_status(\%statusvar, "Locked for $run{'projectname'}");
 ### minimum remove our lock file ####################################
 #####################################################################
 
-print_S "Project - $run{'projectname'} - locked.\n";
-print_S "Using dir - $run{'ddir'} \n";
+print_S("Project - $run{'projectname'} - locked.\n");
+print_S("Using dir - $run{'ddir'} \n");
 
 #####################################################################
 ### Now we set our checkout root where we put the pristine ##########
@@ -259,7 +264,7 @@ if (defined ($run{'variant'}) && $run{'variant'} ) {
 
 set_status(\%statusvar, "Checking out code");
 
-print_S "Checking out source template.\n";
+print_S("Checking out source template.\n");
 
 my $t0 = new Benchmark;
 
@@ -272,7 +277,7 @@ my $t1 = new Benchmark;
 
 $run{'code_co_time'} = wallclock($t1, $t0);
 
-print_S "Code checkout complete [ $run{'code_co_time'} ] \n";
+print_S("Code checkout complete [ $run{'code_co_time'} ] \n");
 
 set_status(\%statusvar, "Code checkout complete");
 
@@ -314,7 +319,7 @@ if ( $run{'dist'} ) {
 ### we just checked out #############################################
 #####################################################################
 
-print_S "Running tree revision for $run{'projectname'}\n";
+print_S("Running tree revision for $run{'projectname'}\n");
 
 unless ( code_treerev(\%SCVar, "$run{'revlog'}") ) {
    print_S "*** Warning : Errors running treerev for $run{'projectname'}\n";
@@ -389,12 +394,12 @@ foreach my $host ( sort @{$run{'buildhosts'}} ) {
       $local_special .= " $eargs";
    }
 
-   my $p = Net::Ping->new("syn");
-   $p->{'port_num'} = $run{'transport_port'};
-   unless ($p->ack) {  
-      print_S "$host does not appear to be reachable - skipping.\n";
-      next;
-   }
+#   my $p = Net::Ping->new("syn");
+#   $p->{'port_num'} = $run{'transport_port'};
+#   unless ($p->ack) {  
+#      print_S "$host does not appear to be reachable - skipping.\n";
+#      next;
+#   }
 
    if ( $pid = fork() ) {
       ### parent
@@ -442,7 +447,7 @@ foreach my $host ( sort @{$run{'buildhosts'}} ) {
       $cmdline .= " --config=$run{'configfile'}";
       $cmdline .= " --user=$run{'user'}";
       $cmdline .= " --host=$host";
-      $cmdline .= " --VARIANT=$run{'variant'}";
+      $cmdline .= " --VARIANT=$run{'variant'}" if $run{'variant'};
       $cmdline .= " --cvstag=$run{'tag'}" if $run{'tag'};
       $cmdline .= " --special_gmake_args=$local_special" if $local_special;
       $cmdline .= " --ddir=$run{'ddir'}";
@@ -503,7 +508,7 @@ if ( defined ( @postcommands) ) {
 #######################################################################
 
 print_S "Generating build report from buildall\n";
-b_system("$run{'buildreport'} --config=$run{'config'}");
+#b_system("$run{'buildreport'} --config=$run{'config'}");
 print_S "Done generating build report\n";
 
 #######################################################################

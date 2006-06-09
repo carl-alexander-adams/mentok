@@ -253,13 +253,17 @@ sub code_co {
    my $lref  = shift; 
    my $rev   = shift;
    my $redir = shift;
+   my $found = 0;
 
    my ($llref);
 
    $new = 0;
 
+   print "here4\n";
+   
    foreach $key (sort keys %{$lref}) {
       if ($key =~ /^SC/) { # new style!
+         $found = 1;
          $llref = \%{$lref->{$key}};
          $err = code_work($rev, $redir, $llref, 'co');
          unless($err) { 
@@ -268,6 +272,12 @@ sub code_co {
             return 0;
          } 
       }
+   }
+
+
+   unless ( $found ) { 
+      print get_stamp() . " No SCVar found in conf. FIX CONF.\n";
+      return 0;
    }
 
    return 1;
@@ -520,7 +530,8 @@ sub code_treediff {
             $name = $1;
             # new method, revert.
             if ($origdir) { chdir($origdir); $orgdir = '';}
-            $lref = find_piece($name,\%main::SCvar);
+            ### XXX fix this ref to main space
+            $lref = find_piece($name,\%main::SCVar);
             set_env_vars($lref);
             $method = $lref->{'method'};
             # perforce client spec name might be wrong - have p4_Treerev
