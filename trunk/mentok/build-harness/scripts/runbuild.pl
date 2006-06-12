@@ -196,12 +196,16 @@ unless ( lock_file("$run{'lockfile'}") ) {
       unlock_file("$run{'lockfile'}");
       if ( ! lock_file("$run{'lockfile'}") ) {
          set_status(\%statusvar, "failed: unable to relock lockfile");
-         exit_err(1, "Cannot lock my lockfile ($lockfile)");
+         exit_err(1, "Cannot lock my lockfile ($run{'lockfile'})");
       }
    }
 }
 
 print_S "Building $run{'projectname'}\n";
+
+######################################################################
+### time to get into our startdir so we can kick things off
+######################################################################
 
 $run{'cwd'} = Cwd::getcwd();
 
@@ -255,7 +259,6 @@ if ( run_commands (\%run, \@client_build_sequence, \@fail_criteria, 'rb') ) {
    cleanup_and_exit(1);
 }
 
-
 ######################################################################
 ### now we push a binary package (library, tarball, etc) to our dist
 ### (distribution) area in case other builds need to pick it up
@@ -263,18 +266,24 @@ if ( run_commands (\%run, \@client_build_sequence, \@fail_criteria, 'rb') ) {
 
 if ( $run{'dist'} ) {
 
-###   set_status(\%statusvar, 'disting');
+   set_status(\%statusvar, 'disting');
 
    print_S "Building distribution / dist'ing\n";
 
    my $suffix  = ''; my $disttag = '';
 
-   if ($run{'tag'}) { if ($run{'disttag'}) { $run{'disttag'} .= "_" . $run{'tag'}; } 
-                      else { $run{'disttag'} = $run{'tag'}; }
+   if ($run{'tag'}) { 
+      if ($run{'disttag'}) { 
+         $run{'disttag'} .= "_" . $run{'tag'}; 
+      } 
+     else { $run{'disttag'} = $run{'tag'}; }
    }
 
-   if ($run{'variant'}) { if ($run{'disttag'}) { $run{'disttag'} .= "_" . $run{'variant'}; }
-                          else { $run{'disttag'} = $run{'variant'}; } 
+   if ($run{'variant'}) { 
+      if ($run{'disttag'}) { 
+         $run{'disttag'} .= "_" . $run{'variant'}; 
+      }
+      else { $run{'disttag'} = $run{'variant'}; } 
    }
 
    if ($run{'disttag'}) {  $run{'suffix'} = "DISTTAG=$run{'disttag'}"; }
@@ -282,7 +291,6 @@ if ( $run{'dist'} ) {
    $t0 = new Benchmark;
 
    if ( defined (@altdist) && @altdist ) {
-
      ### XXX DOC @dist_fail_criteria 
       if ( run_commands(\%run, \@altdist, \@dist_fail_criteria, 'ad') ) {
          print_S "Error running altdist commands - please see the logs.\n";
@@ -301,10 +309,13 @@ if ( $run{'dist'} ) {
    $disttime = wallclock($t1, $t0);
    print_S "Dist completed. [$disttime]\n";
 
+   set_status(\%statusvar, 'completed dist');
+
 ###   $buildtrack {$buildseq++} = [ "$gmake $makeargs $suffix dist ", "$disttime" ] ;
 
 }
 
+set_status(\%statusvar, 'success');
 cleanup_and_exit(0);
 
 ######################################################################

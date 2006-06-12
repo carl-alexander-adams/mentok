@@ -149,7 +149,7 @@ set_status(\%statusvar, "Redirecting to my log files");
 ### Time to redirect our output. #####################################
 ######################################################################
 
-print_S("Build for $run{'projectname'} initialized. Using $run{'ddir'}\n");
+print_S("Build for $run{'projectname'} initialized. Using DDIR $run{'ddir'}\n");
 
 print_S("Redirecting to my logfiles at this moment.\n");
 
@@ -237,7 +237,7 @@ unless ( chdir ("$run{'coderoot'}") ) {
 
 set_status(\%statusvar, "Beginning Code ENV");
 
-print_S " Beginning ENV initialization of code checkout.\n";
+print_S "Beginning ENV initialization of code checkout.\n";
 
 unless ( code_env(\%SCVar) ) {
    print_S "Failed ENV init!\n";
