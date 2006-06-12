@@ -8,12 +8,14 @@
 use lib qw('.'); 
 use lib qw(/home/builds/scripts2);
 
+### Some Standard Perl Modules.
 use Getopt::Long;
 use Benchmark;
 use File::Path;
 use File::Copy::Recursive qw(fcopy rcopy dircopy fmove rmove dirmove);;
 use Net::Ping;
 
+### Our perl modules.
 use build;
 use vcs;
 
@@ -62,7 +64,16 @@ $run{'user'} = $run{'user'} || $ENV{'USER'} || 'buildsystem-default';
 eval { require "$run{'reqdir'}/Defaults.pl"; };
 if($@) { exit_err(1, "Errors with config Defaults.pl. $@"); }
 
-### XXX fix with a path check first
+if ( ! -f "$run{'configfile'}") {
+   if ( ! -f "$run{'reqdir'}/$run{'configfile'}" ) {
+      print_S "*** Error config file specified, but not found.\n";
+      exit_err(1, "No configfile.");
+   }
+   else {
+      $run{'configfile'} = "$run{'reqdir'}/$run{'configfile'}";
+   }
+}
+
 eval { require "$run{'configfile'}"; };
 if($@) { exit_err(1, "Errors with config files $run{'configfile'}, $@"); }
 
@@ -137,6 +148,8 @@ set_status(\%statusvar, "Redirecting to my log files");
 ######################################################################
 ### Time to redirect our output. #####################################
 ######################################################################
+
+print_S("Build for $run{'projectname'} initialized. Using $run{'ddir'}\n");
 
 print_S("Redirecting to my logfiles at this moment.\n");
 
@@ -341,7 +354,7 @@ if ( -f "$run{'lastbuildfile'}" ) {
       while( <LB> ) { chomp; $run{'lb'} = $_; } 
       close(LB);
       $run{'prerevlog'} = "$run{'buildroot'}/$run{'lb'}/revlog.txt";   
-      code_treediff("$run{'prerevlog'}", "$run{'revlog'}", "$run{'difflog'}");
+      code_treediff(\%SCVar, "$run{'prerevlog'}", "$run{'revlog'}", "$run{'difflog'}");
    }
    else {
       print_S "*** Warning: Couldn't open $run{'lastbuildfile'} lastbuild\n";
@@ -355,9 +368,6 @@ if ( open(LB, ">>$run{'lastbuildfile'}") ) {
 else {
    print_S "*** Warning: Couldn't write back to $run{'lastbuildfile'}\n";
 }
-
-### XXX Include some maintenance here to make sure file does not
-### get too big? 
 
 #####################################################################
 ### Now we're at the post-checkout phase, right before we actually ##
@@ -394,12 +404,27 @@ foreach my $host ( sort @{$run{'buildhosts'}} ) {
       $local_special .= " $eargs";
    }
 
-#   my $p = Net::Ping->new("syn");
-#   $p->{'port_num'} = $run{'transport_port'};
-#   unless ($p->ack) {  
-#      print_S "$host does not appear to be reachable - skipping.\n";
-#      next;
-#   }
+   eval { 
+      my $p = Net::Ping->new("syn") || die "nosyn"; 
+      $p->{'port_num'} = $run{'transport_port'};
+      $p->ping($host);
+      unless ($p->ack) {  
+         print_S "$host does not appear to be reachable - skipping.\n";
+         die "nohost";
+      }
+   };
+
+   if ($@ =~ /nosyn/) {
+      if ($run{'ping'}) { 
+         unless ( b_system("$run{'ping'} $host") ) {
+            print_S "$host does not appear to be reachable - skipping.\n";
+            next;
+         }
+      }
+      else {
+         print_S "*** Warning - skipping host up check for $host\n";
+      }
+   }
 
    if ( $pid = fork() ) {
       ### parent
@@ -440,9 +465,6 @@ foreach my $host ( sort @{$run{'buildhosts'}} ) {
       my $cmdline = $run{'cmdline'};
 
       $cmdline .= ' -dist' if $run{'dist'};
-
-      ### I have removed the maincmd stuff here - we can do it all in the single
-      ### config file to pickup correct client_build_sequences 
 
       $cmdline .= " --config=$run{'configfile'}";
       $cmdline .= " --user=$run{'user'}";
@@ -508,6 +530,7 @@ if ( defined ( @postcommands) ) {
 #######################################################################
 
 print_S "Generating build report from buildall\n";
+### XXX buildreport needs fixing
 #b_system("$run{'buildreport'} --config=$run{'config'}");
 print_S "Done generating build report\n";
 
@@ -517,7 +540,7 @@ print_S "Done generating build report\n";
 
 cleanup(0);
 
-maildone();
+maildone(\%run, \%cstat);
 
 exit(0);
 
@@ -538,7 +561,8 @@ sub handle_alarm {
    }
    print "\n";
 
-   b_system("$run{'buildreport'} --config=$run{'configfile'}");
+### XXX buildreport needs fixing.
+#   b_system("$run{'buildreport'} --config=$run{'configfile'}");
 
    cleanup();
 
@@ -590,6 +614,25 @@ sub splash_message {
 
 ##############################################################################
 
+sub get_cstat {
+
+   my $run_ref = shift;
+   my $c_ref   = shift;
+
+   my $cs_retval = 'SUCCESS';
+   my $FAILPLATS;
+
+   foreach my $cs ( keys %{$c_ref} ) {
+      next if ($c_ref->{"$cs"} =~ /^success$/);
+      $FAILPLATS .= "\t$cs: $run_ref->{'platforms'}{$cs}\n";
+      $cs_retval = 'FAILED';
+   }
+
+   return ($cs_retval, $FAILPLATS);
+
+}
+
+
 sub usage {
 
    print <<EOF;
@@ -617,53 +660,51 @@ EOF
 
 ##############################################################################
 
-### XXX Fix maildone to fix up the status hash, etc. 
-### XXX Fix to pass in by ref.
-
 sub maildone {
 
-   my $server  = $run{'mailserver'};
-   my $sender  = $run{'sender'}; 
+   my $run_ref = shift; 
+   my $c_ref   = shift; 
+
+   my $server  = $run_ref->{'mailserver'} || 'mail';
+   my $sender  = $run_ref->{'sender'}     || 'Automated Build Mail <root>';
    my $name    = 'Build Notice';
-   my $baseurl = $run{'baseurl'};
 
    my $compstat;
    my $FAILPLATS;
 
-   ($compstat, $FAILPLATS) = get_cstat();
+   ($compstat, $FAILPLATS) = get_cstat($run_ref, $c_ref);
 
-   my $subject = "$run{'projectname'} Build ($run{'ddir'}) completed: $compstat";
+   my $subject = "$run_ref->{'projectname'} Build ($run_ref->{'ddir'})";
+   $subject   .= " completed: $compstat";
+
    my $rcpt    = "";
 
-   if ( $run{'notify'} ) {
+   if ( defined ( $run_ref->{'notify'} ) && $run_ref->{'notify'} ) {
       $rcpt = $run{'notify'};
    }
 
-   if ( $run{'bcnotify'} ) {
+   if ( defined ( $run_ref->{'bcnotify'} ) && $run_ref->{'bcnotify'} ) {
       $rcpt .= ",$run{'bcnotify'}";
    }
 
-   if ( $run{'email'} ) {
+   if ( defined ( $run_ref->{'email'} ) && $run_ref->{'email'} ) {
       $rcpt .= ",$run{'email'}";
    }
 
    my $body .= get_stamp() . "\n\nBuild was spun from";
 
-   if ($run{'tag'}) {
-      $body .= " tag: $run{'tag'}. \n\n";
+   if (defined ($run_ref->{'tag'}) && $run_ref->{'tag'}) {
+      $body .= " tag: $run_ref->{'tag'}. \n\n";
    }
    else {
       $body .= " Trunk. \n\n";
    }
 
-   $body .= "Build was spun by $run{'user'}. \n\n\n";
-
+   $body .= "Build was spun by $run_ref->{'user'}. \n\n\n";
    $body .= "Build failed on:\n$FAILPLATS\n" if ($compstat =~ /^FAILED$/);
-#   $body .= "Details of this build are available at : \n\n";
-#   $body .= "$baseurl/$projectname/summary.html\n";
 
    if ( ! send_email($server, $sender, $rcpt, $subject, $body) ) {
-      print get_stamp() . " Error sending buildreport mail. Dumping STDOUT\n";
+      print_S "Error sending buildreport mail. Dumping STDOUT\n";
       print $body;
    }
 

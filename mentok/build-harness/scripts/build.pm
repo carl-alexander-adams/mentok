@@ -999,9 +999,8 @@ sub dos2unix {
       return (0);
    }   
 
-   ### XXX fix the mv to perlish
-   if (b_system ("mv $file.UNIX $file")) {
-      print get_stamp () . " dos2unix: mv $file.UNIX $file returned error.\n";
+   unless ( rename("$file.UNIX", "$file")) {
+      print get_stamp () . " dos2unix: rename $file.UNIX $file error.\n";
       return (0);
    }
 
@@ -1055,9 +1054,6 @@ sub evaluate_hash {
    return 0;   
 
 }
-
-### XXX Need to rewrite this a bit so that we output logs to the correct
-### XXX log dir - also need to pass in %run
 
 ### # client_build_sequence
 

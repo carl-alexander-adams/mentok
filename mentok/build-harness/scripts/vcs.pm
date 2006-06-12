@@ -451,7 +451,7 @@ sub code_treerev {
 ### This was moved up from the base libs since we're really just
 ### doing basic file comparisons. 
 
-=item B<code_treediff($file1, $file2, $outfile) >
+=item B<code_treediff($SCVar_ref, $file1, $file2, $outfile) >
 
 This function expects 2 files, both generated from code_treerev and
 will compare their differences and output that info to $outfile. 
@@ -459,6 +459,8 @@ will compare their differences and output that info to $outfile.
 =cut 
 
 sub code_treediff {
+
+   my $sc_ref  = shift;
 
    my $file_1  = shift;
    my $file_2  = shift;
@@ -530,8 +532,7 @@ sub code_treediff {
             $name = $1;
             # new method, revert.
             if ($origdir) { chdir($origdir); $orgdir = '';}
-            ### XXX fix this ref to main space
-            $lref = find_piece($name,\%main::SCVar);
+            $lref = find_piece($name,$sc_var);
             set_env_vars($lref);
             $method = $lref->{'method'};
             # perforce client spec name might be wrong - have p4_Treerev
