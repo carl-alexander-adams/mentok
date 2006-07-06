@@ -70,6 +70,8 @@ of email addresses.
 
 =cut
 
+### XXX for some reason i reversed the returns here.
+
 sub send_email {
 
    my ($server, $sender, $rcpt, $subject, $body) = @_;
@@ -1057,7 +1059,7 @@ sub evaluate_hash {
 
 ### # client_build_sequence
 
-# RUNDIR|USER|COMMAND|ARGS|TARGETS|IGNOREERROR|ENVS|ARBLOGFILE
+# RUNDIR|USER|COMMAND|ARGS|TARGETS|IGNOREERROR|ENVS|ARBLOGFILE|FAIL_REF
 
 #
 # @client_build_sequence = ( [ "","", "$gmake", "-f Makefile.build", "", "", "", "", ], );
