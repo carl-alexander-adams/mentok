@@ -175,7 +175,7 @@ $VERSION   = 1.50;
 
 $vcs_verbose   = 0;
 
-use lib qw(/home/mhall/workplay/mentok/mentok/build-harness/scripts);
+use lib qw(/home/builds/scripts2);
 
 use Cwd;
 
@@ -239,7 +239,7 @@ sub code_env {
 ### code_co should be called with 2 arguments, a revision (label)
 ### and a output redirector (like 1>stupidfile.txt). 
 
-=item B<code_co($rev, $redirection) >
+=item B<code_co(\%ref_to_SCvar, $rev, $redirection) >
 
 This is the main checkout function. It takes an optional revision
 argument (Leave it as '' or undef), and a redirection option (Much
@@ -258,8 +258,6 @@ sub code_co {
    my ($llref);
 
    $new = 0;
-
-   print "here4\n";
    
    foreach $key (sort keys %{$lref}) {
       if ($key =~ /^SC/) { # new style!
@@ -317,7 +315,7 @@ sub code_work {
    $err = &{$method . "_${act}"}($rev, $redir, $lref);
 
    unless ( $err ) { 
-      print get_stamp() . " Problem checking out: Aborting $act.\n";
+      print get_stamp() . " Problem with '$act' action : Aborting $act.\n";
       return 0;
    }
 
@@ -331,7 +329,7 @@ sub code_work {
 ###   toplevel
 ### Perforce Tag relies on our clientspec and what we 'have' in it.
 
-=item B<code_tag($revision, $redirection) >
+=item B<code_tag(\%ref_to_SCVar, $revision, $redirection) >
 
 This is the main tagging function, it will attempt to apply a tag
 (or label) to every piece of code it can / knows about through the
@@ -410,7 +408,7 @@ sub set_env_vars {
 
 }
 
-=item B<code_treerev($outfile) >
+=item B<code_treerev(\%ref_to_SCVar, $outfile) >
 
 This will output a 'revision file', where there will be an entire
 listing of code, plus revision number, for every file that was checked
@@ -451,7 +449,7 @@ sub code_treerev {
 ### This was moved up from the base libs since we're really just
 ### doing basic file comparisons. 
 
-=item B<code_treediff($SCVar_ref, $file1, $file2, $outfile) >
+=item B<code_treediff(\%ref_to_SCvar, $file1, $file2, $outfile) >
 
 This function expects 2 files, both generated from code_treerev and
 will compare their differences and output that info to $outfile. 
