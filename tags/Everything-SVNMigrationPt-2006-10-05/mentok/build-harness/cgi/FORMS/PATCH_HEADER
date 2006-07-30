@@ -1,0 +1,11 @@
+<DIV ALIGN=CENTER>
+<H3>Online Patch Build System</H3>
+</DIV>
+
+<P>
+This page allows you to build a patch from an existing build. The build 
+must have completed successfully and the patch kit must be checked into 
+CVS. 
+
+<P>
+

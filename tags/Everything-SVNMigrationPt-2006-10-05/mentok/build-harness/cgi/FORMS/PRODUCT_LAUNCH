@@ -1,0 +1,34 @@
+<TABLE BGCOLOR="#FFFF00" BORDER=0 ALIGN=CENTER WIDTH=80% CELLSPACING=0 CELLPADDING=1>
+  <TR ALIGN=MIDDLE>
+    <TD ALIGN=CENTER>
+      <FONT COLOR="#990000" FACE="Arial,Helvetica"><B>
+        SUCCESS
+      </B></FONT>
+    </TD>
+  </TR>
+  <TR ALIGN=MIDDLE>
+    <TD ALIGN=CENTER>
+      <TABLE BGCOLOR="#000000" BORDER=0 CELLPADDING=9 CELLSPACING=9 ALIGN=CENTER WIDTH=100%>
+        <TR ALIGN=MIDDLE>
+          <TD ALIGN=CENTER>
+            <FONT COLOR="#FFFF99" FACE="Arial,Helvetica">
+            <B> [% product %] </B> is now spinning...
+            </FONT>
+          </TD>
+        </TR>
+        <TR ALIGN=MIDDLE>
+          <TD ALIGN=CENTER>
+           <FONT COLOR="#FFFF99" FACE="Arial,Helvetica">
+           You can see the final results at &nbsp; 
+           <A HREF="/eng/[% product %]/builds/summary.html"> [% product %]'s
+           nightly builds page</A>. 
+           </FONT>
+
+          </TD>
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>
+
+

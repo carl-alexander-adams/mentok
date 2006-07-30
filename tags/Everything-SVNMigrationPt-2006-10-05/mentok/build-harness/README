@@ -1,0 +1,14 @@
+
+This area needs a lot of work. The directories here are enumerated
+below.
+
+
+scripts/
+    This directory has the main scripts used to launch a build.
+
+config/
+   This directory has the config files necessary to declare a build
+   of a product and its defines.
+
+cgi/
+   An example web interface for the build launching system.

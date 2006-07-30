@@ -1,0 +1,44 @@
+
+<FORM METHOD=POST ACTION=[% env.REQUEST_URI %]>
+
+<TABLE BORDER=0>
+
+<TR>
+ <TD>Product</TD>
+ <TD>
+ <SELECT NAME="product">
+  [% FOREACH p = products %]
+  <OPTION NAME=[% p %]> [% p %]
+  [% END %]
+ </SELECT>
+ </TD>
+</TR>
+<TR>
+ <TD>Patch ID</TD>
+ <TD><INPUT TYPE=text NAME="patchnum">
+ </TD>
+</TR>
+<TR>
+ <TD>Build ID</TD>
+ <TD><INPUT TYPE=text NAME="buildid">
+ </TD>
+</TR>
+<TR>
+ <TD>cvs tag</TD>
+ <TD><INPUT TYPE=text NAME="cvstag">
+ </TD>
+</TR>
+<TR>
+ <TD>Additional Email Addresses</TD>
+ <TD><INPUT TYPE=text NAME="email">
+ </TD>
+</TR>
+<TR>
+ <TD></TD>
+ <TD><INPUT TYPE=SUBMIT NAME="build" VALUE="GO">
+ </TD>
+</TR>
+</TABLE>
+
+</FORM>
+

@@ -1,0 +1,22 @@
+
+Eliminate most system calls - let's try to use perl exclusively and stop
+calling out to shells, repeatedly. This will increase our need for 3rdparty
+and not standard Perl modules, but so be it. 
+
+We should also up our perl requirements from the not documented 5.005 to 
+something a bit newer. 
+
+Need to eliminate a lot of the web junk from the cmdline spinning harness -
+I think that can be integrated more cleanly elsewhere. 
+
+File::Copy::Recursive (Fix up our cp'ing)
+File::Path (Fix up our mkdir's)
+
+Net::Ping (with syn or with Net::Ping::External)
+
+Sys::Hostname
+POSIX::uname();
+ ($sysname, $nodename, $release, $version, $machine) = POSIX::uname();
+
+Date replacement. use 'perldoc -f localtime' calls - cache it
+
