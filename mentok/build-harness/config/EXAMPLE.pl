@@ -1,31 +1,38 @@
 
-### Anything in here can be duplicated, or changed from the Defaults.
-
-## Platforms [desc here]
+### An Example Config
 
 # REQUIRED: platforms
 # 'hostname' => 'arch'
+$config{'platforms'} = { 'fc4-1' => 'Linux-2.6.11-1.1369_FC4smp-i686', };
 
-$config{'platforms'}  = ( '<hostname>'  => '<Arch>', );
-$config{'buildhosts'} = keys $config{'platforms'};
-$config{'alarmwait'}  = 60 * 180;
+@{$config{'buildhosts'}} = keys %{$config{'platforms'}};
+
+$config{'alarmwait'}  = 60*180; # 180 mins  
 
 # REQUIRED:projectname
-$config{'projectname'} = 'preomni';
-
-# REQUIRED: buildroot
-$config{'buildroot'} = "/home/builds/$config{'projectname'}";
-
-# REQUIRED: statusdir ... will get eval'ed in buildall to pickup correct $ddir
-$config{'statusdir'} = "$buildroot/\$ddir/status";
-
+$config{'projectname'} = 'someproject';
 # REQUIRED: toolsdir
-$config{'toolsdir'}  = '/home/builds/scripts';
-
+$config{'toolsdir'}    = "/home/builds/scripts2";
+# REQUIRED: buildroot
+$config{'buildroot'}   = "/home/builds/$config{'projectname'}";
+# REQUIRED: startdir (or we assume 'src' or '.'). 
+$config{'startdir'}    = "somedir/$config{'projectname'}";
 # Who we send email to on build status
-$config{'notify'}    = "<someone_who_cares>\@.com";
+$config{'notify'}      = 'someone@who.cares.com';
 
 # REQUIRED: SCvar (Source Control Variable)
+
+%SCVar = ( projectname => 'xplatform',
+           SCVar1 => { 
+              method => 'cvs',
+              name   => 'xplatform_from_cvs',
+              cvsmod => "recourse/$config{'projectname'}",
+              _CVSROOT => ':ext:release@wopr:/cvs/components',
+              _CVS_RSH => $defaults{'transport'},
+           },
+         );
+
+# Another example
 
 %SCvar = (
           projectname => 'SomeCodeBase',
@@ -58,12 +65,12 @@ $config{'notify'}    = "<someone_who_cares>\@.com";
                  },
 );
 
-
-# This is a config file with a separate client_build_sequence
-# to be run for each host. 
-# REQUIRED: maincmd
+# OPTIONAL: maincmd
+# if each hostname needs a special config file of its own.
 
 $config{'maincmd'} = ( 'hostname'     => 'special_config_file', );
+
+$gmake = '/usr/local/bin/gmake';
 
 # REQUIRED: client_build_sequence
 
@@ -84,35 +91,39 @@ $config{'maincmd'} = ( 'hostname'     => 'special_config_file', );
 # ARBLOGFILE, an arbitrary logfile, otherwise will form from command/target
 #	can embed code
 
-### XXX local-lize this block to use short vars for cleanliness.
+@client_build_sequence = (
+        [ "", "", "$gmake", "-f", "Makefile-build3.mk" ],
+        [ "", "", "$gmake", "", "depends" ],
+        [ "", "", "$gmake", "", "all" ],
+        [ "", "", "$gmake", "", "package" ],
+);
+
+### Another example. Note the late eval of '$ddir'. 
 
 @client_build_sequence = (
         [ "", "", "$gmake", "-f Makefile.build", "", "", 
           "", "", "" ],
         [ "", "", "mkdir", "-p $buildroot/\$ddir/package", ""  ],
-        [ "", "", "cp", "-f ../bin/something.o $buildroot/\$ddir/package/something2.o", "" ],
+        [ "", "", "cp", "-f ../bin/something.o $config{'buildroot'}/\$ddir/package/something2.o", "" ],
         [ "", "", "$gmake", "", "full-clean" ],
         [ "", "", "$gmake", "-f Makefile.build", "", "", 
           "", "", "" ],
-        [ "", "", "cp", "-f ../bin/something.o $buildroot/\$ddir/package/something3.o", "" ],
+        [ "", "", "cp", "-f ../bin/something.o $config{'buildroot'}/\$ddir/package/something3.o", "" ],
 	[ "", "", "$gmake", "-f Makefile.build", "package" ],
 );
 
-#
-# FLUFF: buildtool
+# OPTIONAL PRUNE_AFTER (Check Defaults.pl for default value)
+# Our prunes.pl uses this to detemine whether or not to reap builds.
+$config{'prune_after'} = 5;
+
+# REQUIRED: buildtool
 # This is the script that picks things up on the client side.
 $config{'buildtool'} = "$config{'toolsdir'}/runbuild.pl";
 # REQUIRED: cmdline
 $config{'cmdline'} = $config{'buildtool'};
 
-# OPTIONAL PRUNE_AFTER (Check Defaults.pl for default value)
-# Our prunes.pl uses this to detemine whether or not to reap builds.
-$config{'prune_after'} = 15;
-
-# OPTIONAL (To override the normal disting mechanism)
-
+# OPTIONAL: altdist. This will override the 'dist'ing mechanism (packaging)
 ### XXX Rewrite alt dist to be in client_build_sequence form.
 
 @altdist = ("directory", "command", 
             "directory", "command"); 
-
