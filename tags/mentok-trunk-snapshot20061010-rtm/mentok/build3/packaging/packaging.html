@@ -1,0 +1,435 @@
+<html> <head>
+<title>Build System Packaging Module</title>
+</head>
+
+<body>
+<h1>Build System Packaging Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Build System Packaging Module provides the
+build system with the ability to create various packagings
+of files. This includes the ability to create tar files,
+zip files, etc. 
+<p>
+NOTE: Due to limitations in gmake's ability to interpret
+generated dependency chains on the fly, making some of
+the package targets in a fresh tree may not work in the
+first invocation even though the dependencies have been
+mapped out. To work around this problem is is recommended
+that an 'all' or 'depends' build be invoked separately
+before any of the targets provided by this module are
+requested.
+
+<hr>
+<h2>Macros and Controls</h2>
+<dl>
+  <dt><b>PACKAGE_ROOT</b></dt>
+  <dd>
+       The root of the directory for some packaging module targets.
+       The default value for this is $(COMPONENT_ROOT)/package.
+       </dd><p>
+
+  <dt><b>PACKAGE_TARGET_DIR</b></dt>
+  <dd>
+       The target directory for some package targets. Package
+       targets share a component wide target directory so
+       component packages can by built up here piece by piece
+       as the build progresses through the component source tree.
+       The default value for this is $(PACKAGE_ROOT)/built/$(BS_PLATFORM_ARCH_FULL).
+       </dd><p>
+  <dt><b>PACKAGE_RELEASE_DIR</b></dt>
+  <dd>
+       A final staging dir for deliverable tarballs, bundled package, and files.
+       The default value for this is $(PACKAGE_ROOT)/release/$(BS_PLATFORM_ARCH_FULL).
+       The distinction between this and pushing components to dist is fuzzy.
+       </dd><p>
+</dl>
+
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#PACKAGEFILE_TARGETS">PACKAGEFILE_TARGETS</a>
+  <li><a href="#PACKAGEDIR_TARGETS">PACKAGEDIR_TARGETS</a>
+  <li><a href="#TARGZ_TARGETS">TARGZ_TARGETS</a>
+  <li><a href="#ZIP_TARGETS">ZIP_TARGETS</a>
+  <li><a href="#packaging_package">packaging_package (deprecated)</a>
+  <li><a href="#packaging_packagefile">packaging_packagefile</a>
+  <li><a href="#packaging_packagedir">packaging_packagedir</a>
+  <li><a href="#packaging_targz">packaging_targz</a>
+  <li><a href="#packaging_zip">packaging_zip</a>
+  <li><a href="#packaging_info">packaging_info</a>     
+  <li><a href="#packaging_man">packaging_man</a>
+</ul>
+
+<hr>
+<h2>Functions</h2>
+<ul>
+  <li><a href="#PACKAGING_FUNC_GET_TARGZ_REALTARGET">PACKAGING_FUNC_GET_TARGZ_REALTARGET</a>
+  <li><a href="#PACKAGING_FUNC_GET_TARGZ_FLAGTARGET">PACKAGING_FUNC_GET_TARGZ_FLAGTARGET</a>
+  <li><a href="#PACKAGING_FUNC_GET_ZIP_REALTARGET">PACKAGING_FUNC_GET_ZIP_REALTARGET</a>
+  <li><a href="#PACKAGING_FUNC_GET_ZIP_FLAGTARGET">PACKAGING_FUNC_GET_ZIP_FLAGTARGET</a>
+</ul>
+
+
+
+
+<hr>
+<a name="PACKAGEFILE_TARGETS">
+<h2>PACKAGEFILE_TARGETS</h2>
+<h3>PACKAGEFILE_TARGETS Overview</h3>
+PACKAGEFILE_TARGETS is the pattern target used to package
+files from a build into the component wide package
+directory for eventual component roll up. In essence, PACKAGEFILE_TARGETS
+is a glorified interface to the file copy command. Only files
+may be packaged with this pattern target; directories should be packaged
+with the <a href="#PACKAGEDIR_TARGETS">PACKAGEDIR_TARGETS</a>
+pattern target.
+By default, the file packaged by a given PACKAGEFILE_TARGETS pattern target
+will be <i>&lt;package file target&gt;</i> found in either the target
+dir for the build system's platform or the default
+native code tool chain's target platform. This may be overridden
+by the <i>&lt;package file target&gt;</i>
+<i>&lt;package file target&gt;</i>_FROM option.
+
+<p>
+PACKAGEFILE_TARGETS will be built during the "posttarget" phase of a build.
+PACKAGEFILE_TARGETS may be built in isolation by requesting the "packaging_packagefile"
+target.
+<h3>PACKAGEFILE_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;package file target&gt;</i>_DEST</b></dt>
+  <dd>
+       Specifies the file name and path under $(PACKAGE_TARGET_DIR) to copy the
+       <i>&lt;package file target&gt;</i> to. This option must specify a
+       file location and not a directory. The default value is
+       simply <i>&lt;package file target&gt;</i>.
+       </dd><p>
+       
+  <dt><b><i>&lt;package file target&gt;</i>_FROM</b></dt>
+  <dd>
+       Override the entire default source path to the
+       <i>&lt;package file target&gt;</i>. Setting this option
+       makes renders the _PLATFORM option moot.
+       This option can be used with a <i>&lt;package file target&gt;</i>
+       to achieve the same behavior provided by the PACKAGE_RAW_TARGETS
+       of the old build system.
+       </dd><p>
+       
+  <dt><b><i>&lt;package file target&gt;</i>_DEP</b></dt>
+  <dd>
+       Specify additional dependancies for the current target.
+       </dd><p>
+	
+</dl>
+
+<hr>
+<a name="PACKAGEDIR_TARGETS">
+<h2>PACKAGEDIR_TARGETS</h2>
+<h3>PACKAGEDIR_TARGETS Overview</h3>
+PACKAGEDIR_TARGETS is the pattern target used to package
+directories from a build into the component wide package
+directory for eventual component roll up. Only directories
+may be packaged with this pattern target; files should be packaged
+with the <a href="#PACKAGEFILE_TARGETS">PACKAGEFILE_TARGETS</a>
+pattern target.
+By default, the directory packaged by a given PACKAGEDIR_TARGETS pattern target
+will be <i>&lt;package dir target&gt;</i> found in either the target
+dir for the build system's platform or the default
+native code tool chain's target platform. This may be overridden
+by the <i>&lt;package dir target&gt;</i>
+<i>&lt;package dir target&gt;</i>_FROM option.
+
+
+<p>
+PACKAGEDIR_TARGETS will be built during the "posttarget" phase of a build.
+PACKAGEDIR_TARGETS may be built in isolation by requesting the "packaging_packagedir"
+target.
+<p>
+<b>WARNING:</b>
+PACKAGEDIR_TARGETS pattern targets WILL NOT be cleaned by building the "clean" target.
+These pattern targets will only be cleaned by building the "nuke" target.
+Furthermore, these targets will be remade with every build of the "posttarget" phase.
+These are side effects of directory targets potentially overlapping, and of not having
+their full contents enumerated to the build system for dependancy resolution.
+
+<h3>PACKAGEDIR_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;package dir target&gt;</i>_DEST</b></dt>
+  <dd>
+       Specifies the directory name and path under $(PACKAGE_TARGET_DIR) to copy the
+       <i>&lt;package dir target&gt;</i> to. This option must specify a
+       directory name. The default value is the basename
+       of the current target. If the target already exists, the current
+       target will be overlayed into the existing directory.
+       </dd><p>
+
+       
+  <dt><b><i>&lt;package dir target&gt;</i>_FROM</b></dt>
+  <dd>
+       Override the entire default source path to the
+       <i>&lt;package dir target&gt;</i>. Setting this option
+       makes renders the _PLATFORM option moot.
+       This option can be used with a <i>&lt;package dir target&gt;</i>
+       to achieve the same behavior provided by the PACKAGE_RAW_TARGETS
+       of the old build system.
+       </dd><p>
+       
+  <dt><b><i>&lt;package dir target&gt;</i>_SCRUB</b></dt>
+  <dd>
+       Specifies a list of files or directories to remove from the
+       package once it has been copied to the $(PACKAGE_TARGET_DIR).
+       This option is useful for cleaning out CVS directories or other
+       ancillary files  when packaging directories.
+       <b>WARNING:</b>Use of the _SCRUB option for PACKAGEDIR_TARGETS
+       may have unintended consequences when multiple targets overlay into
+       the same directory.
+       </dd><p>
+       
+  <dt><b><i>&lt;package dir target&gt;</i>_DEP</b></dt>
+  <dd>
+       Specify additional dependancies for the current target.
+       </dd><p>
+	
+
+</dl>
+
+
+<hr>
+<a name="TARGZ_TARGETS">
+<h2>TARGZ_TARGETS</h2>
+<h3>TARGZ_TARGETS Overview</h3>
+TARGZ_TARGETS is the pattern target used to create tar'ed and gzip'ed
+archive files.
+By default, the archive will be created in a file named
+$(BS_ARCH_TARGET_DIR)/<i>&lt;targz target&gt;</i>.tar.gz, but this
+may be overridden by target specific controls.
+<p>
+TARGZ_TARGETS will be built during the "posttarget" phase of a build.
+TARGZ_TARGETS may be built in isolation by requesting the "packaging_targz"
+target.
+<h3>TARGZ_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;targz target&gt;</i>_DEST</b></dt>
+  <dd>Specify an override location for the archive file
+       produced by the evaluation of the pattern rules.
+       The default archive file will be
+       $(BS_ARCH_TARGET_DIR)/<i>&lt;targz target&gt;</i>.tar.gz,rules,
+       but specifying paths under the $(PACKAGE_TARGET_DIR)
+       or $(PACKAGE_STAGE_DIR) may be useful for producing
+       archive files for final component delivery.
+       </dd><p>
+
+  <dt><b><i>&lt;targz target&gt;</i>_FILES</b></dt>
+  <dd>
+       Specify a list of files to include in the archive.
+       </dd><p>
+       
+  <dt><b><i>&lt;targz target&gt;</i>_MANIFEST</b></dt>
+  <dd>
+       Specify a manifest file containing a list of
+       files to include in the archive. The contents
+       of the manifest are treated as if they appeared
+       in the _FILES option.
+       </dd><p>
+  <dt><b><i>&lt;targz target&gt;</i>_CWD</b></dt>
+  <dd>
+       The parent directory of the files specified
+       by the _FILES or _MANIFEST options. Files
+       to appear in a given <i>&lt;targz target&gt;</i>
+       archive must be located under the directory specified
+       by the _CWD option, and will have the _CWD directory
+       prefix stripped prior to being placed in the archive.
+       The default value for the _CWD option is the
+       target directory $(BS_ARCH_TARGET_DIR), but
+       it is expected that values containing $(PACKAGE_TARGET_DIR)
+       will be useful.
+       </dd><p>
+       
+</dl>
+
+<hr>
+<a name="ZIP_TARGETS">
+<h2>ZIP_TARGETS</h2>
+<h3>ZIP_TARGETS Overview</h3>
+ZIP_TARGETS is the pattern target used to create zip archive files.
+By default, the archive will be created in a file named
+$(BS_ARCH_TARGET_DIR)/<i>&lt;zip target&gt;</i>.zip, but this
+may be overridden by target specific controls.
+<p>
+ZIP_TARGETS will be built during the "posttarget" phase of a build.
+ZIP_TARGETS may be built in isolation by requesting the "packaging_zip"
+target.
+<h3>ZIP_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;zip target&gt;</i>_DEST</b></dt>
+  <dd>
+       Specify an override location for the archive file
+       produced by the evaluation of the pattern rules.
+       The default archive file will be
+       $(BS_ARCH_TARGET_DIR)/<i>&lt;zip target&gt;</i>.tar.gz,rules,
+       but specifying paths under the $(PACKAGE_TARGET_DIR)
+       or $(PACKAGE_STAGE_DIR) may be useful for producing
+       archive files for final component delivery.
+       </dd><p>
+
+  <dt><b><i>&lt;zip target&gt;</i>_FILES</b></dt>
+  <dd>
+       Specify a list of files to include in the archive.
+       </dd><p>
+
+  <dt><b><i>&lt;zip target&gt;</i>_MANIFEST</b></dt>
+  <dd>
+       Specify a manifest file containing a list of
+       files to include in the archive. The contents
+       of the manifest are treated as if they appeared
+       in the _FILES option.
+       </dd><p>
+  <dt><b><i>&lt;zip target&gt;</i>_CWD</b></dt>
+  <dd>
+       The parent directory of the files specified
+       by the _FILES or _MANIFEST options. Files
+       to appear in a given <i>&lt;zip target&gt;</i>
+       archive must be located under the directory specified
+       by the _CWD option, and will have the _CWD directory
+       prefix stripped prior to being placed in the archive.
+       The default value for the _CWD option is the
+       target directory $(BS_ARCH_TARGET_DIR), but
+       it is expected that values containing $(PACKAGE_TARGET_DIR)
+       will be useful.
+       </dd><p>
+       
+</dl>
+
+
+
+
+
+<hr>
+<a name="packaging_packagefile">
+<h2>packaging_packagefile</h2>
+<h3>packaging_packagefile Overview</h3>
+Simple target to trigger the building of PACKAGEFILE_TARGETS
+pattern targets independent of the main build "posttarget" phase. 
+
+<hr>
+<a name="packaging_packagedir">
+<h2>packaging_packagedir</h2>
+<h3>packaging_packagedir Overview</h3>
+Simple target to trigger the building of PACKAGEDIR_TARGETS
+pattern targets independent of the main build "posttarget" phase. 
+
+<hr>
+<a name="packaging_targz">
+<h2>packaging_targz</h2>
+<h3>packaging_targz Overview</h3>
+Simple target to trigger the building of TARGZ_TARGETS
+pattern targets independent of the main build "posttarget" phase. 
+
+<hr>
+<a name="packaging_zip">
+<h2>packaging_zip</h2>
+<h3>packaging_zip Overview</h3>
+Simple target to trigger the building of ZIP_TARGETS
+pattern targets independent of the main build "posttarget" phase. 
+
+
+<hr>
+<a name="packaging_info">
+<h2>packaging_info</h2>
+<h3>packaging_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the packaging module of
+the build system. The <b>packaging_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>packaging_info</b> target.
+
+<hr>
+<a name="packaging_man">
+<h2>packaging_man</h2>
+<h3>packaging_man Overview</h3>
+Simple target to display usage information and help pertaining to 
+the packaging module of the build system.
+The <b>packaging_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>packaging_man</b> target.
+
+
+<hr>
+<a name="PACKAGING_FUNC_GET_TARGZ_REALTARGET">
+<h2>PACKAGING_FUNC_GET_TARGZ_REALTARGET</h2>
+This function is provided to translate a targz pattern target
+as it is named in the TARGZ_TARGETS list to the
+real target that results from the pattern rules.
+
+<hr>
+<a name="PACKAGING_FUNC_GET_TARGZ_FLAGTARGET">
+<h2>PACKAGING_FUNC_GET_TARGZ_FLAGTARGET</h2>
+This function is provided to translate a targz pattern target
+as it is named in the TARGZ_TARGETS list to the
+flag target that is used to track dependencies on a given
+targz pattern target. This flag target is probably of little
+use outside the the internals of the packaging build system module,
+since PACKAGING_FUNC_GET_TARGZ_REALTARGET provides a better
+candidate for chaining a target target in the dependency
+list of another pattern target.
+
+
+<hr>
+<a name="PACKAGING_FUNC_GET_ZIP_REALTARGET">
+<h2>PACKAGING_FUNC_GET_ZIP_REALTARGET</h2>
+This function is provided to translate a zip pattern target
+as it is named in the ZIP_TARGETS list to the
+real target that results from the pattern rules.
+
+<hr>
+<a name="PACKAGING_FUNC_GET_ZIP_FLAGTARGET">
+<h2>PACKAGING_FUNC_GET_ZIP_FLAGTARGET</h2>
+This function is provided to translate a zip pattern target
+as it is named in the ZIP_TARGETS list to the
+flag target that is used to track dependencies on a given
+zip pattern target. This flag target is probably of little
+use outside the the internals of the packaging build system module,
+since PACKAGING_FUNC_GET_ZIP_REALTARGET provides a better
+candidate for chaining a target target in the dependency
+list of another pattern target.
+
+
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+COMPONENT_ROOT=../..
+BS_ROOT=$(COMPONENT_ROOT)/../build3
+
+include $(BS_ROOT)/defines.mk
+
+
+#
+# The resulting package isn't really useful, just shows how you can use the target options
+#
+
+moof_pkg_target=moof-tar1.tar.gz
+
+PACKAGEDIR_TARGETS=foo-pkg1 $(moof_pkg_target)
+TARGZ_TARGETS=moof-tar1
+
+
+foo-pkg1_FROM=$(COMPONENT_ROOT)/sample-srcdir
+#foo-pkg1_DEST=$(PROJECT)
+foo-pkg1_SCRUB=CVS
+
+moof-tar1_FILES=foo-pkg1
+moof-tar1_CWD=$(PACKAGE_TARGET_DIR)
+
+#$(moof_pkg_target)_FROM=$(BS_ARCH_TARGET_DIR)/moof-tar1.tar.gz # This is the default
+$(moof_pkg_target)_DEST=moof-tarball-package-dir/
+
+
+include $(BS_ROOT)/rules.mk
+
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>

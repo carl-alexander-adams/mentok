@@ -1,0 +1,12 @@
+build3
+    The core of the build system 3.0, AKA "Project Mentok"
+
+build3-sample-component-tree
+    A sample componet source tree that uses build system 3
+
+src
+    Build system 3 componet src tree that uses the copy of
+    build system 3 in this dir. This is how build system 3
+    pushes itself to dist. (Holly recursion batman, the build
+    system's self pushing component root)
+

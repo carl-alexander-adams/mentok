@@ -1,0 +1,38 @@
+
+<TABLE WIDTH=80% CELLSPACING=0 CELLPADDING=1 ALIGN=CENTER BORDER=0 BGCOLOR="RED">
+  <TR ALIGN=MIDDLE>
+    <TD ALIGN=CENTER>
+     <FONT FACE="Arial,Helvetica" COLOR="#FFFFFF"><B>
+	ERROR
+     </B></FONT>
+    </TD>
+  </TR>
+  <TR ALIGN=MIDDLE>
+   <TD ALIGN=CENTER>
+     <TABLE WIDTH=100% CELLSPACING=5 CELLPADDING=5 ALIGN=CENTER BORDER=0 BGCOLOR="#000000">
+      <TR ALIGN=MIDDLE>
+        <TD ALIGN=CENTER>
+         <P>
+          <B>
+           <FONT FACE="Arial,Helvetica" COLOR="#FF0000">
+            There were errors in the push process:<P>
+             [% error %]
+             <BR>
+             <BR>
+             Please report the problem to - Release
+             </B>
+           </FONT>
+          </B>
+         </P>
+        </TD>
+       </TR>
+     </TABLE>
+   </TD>
+  </TR>
+</TABLE>
+<BR>
+
+
+
+
+
