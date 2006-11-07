@@ -126,15 +126,19 @@ $result_OSRuntimeOldName = 'unknown';
 $result_OSRuntimeName = 'unknown';
 
 
-
 #
 # Refine notions of hardware and instruction sets,
 #
 $result_machineType = `uname -m`;
 $result_machineType = normalize($result_machineType);
 
-$result_machineProc = `uname -p`;
-$result_machineProc = normalize($result_machineProc);
+if ($result_OSName eq "HP-UX") {
+  $result_machineProc = 'unknown';
+}
+else {
+  $result_machineProc = `uname -p`;
+  $result_machineProc = normalize($result_machineProc);
+}
 
 # XXX I'm not sure if this is right. Check Mac OSX and Cygwin too
 $result_machineInstset = $result_machineType;
@@ -183,6 +187,13 @@ elsif ($result_OSName eq "Darwin") {
    $result_OSRuntimeRevMinor, 
    $result_OSRuntimeRevPatch) = split(/\./, $tmp_rev, 3);
   $result_OSRuntimeOldName = $result_OSRuntimeName . '-' . $tmp_rev
+}
+elsif ($result_OSName eq "HP-UX") {
+  $result_OSRuntimeName = 'HP-UX';
+  $result_OSRuntimeOldName = 'HP-UX';
+  $result_OSRuntimeRevMajor = $result_OSRevMajor;
+  $result_OSRuntimeRevMinor = $result_OSRevMinor;
+  $result_OSRuntimeRevPatch = $result_OSRevPatch;
 }
 
 #
