@@ -15,14 +15,29 @@ Project Mentok
 </tr>
 <tr><td>
 Mentok is an enterprise grade build system designed for release engineering 
-automation. It is designed to not require developers to understand the finer points 
-of make (as they never do anyways).  Mentok provides project wide build 
-controls but a allows deep degrees of customization per directory or target.  
-Mentok is the opposite of autoconf.  It is designed for consistency of 
+automation. Mentok has two primary components: a makefile system known as "build3",
+and release engineering automation scripts known as the "build harness".
+<p>
+the makefile component of Mentoks  is designed to not require developers to 
+understand the finer points  of make (as they never do anyways).  Mentok provides 
+project wide build controls but a allows deep degrees of customization per directory or target.  
+Mentok makefile system is the opposite of autoconf.  It is designed for consistency of 
 compilation over "just working" with whatever tool chain happens to be found
 in the environment. 
-
 <p>
+The build harness is designed to manage the building and tagging the many diverse
+projects found within a typical engineering environment.  It's modular design accomodates
+a variety of revision control systems, as well as arbitrary build systems (yes, it supports
+more than build3).
+<p>
+The important stuff:
+<ul>
+<li><a href="http://sourceforge.net/project/showfiles.php?group_id=97706">Download current source code</a></li>
+<li><a href="build3-doc-snapshot/index.html">Current Build3 Makefile Documentation on-line</a></li>
+<li>Current Build Harness Documentation on-line (Link not yet availible)</li>
+<li><a href="http://www.sourceforge.net/projects/mentok/">Mentok's Source Forge Project Home</a></li>
+</ul>
+
 <!-- This proly belongs in the build3 html files
 <i><center>
 The Zen of Make
@@ -46,9 +61,6 @@ all you must do is request the palace from your pile of stones, and it will be.
 
 </td></tr>
 
-<tr><td>
-<a href="http://www.sourceforge.net/projects/mentok/">Mentok's Source Forge Home</a>
-</td></tr>
 </table>
 
 

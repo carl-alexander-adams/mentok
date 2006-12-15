@@ -1,0 +1,368 @@
+<html> <head>
+<title>Build System XML/Metadata Module</title>
+</head>
+
+<body>
+<h1>Build System XML/Metadata Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Build System XML/Metadata Module provides the
+build system with the ability to process XML files,
+including validation and transformation.
+
+<hr>
+<h2>Macros and Controls</h2>
+<dl>
+  <dt><b>XML_VALIDATE_CLASS</b></dt>
+  <dd>
+       This is the java class entry point into the default XML
+       validation utility. The value is used to set the default value
+       of the complete validation command line. Defaults to "Validate".
+       </dd><p>
+  <dt><b>XML_VALIDATE_CP</b></dt>
+  <dd>
+       This is the java classpath passed to the JVM running the
+       validation utility. The value is used to set the default
+       classpath argument in the complete validation command
+       line. Defaults based on having bb-md-validate in the
+       IMPORT_NOARCH_TARGETS list with default import options.
+       </dd><p>
+  <dt><b>XML_VALIDATE_JAVAFLAGS</b></dt>
+  <dd>
+       This is the extra java command line options passed to the JVM
+       running the validation utility. The value is used in the
+       default version of the complete validation command
+       line. Defaults to "-client" for performance reasons.
+       </dd><p>
+  <dt><b>XML_VALIDATE_CMD</b></dt>
+  <dd>
+       This is the actual command line used for running the validation
+       utility. The default value builds a command line from the three
+       previous variables. Any command must be able to take exactly
+       two arguments: the schema and the XML to be validated.
+       </dd><p>
+  <dt><b>XML_TRANSFORM_CLASS</b></dt>
+  <dd>
+       This is the java class entry point into the default XML
+       transform utility. The value is used to set the default value
+       of the complete transform command line. Defaults to "Transform".
+       </dd><p>
+  <dt><b>XML_TRANSFORM_CP</b></dt>
+  <dd>
+       This is the java classpath passed to the JVM running the
+       transform utility. The value is used to set the default
+       classpath argument in the complete transform command
+       line. Defaults based on having bb-md-validate in the
+       IMPORT_NOARCH_TARGETS list with default import options.
+       </dd><p>
+  <dt><b>XML_TRANSFORM_JAVAFLAGS</b></dt>
+  <dd>
+       This is the extra java command line options passed to the JVM
+       running the transform utility. The value is used in the default
+       version of the complete transform command line. Defaults to
+       "-client" for performance reasons.
+       </dd><p>
+  <dt><b>XML_TRANSFORM_CMD</b></dt>
+  <dd>
+       This is the actual command line used for running the transform
+       utility. The default value builds a command line from the three
+       previous variables. Any command must be able to take exactly
+       three arguments: the XSLT script, the XML to be transformed,
+       and the output file.
+       </dd><p>
+  <dt><b>XML_TRANSFORM_XSL</b></dt>
+  <dd>
+       This variable is used as the default XSLT script used in
+       XML_TRANSFORM_TARGETS if there is no target-specific XSLT
+       script specified. This can be used if many XML files are being
+       transformed the same way in a single Makefile.
+       </dd><p>
+  <dt><b>XML_TFSPLITXSL</b></dt>
+  <dd>
+       This variable is used as the default XSLT script used in
+       XML_TFSPLIT_TARGETS if there is no target-specific XSLT
+       script specified. This can be used if many XML files are being
+       transformed the same way in a single Makefile.
+       </dd><p>
+  <dt><b>XML_TFSPLITCMD</b></dt>
+  <dd>
+       This variable is used as the default output splitting used in
+       XML_TFSPLIT_TARGETS if there is no target-specific command
+       specified. This can be used if many XML files are being
+       transformed the same way in a single Makefile.
+       </dd><p>
+  <dt><b>XML_TFSPLITBXSL</b></dt>
+  <dd>
+       This variable is used as the default XSLT script used in
+       XML_TFSPLIT_TARGETS if there is no target-specific XSLT
+       script specified as %_BASEXSL. This can be used if many XML
+       files are being transformed the same way in a single Makefile.
+       </dd><p>
+</dl>
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#XML_VALIDATE_TARGETS">XML_VALIDATE_TARGETS</a>
+  <li><a href="#XML_TRANSFORM_TARGETS">XML_TRANSFORM_TARGETS</a>
+  <li><a href="#XML_TFSPLIT_TARGETS">XML_TFSPLIT_TARGETS</a>
+  <li><a href="#xmlmd_validate">xmlmd_validate</a>
+  <li><a href="#xmlmd_transform">xmlmd_transform</a>
+  <li><a href="#xmlmd_tfsplit">xmlmd_tfsplit</a>
+  <li><a href="#xmlmd_info">xmlmd_info</a>
+  <li><a href="#xmlmd_man">xmlmd_man</a>
+</ul>
+
+
+<hr>
+<a name="XML_VALIDATE_TARGETS">
+<h2>XML_VALIDATE_TARGETS</h2>
+<h3>XML_VALIDATE_TARGETS Overview</h3>
+XML_VALIDATE_TARGETS is the XML schema validation target. This pattern
+target is used to ensure that an XML file is properly formatted.
+XML_VALIDATE_TARGETS patten targets will be run during the "pretarget"
+phase of a build.
+The general form of the validate command used is as follows:
+<blockquote>
+<i>&lt;java&gt; &lt;java flags&gt;</i> -cp <i>&lt;validate classpath&gt;
+&lt;validate class&gt; &lt;XML schema&gt; &lt;XML file&gt;</i>
+</blockquote>
+
+<h3>XML_VALIDATE_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;validate target&gt;</i>_CMD</b></dt>
+  <dd>
+       Override the default validation command line for the
+       current target.
+       </dd><p>
+	
+  <dt><b><i>&lt;validate target&gt;</i>_SCHEMA</b></dt>
+  <dd>
+       Set the schema for the current <i>&lt;validate target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;validate target&gt;</i>_SRC</b></dt>
+  <dd>
+       Override the default source file
+       location of <i>&lt;validate target&gt;</i>
+       </dd><p>
+	
+</dl>
+
+<hr>
+<a name="XML_TRANSFORM_TARGETS">
+<h2>XML_TRANSFORM_TARGETS</h2>
+<h3>XML_TRANSFORM_TARGETS Overview</h3>
+XML_TRANSFORM_TARGETS is the XML transformation target. This pattern
+target is used to apply an XSLT style transform to an XML file
+XML_TRANSFORM_TARGETS patten targets will be run during the "target"
+phase of a build.
+The general form of the transform command used is as follows:
+<blockquote>
+<i>&lt;java&gt; &lt;java flags&gt;</i> -cp <i>&lt;transform classpath&gt;
+&lt;transform class&gt; &lt;XSLT script&gt; &lt;XML file&gt; &lt;output&gt;</i>
+</blockquote>
+
+<h3>XML_TRANSFORM_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;transform target&gt;</i>_CMD</b></dt>
+  <dd>
+       Override the default transform command line for the
+       current target.
+       </dd><p>
+	
+  <dt><b><i>&lt;transform target&gt;</i>_VALCMD</b></dt>
+  <dd>
+       Override the default validate command line for the
+       current target used in input/output schema validation.
+       </dd><p>
+	
+  <dt><b><i>&lt;transform target&gt;</i>_INSCHEMA</b></dt>
+  <dd>
+       If set, check the input XML file against this schema for the
+       current <i>&lt;transform target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;transform target&gt;</i>_OUTSCHEMA</b></dt>
+  <dd>
+       If set, check the output XML file against this schema for the
+       current <i>&lt;transform target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;transform target&gt;</i>_INCHECK</b></dt>
+  <dd>
+       If set, check the input XML file using this program for
+       the current <i>&lt;transform target&gt;</i>. It should take the
+       input XML file as a single argument.
+       </dd><p>
+	
+  <dt><b><i>&lt;transform target&gt;</i>_XSL</b></dt>
+  <dd>
+       Override the default XSLT script file
+       for <i>&lt;transform target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;transform target&gt;</i>_SRC</b></dt>
+  <dd>
+       Override the default source file
+       location of <i>&lt;transform target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;transform target&gt;</i>_OUTFILE</b></dt>
+  <dd>
+       Override the default destination file
+       location of <i>&lt;transform target&gt;</i>.
+       Defaults to $(BS_NOARCH_TARGET_DIR)/<i>&lt;transform target&gt;</i>.
+       </dd><p>
+	
+</dl>
+
+<hr>
+<a name="XML_TFSPLIT_TARGETS">
+<h2>XML_TFSPLIT_TARGETS</h2>
+<h3>XML_TFSPLIT_TARGETS Overview</h3>
+XML_TFSPLIT_TARGETS is the XML transformation target. This pattern
+target is used to apply an XSLT style transform to an XML file
+XML_TFSPLIT_TARGETS patten targets will be run during the "target"
+phase of a build.
+The general form of the transform command used is as follows:
+<blockquote>
+<i>&lt;java&gt; &lt;java flags&gt;</i> -cp <i>&lt;transform classpath&gt;
+&lt;transform class&gt; &lt;XSLT script&gt; &lt;XML file&gt; &lt;output&gt;</i>
+</blockquote>
+
+<h3>XML_TFSPLIT_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;tfsplit target&gt;</i>_CMD</b></dt>
+  <dd>
+       Override the default transform command line for the
+       current target.
+       </dd><p>
+	
+  <dt><b><i>&lt;tfsplit target&gt;</i>_VALCMD</b></dt>
+  <dd>
+       Override the default validate command line for the
+       current target used in input schema validation.
+       </dd><p>
+	
+  <dt><b><i>&lt;tfsplit target&gt;</i>_SCHEMA</b></dt>
+  <dd>
+       If set, check the input XML file against this schema for the
+       current <i>&lt;tfsplit target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;tfsplit target&gt;</i>_SPLITXSL</b></dt>
+  <dd>
+       Override the default XSLT script file used to generate the
+       input to the split command for <i>&lt;tfsplit target&gt;</i>
+       </dd><p>
+	
+  <dt><b><i>&lt;tfsplit target&gt;</i>_SPLITCMD</b></dt>
+  <dd>
+       Override the default command used to split the output of the
+       %_SPLITXSL transform for <i>&lt;tfsplit target&gt;</i>
+       </dd><p>
+	
+  <dt><b><i>&lt;tfsplit target&gt;</i>_BASEOUT</b></dt>
+  <dd>
+       If set, perform a 1-1 transform of the input file into
+       a file in the output directory with this filename
+       for <i>&lt;tfsplit target&gt;</i>
+       </dd><p>
+
+  <dt><b><i>&lt;tfsplit target&gt;</i>_BASEXSL</b></dt>
+  <dd>
+       Override the default XSLT script file used to generate
+       %_BASEOUT file for <i>&lt;tfsplit target&gt;</i>
+       </dd><p>
+	
+  <dt><b><i>&lt;tfsplit target&gt;</i>_SRC</b></dt>
+  <dd>
+       Override the default source file
+       location of <i>&lt;tfsplit target&gt;</i>
+       </dd><p>
+	
+  <dt><b><i>&lt;tfsplit target&gt;</i>_OUT</b></dt>
+  <dd>
+       Override the default output directory
+       location of <i>&lt;tfsplit target&gt;</i>
+       </dd><p>
+	
+</dl>
+
+
+
+<hr>
+<a name="xmlmd_validate">
+<h2>xmlmd_validate</h2>
+<h3>xmlmd_validate Overview</h3>
+Simple target to trigger the building of XML_VALIDATE_TARGETS
+pattern targets independent of the main build "pretarget" phase. 
+
+<hr>
+<a name="xmlmd_transform">
+<h2>xmlmd_transform</h2>
+<h3>xmlmd_transform Overview</h3>
+Simple target to trigger the building of XML_TRANSFORM_TARGETS
+pattern targets independent of the main build "target" phase. 
+
+<hr>
+<a name="xmlmd_tfsplit">
+<h2>xmlmd_tfsplit</h2>
+<h3>xmlmd_tfsplit Overview</h3>
+Simple target to trigger the building of XML_TFSPLIT_TARGETS
+pattern targets independent of the main build "target" phase. 
+
+
+<hr>
+<a name="xmlmd_info">
+<h2>xmlmd_info</h2>
+<h3>xmlmd_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the XML/metadata module of
+the build system. The <b>xmlmd_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>xmlmd_info</b> target.
+
+<hr>
+<a name="xmlmd_man">
+<h2>xmlmd_man</h2>
+<h3>xmlmd_man Overview</h3>
+Simple target to display usage information and help pertaining to 
+the XML/metadata module of the build system.
+The <b>xmlmd_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>xmlmd_man</b> target.
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+# The source root of this Component
+COMPONENT_ROOT=../..
+
+# The root of the build system
+BS_ROOT=$(COMPONENT_ROOT)/build3
+
+# Boostrap Build system definitions.
+include $(BS_ROOT)/defines.mk
+
+# validate an XML file
+XML_VALIDATE_TARGETS=bb-event.xml
+bb-event.xml_SCHEMA=md_2.0-PPEM.xsd
+bb-event.xml_SRC=bb-event-PPEM.md
+
+# split an XML file into multiple HTML files
+XML_TFSPLIT_TARGETS=bbeventhtml
+bbeventhtml_SRC=bb-event-PPEM.md
+bbeventhtml_SPLITXSL=md2html.xsl
+bbeventhtml_SPLITCMD=md2html.pl
+bbeventhtml_BASEOUT=bb-event.xml
+bbeventhtml_BASEXSL=md_trim.xsl
+
+# Finally, include the rules to make the build system go.
+include $(BS_ROOT)/rules.mk
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>
