@@ -197,7 +197,26 @@ elsif ($result_OSName eq "HP-UX") {
 }
 
 #
-# Build3's platform name.
+# Final cleanup. We don't like empty values.
+#
+if (! ${result_machineName} )       { ${result_machineName} = "unknown" ; }
+if (! ${result_OSName} )            { ${result_OSName} = "unknown" ; }
+if (! ${result_OSRevMajor} )        { ${result_OSRevMajor} = "0" ; }
+if (! ${result_OSRevMinor} )        { ${result_OSRevMinor} = "0" ; }
+if (! ${result_OSRevPatch} )        { ${result_OSRevPatch} = "0" ; }
+if (! ${result_OSRuntimeName} )     { ${result_OSRuntimeName} = "unknown" ; }
+if (! ${result_OSRuntimeRevMajor} ) { ${result_OSRuntimeRevMajor} = "0" ; }
+if (! ${result_OSRuntimeRevMinor} ) { ${result_OSRuntimeRevMinor} = "0" ; }
+if (! ${result_OSRuntimeRevPatch} ) { ${result_OSRuntimeRevPatch} = "0" ; }
+if (! ${result_OSRuntimeOldName} )  { ${result_OSRuntimeOldName} = "unknown" ; }
+if (! ${result_machineType} )       { ${result_machineType} = "unknown" ; }
+if (! ${result_machineProc} )       { ${result_machineProc} = "unknown" ; }
+if (! ${result_machineInstset} )    { ${result_machineInstset} = "unknown" ; }
+if (! ${result_build3Platform} )    { ${result_build3Platform} = "unknown" ; }
+
+
+#
+# Build3's platform name (a constructed value)
 #
 $result_build3Platform = "${result_OSName}-";
 if (${result_OSRevMajor}) {$result_build3Platform .= "${result_OSRevMajor}";}
@@ -208,10 +227,10 @@ if (${result_OSRuntimeRevMajor}) {$result_build3Platform .= "${result_OSRuntimeR
 if (${result_OSRuntimeRevMinor}) {$result_build3Platform .= ".${result_OSRuntimeRevMinor}";}
 if (${result_OSRuntimeRevPatch}) {$result_build3Platform .= ".${result_OSRuntimeRevPatch}";}
 
+
 #
 # Output
 #
-
 if ($display_format eq 'long') {
   #
   # Long format output
