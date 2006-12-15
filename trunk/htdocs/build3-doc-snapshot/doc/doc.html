@@ -1,0 +1,136 @@
+<html> <head>
+<title>Build System Document Generation Module</title>
+</head>
+
+<body>
+<h1>Build System Document Generation Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Build System Document Generation Module provides the
+build system with the ability to generate documents from
+other sources. 
+This includes the ability to run doxygen and javadoc (although
+javadoc has yet to be implemented).
+
+<hr>
+<h2>Macros and Controls</h2>
+<!-- 
+<dl>
+  <dt><b>CONFIG_CONTROL_XXX</b></dt>
+  <dd>
+       Control docs go here.
+       </dd><p>
+</dl>
+-->
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#DOXYGEN_TARGETS">DOXYGEN_TARGETS</a>
+  <li><a href="#doc_doxygen">doc_doxygen</a>
+  <li><a href="#doc_info">doc_info</a>
+  <li><a href="#doc_man">doc_man</a>
+</ul>
+
+
+<hr>
+<a name="DOXYGEN_TARGETS">
+<h2>DOXYGEN_TARGETS</h2>
+<h3>DOXYGEN_TARGETS Overview</h3>
+DOXYGEN_TARGETS is the doxygen
+(<a href="http://www.doxygen.org/">http://www.doxyten.org/</a>)
+pattern target. This pattern
+target is used to produce documents from source code and doxygen
+configuration files.
+DOXYGEN_TARGETS will be build during the "target" phase of a build.
+The general form of the doxygen command used
+to generate documents is as follows:
+<blockquote>
+<i>&lt;doxygen&gt; &lt;doxygen flags&gt;</i> &lt;doxygen config file&gt;</i>
+</blockquote>
+
+<p>
+The <i>&lt;doxygen flags&gt;</i> used to build the source code
+file are assembled from the following macros in the indicated order:
+<blockquote>
+FLAGS_DOXYGEN
+</blockquote>
+
+
+<h3>DOXYGEN_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;doxygen target&gt;</i>_DOXYGEN</b></dt>
+  <dd>
+       Override the default doxygen binary for the
+       current target.
+       </dd><p>
+	
+  <dt><b><i>&lt;doxygen target&gt;</i>_DOXYGENFLAGS</b></dt>
+  <dd>
+       Override FLAGS_DOXYGEN for the current <i>&lt;doxygen target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;doxygen target&gt;</i>_DEP</b></dt>
+  <dd>
+       Specify additional dependancies for
+       the current <i>&lt;doxygen target&gt;</i>.
+       </dd><p>
+	
+  <dt><b><i>&lt;doxy target&gt;</i>_SRC</b></dt>
+  <dd>
+       Override the default config file, "Doxyfile".
+       </dd><p>
+	
+</dl>
+
+<hr>
+<a name="doc_doxygen">
+<h2>doc_doxygen</h2>
+<h3>doc_doxygen Overview</h3>
+Simple target to trigger the building of DOXYGEN_TARGETS
+pattern targets independent of the main build "target" phase. 
+
+
+<hr>
+<a name="doc_info">
+<h2>doc_info</h2>
+<h3>doc_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the document generation module of
+the build system. The <b>doc_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>doc_info</b> target.
+
+<hr>
+<a name="doc_man">
+<h2>doc_man</h2>
+<h3>doc_man Overview</h3>
+Simple targes to display usage information and help pertaining to 
+the document generation module of the build system.
+The <b>doc_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>doc_man</b> target.
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+# The source root of this Component
+COMPONENT_ROOT=../..
+
+# The root of the build system
+BS_ROOT=$(COMPONENT_ROOT)/../build3
+
+# Boostrap Build system definitions.
+include $(BS_ROOT)/defines.mk
+
+# Generate src code from lex code.
+DOXYGEN_TARGETS=my_project_doxgen_docs
+
+my_project_doxygen_docs_SRC=my_project_Doxyfile
+
+include $(BS_ROOT)/rules.mk
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>

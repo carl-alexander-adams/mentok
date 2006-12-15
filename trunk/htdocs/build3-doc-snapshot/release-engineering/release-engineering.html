@@ -1,0 +1,137 @@
+<html> <head>
+<title>Build System Release Engineering Module</title>
+</head>
+
+<body>
+<h1>Build System Release Engineering Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Release Engineering module of the build system provides
+a translation layer between release engineering's
+automated build stripts and core targets of the build
+system.
+
+<hr>
+<h2>Macros and Controls</h2>
+
+<dl>
+  <dt><b>DISTTAG</b></dt>
+  <dd>
+       This macro is used to set the value of COMPONENT_DISTTAG, and is
+       provided as a translation layer between release engineering make
+       calling conventions and the architecure and naming conventions of the
+       current build system.
+       </dd><p>
+
+  <dt><b>NC_CONTROL_STRIP</b></dt>
+  <dd>
+       This macro is used to set the value of NC_CONTROL_STRIP, and is
+       provided as a translation layer between release engineering make
+       calling conventions and the architecure and naming conventions of the
+       current build system.
+       </dd><p>
+
+  <dt><b>NC_CONTROL_DEBUG</b></dt>
+  <dd>
+       This macro is used to set the value of NC_CONTROL_DEBUG, and is
+       provided as a translation layer between release engineering make
+       calling conventions and the architecure and naming conventions of the
+       current build system.
+       </dd><p>
+</dl>
+
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#all">all</a>
+  <li><a href="#package">package</a>
+  <li><a href="#dist">dist</a>
+  <li><a href="#imports">imports</a>
+  <li><a href="#releaseeng_info">releaseeng_info</a>
+  <li><a href="#releaseeng_man">releaseeng_man</a>
+</ul>
+	
+
+<hr>
+<a name="all">
+<h2>all</h2>
+<h3>all Overview</h3>
+Simple target used by release engineering to
+perform the bulk of the build for a component. This
+is equivalent to the "target" target of the core build system.
+
+<hr>
+<a name="package">
+<h2>package</h2>
+<h3>package Overview</h3>
+Simple target used by release engineering to
+stage the packaging of a component build and is performed only after
+the "all" target has been built.  This is equivalent to the "packaging_packagedir"
+and "packaging_packagefile"
+targets of the core build system provided by the packaging module.
+
+<hr>
+<a name="dist">
+<h2>dist</h2>
+<h3>dist Overview</h3>
+Simple target used by release engineering to push a component build
+to the component repository (the dist area). "dist" is
+only a valid target once a "package" target has been built. 
+This is equivalent to the "component_dist"
+target of the core build system provided by the component module.
+
+<hr>
+<a name="imports">
+<h2>imports</h2>
+<h3>imports Overview</h3>
+Simple target used by release engineering to import a component
+build's import dependancies from
+the component repository (the dist area). "imports" must be
+done before "all" can be built, and will be done automaticly by
+a the building of an "all" target.
+This is equivalent to the "component_import"
+target of the core build system provided by the component module.
+
+
+<hr>
+<a name="releaseeng_info">
+<h2>releaseeng_info</h2>
+<h3>releaseeng_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the release engineering module of
+the build system. The <b>releaseeng_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>releaseeng_info</b> target.
+
+<hr>
+<a name="releaseeng_man">
+<h2>releaseeng_man</h2>
+<h3>releaseeng_man Overview</h3>
+Simple target to display usage information and help pertaining to 
+the release engineering module of the build system.
+The <b>releaseeng_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>releaseeng_man</b> target.
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+# The source root of this component
+COMPONENT_ROOT=../..
+
+# The root of the build system
+BS_ROOT=$(COMPONENT_ROOT)/../build3
+
+# Boostrap Build system definitions.
+include $(BS_ROOT)/defines.mk
+
+
+
+# Finally, include the rules to make the build system go.
+include $(BS_ROOT)/rules.mk
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>
