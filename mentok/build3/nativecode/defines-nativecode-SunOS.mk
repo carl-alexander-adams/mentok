@@ -7,42 +7,43 @@
 # Gnu tool chain
 #
 ifeq ($(BIN_GNU_CC),)
-BIN_GNU_CC=/usr/local/gcc-3.2/bin/gcc
+BIN_GNU_CC=/tools/bin/gcc
 endif
 ifeq ($(BIN_GNU_CXX),)
-BIN_GNU_CXX=/usr/local/gcc-3.2/bin/g++
+BIN_GNU_CXX=/tools/bin/g++
 endif
 ifeq ($(BIN_GNU_AS),)
-BIN_GNU_AS=/usr/local/gcc-3.2/bin/gcc
+BIN_GNU_AS=/tools/bin/gcc
 endif
 ifeq ($(BIN_GNU_CPP),)
-BIN_GNU_CPP=/usr/local/gcc-3.2/bin/gcc -E
+BIN_GNU_CPP=/tools/bin/gcc -E
 endif
 ifeq ($(BIN_GNU_LD),)
-BIN_GNU_LD=/usr/local/gcc-3.2/bin/gcc
+BIN_GNU_LD=/tools/bin/gcc
 endif
 ifeq ($(BIN_GNU_AR),)
-BIN_GNU_AR=/usr/local/bin/ar
+BIN_GNU_AR=/tools/bin/ar
 endif
 ifeq ($(BIN_GNU_STRIP),)
-BIN_GNU_STRIP=/usr/local/bin/strip
+BIN_GNU_STRIP=/tools/bin/strip
 endif
 
 
 
 
 ifeq ($(FLAGS_GNU_CC),)
-FLAGS_GNU_CC=-W \
-	-Wall \
-	-Wcast-qual \
-	-Wcast-align \
-	-Wpointer-arith \
-	-Wsign-compare \
-	-Winline \
-	-Waggregate-return \
-	-Wmissing-prototypes \
-	-Wmissing-declarations \
-	-Wunused
+#FLAGS_GNU_CC=-W \
+#	-Wall \
+#	-Wcast-qual \
+#	-Wcast-align \
+#	-Wpointer-arith \
+#	-Wsign-compare \
+#	-Winline \
+#	-Waggregate-return \
+#	-Wmissing-prototypes \
+#	-Wmissing-declarations \
+#	-Wunused
+
 #	-v \
 #	-ftime-report \
 #	-fmem-report
