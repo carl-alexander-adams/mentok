@@ -154,12 +154,17 @@ if ($result_OSName eq "SunOS") {
 elsif ($result_OSName eq "Linux") {
     # Of course, with a million linux distros, there
     # is no easy way to do this.
-    open(ETCISSUE, '/etc/issue');
-    while (<ETCISSUE>) {
+    open(ETC_ISSUE, '/etc/issue');
+    while (<ETC_ISSUE>) {
         push(@etc_issue, $_);
     }
-    close(ETCISSUE);
+    close(ETC_ISSUE);
 
+    open(ETC_LSBRELEASE, '/etc/lsb-release');
+    while (<ETC_LSBRELEASE>) {
+        push(@etc_lsbrelease, $_);
+    }
+    close(ETC_LSBRELEASE);
 
     if (-f '/etc/gentoo-release') {
         # /etc/issue:
@@ -170,13 +175,14 @@ elsif ($result_OSName eq "Linux") {
         #
         # Gentoo Base System version 1.12.6
         # 
+        $result_OSRuntimeName = 'Gentoo';
+
         open(ETC_DISTRORELEASE, '/etc/gentoo-release');
         while (<ETC_DISTRORELEASE>) {
+	    if ($_ =~  /^\s*$/) { next; } 
             push(@etc_distrorelease, $_);
         }
         close(ETC_DISTRORELEASE);
-
-        $result_OSRuntimeName = 'Gentoo';
 
         @tmp_version = grep(/Gentoo Base System/, @etc_distrorelease);
 	$tmp_version = pop(@tmp_version);
@@ -194,13 +200,14 @@ elsif ($result_OSName eq "Linux") {
 	# SUSE LINUX Enterprise Server 9 (i586)
 	# VERSION = 9
 	# 
+        $result_OSRuntimeName = 'SuSE';
+
         open(ETC_DISTRORELEASE, '/etc/SuSE-release');
         while (<ETC_DISTRORELEASE>) {
+	    if ($_ =~  /^\s*$/) { next; } 
             push(@etc_distrorelease, $_);
         }
         close(ETC_DISTRORELEASE);
-
-        $result_OSRuntimeName = 'SuSE';
 
         @tmp_version = grep(/VERSION/, @etc_distrorelease);
 	$tmp_version = pop(@tmp_version);
@@ -221,13 +228,21 @@ elsif ($result_OSName eq "Linux") {
 	# UnitedLinux 1.0 (i586)
 	# VERSION = 1.0
 	#
+	# 
+	# /etc/lsb-release:
+	# LSB_VERSION="1.2"
+	# DISTRIB_ID="UnitedLinux"
+	# DISTRIB_RELEASE="1.0"
+	# DISTRIB_DESCRIPTION="UnitedLinux 1.0 (i586)"
+	# 
+	$result_OSRuntimeName = 'UnitedLinux';
+
         open(ETC_DISTRORELEASE, '/etc/UnitedLinux-release');
         while (<ETC_DISTRORELEASE>) {
+	    if ($_ =~  /^\s*$/) { next; } 
             push(@etc_distrorelease, $_);
         }
         close(ETC_DISTRORELEASE);
-
-	$result_OSRuntimeName = 'UnitedLinux';
 
         @tmp_version = grep(/VERSION/, @etc_distrorelease);
 	$tmp_version = pop(@tmp_version);
@@ -239,6 +254,8 @@ elsif ($result_OSName eq "Linux") {
     # Need to add RedHat Enterprise Linux here.
     # 
     elsif (-f '/etc/fedora-release') {
+	# Fedora is redhat derived, so test for it before redhat.
+	#
         # /etc/issue:
         # 
         # Fedora Core release 5 (Bordeaux)
@@ -248,13 +265,14 @@ elsif ($result_OSName eq "Linux") {
 	# 
         # Fedora Core release 5 (Bordeaux)
         # 
+	$result_OSRuntimeName = 'FedoraCore';
+
         open(ETC_DISTRORELEASE, '/etc/fedora-release');
         while (<ETC_DISTRORELEASE>) {
+	    if ($_ =~  /^\s*$/) { next; } 
             push(@etc_distrorelease, $_);
         }
         close(ETC_DISTRORELEASE);
-
-	$result_OSRuntimeName = 'FedoraCore';
 
 	@tmp_version = grep(/Fedora Core/, @etc_distrorelease);
 	$tmp_version = pop(@tmp_version);
@@ -274,13 +292,14 @@ elsif ($result_OSName eq "Linux") {
 	# 
 	# Red Hat Linux release 7.1 (Seawolf)
         # 
+	$result_OSRuntimeName = 'RedHat';
+
         open(ETC_DISTRORELEASE, '/etc/redhat-release');
         while (<ETC_DISTRORELEASE>) {
+	    if ($_ =~  /^\s*$/) { next; } 
             push(@etc_distrorelease, $_);
         }
         close(ETC_DISTRORELEASE);
-
-	$result_OSRuntimeName = 'RedHat';
 
 	@tmp_version = grep(/Red Hat Linux/, @etc_distrorelease);
 	$tmp_version = pop(@tmp_version);
@@ -288,16 +307,60 @@ elsif ($result_OSName eq "Linux") {
         ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
             = split(/\./, $tmp_version, 3);
     }
-    elsif (grep(/Debian/, @etc_issue)) {
+    elsif (grep(/Ubuntu/, @etc_issue)) {
+	# Ubuntu is Debian derived, so test for it before Debian
+	# 
+	# /etc/issue: 
+	# 
+	# Ubuntu 6.06.1 LTS \n \l
+	# 
+	# 
+	# /etc/lsb-release:
+	# 
+	# DISTRIB_ID=Ubuntu
+	# DISTRIB_RELEASE=6.06
+	# DISTRIB_CODENAME=dapper
+	# DISTRIB_DESCRIPTION="Ubuntu 6.06.1 LTS"
+	# 
+	# 
+	# /etc/debian_version: 
+	# 
+	# testing/unstable
+	# 
+	$result_OSRuntimeName = 'Ubuntu';
+
+	@tmp_version = grep(/Ubuntu/, @etc_issue);
+	$tmp_version = pop(@tmp_version);
+	$tmp_version =~ s/^.*Ubuntu\s+([^\s]+).*$/\1/;
+        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+            = split(/\./, $tmp_version, 3);
+
+	# @tmp_version = grep(/DISTRIB_RELEASE/, @etc_lsbrelease);
+	# $tmp_version = pop(@tmp_version);
+	# $tmp_version =~ s/.*=\s+//;
+        # ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+        #     = split(/\./, $tmp_version, 3);
+    }
+    elsif (-f '/etc/debian_version') {
         # /etc/issue:
         # 
 	# Debian GNU/Linux 4.0 \n \l
-	
+	#
+	# /etc/debian_version:
+	#
+	# 4.0
+	#
+	# 
 	$result_OSRuntimeName = 'Debian';
+	
+        open(ETC_DISTRORELEASE, '/etc/debian_version');
+        while (<ETC_DISTRORELEASE>) {
+	    if ($_ =~  /^\s*$/) { next; } 
+            push(@etc_distrorelease, $_);
+        }
+        close(ETC_DISTRORELEASE);
 
-	@tmp_version = grep(/Debian/, @etc_issue);
-	$tmp_version = pop(@tmp_version);
-	$tmp_version =~ s/^.*Debian GNU\/Linux\s+([^\s]+).*$/\1/;
+	$tmp_version = shift(@etc_distrorelease);
         ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
             = split(/\./, $tmp_version, 3);
     }
