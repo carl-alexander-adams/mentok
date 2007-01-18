@@ -207,6 +207,17 @@ elsif ($result_OSName eq "Linux") {
     #    elsif (-FedoreCore-) {
     #        $result_OSRuntimeName = 'RedHatFedora';
     #    }
+    elsif (grep(/Debian/, @etc_issue)) {
+	# Debian GNU/Linux 4.0 \n \l
+	
+	$result_OSRuntimeName = 'Debian';
+
+	@tmp_version = grep(/Debian/, @etc_issue);
+	$tmp_version = pop(@tmp_version);
+	$tmp_version =~ s/^.*Debian GNU\/Linux\s+([^\s]+).*$/\1/;
+        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+            = split(/\./, $tmp_version, 3);
+    }
     elsif (-f '/etc/gentoo-release') {
         #
         # Gentoo Base System version 1.12.6
