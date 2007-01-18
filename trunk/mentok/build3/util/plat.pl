@@ -154,60 +154,143 @@ if ($result_OSName eq "SunOS") {
 elsif ($result_OSName eq "Linux") {
     # Of course, with a million linux distros, there
     # is no easy way to do this.
-    open(ETCISSUE, "/etc/issue");
+    open(ETCISSUE, '/etc/issue');
     while (<ETCISSUE>) {
         push(@etc_issue, $_);
     }
     close(ETCISSUE);
 
 
-    if (grep(/SUSE LINUX Enterprise Server/, @etc_issue)) {
+    if (-f '/etc/gentoo-release') {
+        # /etc/issue:
+	#
+        # This is \n.\O (\s \m \r) \t
+	# 
+	# /etc/gentoo-release:
+        #
+        # Gentoo Base System version 1.12.6
+        # 
+        open(ETC_DISTRORELEASE, '/etc/gentoo-release');
+        while (<ETC_DISTRORELEASE>) {
+            push(@etc_distrorelease, $_);
+        }
+        close(ETC_DISTRORELEASE);
+
+        $result_OSRuntimeName = 'Gentoo';
+
+        @tmp_version = grep(/Gentoo Base System/, @etc_distrorelease);
+	$tmp_version = pop(@tmp_version);
+	$tmp_version =~ s/^.*version\s+([^\s]+).*$/\1/;
+        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+            = split(/\./, $tmp_version, 3);
+    }
+    elsif (-f '/etc/SuSE-release') {
+        # /etc/issue:
         # 
         # Welcome to SUSE LINUX Enterprise Server 9 (i586) - Kernel \r (\l).
         # 
-        $result_OSRuntimeName = 'SUSEEnterprise';
+	# /etc/SuSE-release:
+	# 
+	# SUSE LINUX Enterprise Server 9 (i586)
+	# VERSION = 9
+	# 
+        open(ETC_DISTRORELEASE, '/etc/SuSE-release');
+        while (<ETC_DISTRORELEASE>) {
+            push(@etc_distrorelease, $_);
+        }
+        close(ETC_DISTRORELEASE);
 
-	@tmp_version = grep(/SUSE LINUX/, @etc_issue);
+        $result_OSRuntimeName = 'SuSE';
+
+        @tmp_version = grep(/VERSION/, @etc_distrorelease);
 	$tmp_version = pop(@tmp_version);
-	$tmp_version =~ s/^.*Server\s+([^\s]+).*$/\1/;
+	$tmp_version =~ s/.*=\s+//;
         ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
-            = split(/\./, $tmp_version, 3);        
+            = split(/\./, $tmp_version, 3);
     }
-    elsif (grep(/UnitedLinux/, @etc_issue)) {
+    elsif (-f '/etc/UnitedLinux-release') {
+        # /etc/issue:
         #
         # Welcome to UnitedLinux 1.0 (i586) - Kernel \r (\l).
         # 
         # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
         # 
-        $result_OSRuntimeName = 'UnitedLinux';
+	#
+	# /etc/UnitedLinux-release:
+	# 
+	# UnitedLinux 1.0 (i586)
+	# VERSION = 1.0
+	#
+        open(ETC_DISTRORELEASE, '/etc/UnitedLinux-release');
+        while (<ETC_DISTRORELEASE>) {
+            push(@etc_distrorelease, $_);
+        }
+        close(ETC_DISTRORELEASE);
 
-	@tmp_version = grep(/UnitedLinux/, @etc_issue);
+	$result_OSRuntimeName = 'UnitedLinux';
+
+        @tmp_version = grep(/VERSION/, @etc_distrorelease);
 	$tmp_version = pop(@tmp_version);
-	$tmp_version =~ s/^.*UnitedLinux\s+([^\s]+).*$/\1/;
+	$tmp_version =~ s/.*=\s+//;
         ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
             = split(/\./, $tmp_version, 3);
     }
-    elsif (grep(/Red Hat Linux/, @etc_issue)) {
-        #
-        # Red Hat Linux release 7.1 (Seawolf)
+    #
+    # Need to add RedHat Enterprise Linux here.
+    # 
+    elsif (-f '/etc/fedora-release') {
+        # /etc/issue:
         # 
-        # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
+        # Fedora Core release 5 (Bordeaux)
+	# Kernel \r on an \m
+	# 
+	# /etc/fedore-release:
+	# 
+        # Fedora Core release 5 (Bordeaux)
         # 
-        $result_OSRuntimeName = 'RedHat';
+        open(ETC_DISTRORELEASE, '/etc/fedora-release');
+        while (<ETC_DISTRORELEASE>) {
+            push(@etc_distrorelease, $_);
+        }
+        close(ETC_DISTRORELEASE);
 
-	@tmp_version = grep(/Red Hat Linux/, @etc_issue);
+	$result_OSRuntimeName = 'FedoraCore';
+
+	@tmp_version = grep(/Fedora Core/, @etc_distrorelease);
 	$tmp_version = pop(@tmp_version);
 	$tmp_version =~ s/^.*release\s+([^\s]+).*$/\1/;
         ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
             = split(/\./, $tmp_version, 3);
     }
-    #    elsif (-RHELS-) {
-    #        $result_OSRuntimeName = 'RedHatEnterprise';
-    #    }
-    #    elsif (-FedoreCore-) {
-    #        $result_OSRuntimeName = 'RedHatFedora';
-    #    }
+    elsif (-f '/etc/redhat-release') {
+        # /etc/issue:
+        # 
+        # Red Hat Linux release 7.1 (Seawolf)
+        # 
+        # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
+        # 
+	# 
+	# /etc/redhat-release:
+	# 
+	# Red Hat Linux release 7.1 (Seawolf)
+        # 
+        open(ETC_DISTRORELEASE, '/etc/redhat-release');
+        while (<ETC_DISTRORELEASE>) {
+            push(@etc_distrorelease, $_);
+        }
+        close(ETC_DISTRORELEASE);
+
+	$result_OSRuntimeName = 'RedHat';
+
+	@tmp_version = grep(/Red Hat Linux/, @etc_distrorelease);
+	$tmp_version = pop(@tmp_version);
+	$tmp_version =~ s/^.*release\s+([^\s]+).*$/\1/;
+        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+            = split(/\./, $tmp_version, 3);
+    }
     elsif (grep(/Debian/, @etc_issue)) {
+        # /etc/issue:
+        # 
 	# Debian GNU/Linux 4.0 \n \l
 	
 	$result_OSRuntimeName = 'Debian';
@@ -215,24 +298,6 @@ elsif ($result_OSName eq "Linux") {
 	@tmp_version = grep(/Debian/, @etc_issue);
 	$tmp_version = pop(@tmp_version);
 	$tmp_version =~ s/^.*Debian GNU\/Linux\s+([^\s]+).*$/\1/;
-        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
-            = split(/\./, $tmp_version, 3);
-    }
-    elsif (-f '/etc/gentoo-release') {
-        #
-        # Gentoo Base System version 1.12.6
-        # 
-        open(ETCGENTOORELEASE, "/etc/gentoo-release");
-        while (<ETCGENTOORELEASE>) {
-            push(@etc_gentoorelease, $_);
-        }
-        close(ETCGENTOORELEASE);
-
-        $result_OSRuntimeName = 'Gentoo';
-
-        @tmp_version = grep(/Gentoo Base System/, @etc_gentoorelease);
-	$tmp_version = pop(@tmp_version);
-	$tmp_version =~ s/^.*version\s+([^\s]+).*$/\1/;
         ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
             = split(/\./, $tmp_version, 3);
     }
