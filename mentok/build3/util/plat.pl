@@ -183,6 +183,12 @@ elsif ($result_OSName eq "Linux") {
         # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
         # 
         $result_OSRuntimeName = 'RedHat';
+
+	@tmp_version = grep(/Red Hat Linux/, @etc_issue);
+	$tmp_version = pop(@tmp_version);
+	$tmp_version =~ s/^.*release\s+([^\s]+).*$/\1/;
+        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+            = split(/\./, $tmp_version, 3);
     }
     #    elsif (-RHELS-) {
     #        $result_OSRuntimeName = 'RedHatEnterprise';
