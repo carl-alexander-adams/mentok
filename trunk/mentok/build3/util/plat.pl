@@ -166,7 +166,12 @@ elsif ($result_OSName eq "Linux") {
         # Welcome to SUSE LINUX Enterprise Server 9 (i586) - Kernel \r (\l).
         # 
         $result_OSRuntimeName = 'SUSEEnterprise';
-        
+
+	@tmp_version = grep(/SUSE LINUX/, @etc_issue);
+	$tmp_version = pop(@tmp_version);
+	$tmp_version =~ s/^.*Server\s+([^\s]+).*$/\1/;
+        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+            = split(/\./, $tmp_version, 3);        
     }
     elsif (grep(/UnitedLinux/, @etc_issue)) {
         #
@@ -175,6 +180,12 @@ elsif ($result_OSName eq "Linux") {
         # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
         # 
         $result_OSRuntimeName = 'UnitedLinux';
+
+	@tmp_version = grep(/UnitedLinux/, @etc_issue);
+	$tmp_version = pop(@tmp_version);
+	$tmp_version =~ s/^.*UnitedLinux\s+([^\s]+).*$/\1/;
+        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+            = split(/\./, $tmp_version, 3);
     }
     elsif (grep(/Red Hat Linux/, @etc_issue)) {
         #
