@@ -101,15 +101,13 @@ if ($opt_h) {
 # Figure out the values and adjust for different OSs
 # needing different command lines to make a proper determination.
 #
-
-$result_OSName = `uname -s`;
-$result_machineName = `uname -n`;
+$result_OSName = normalize(`uname -s`);
+$result_machineName = normalize(`uname -n`);
 
 #
 # Break down OS/kernel revision
 #
-
-$tmp_rev = `uname -r`;
+$tmp_rev = normalize(`uname -r`);
 ($result_OSRevMajor, $result_OSRevMinor, $result_OSRevPatch) = split(/\./,$tmp_rev,3);
 $result_OSRuntimeName = 'unknown';
 
@@ -117,19 +115,19 @@ $result_OSRuntimeName = 'unknown';
 #
 # Refine notions of hardware and instruction sets,
 #
-$result_machineType = `uname -m`;
+$result_machineType = normalize(`uname -m`);
 if ($result_OSName eq "HP-UX") {
     $result_machineProc = 'unknown';
 }
 else {
-    $result_machineProc = `uname -p`;
+    $result_machineProc = normalize(`uname -p`);
 }
 
 # XXX I'm not sure if this is right. Check Mac OSX and Cygwin too
 $result_machineInstset = $result_machineType;
 
 if ($result_OSName eq "SunOS") {
-    $result_machineInstset = `optisa i386 sparcv7 sparcv9`;
+    $result_machineInstset = normalize(`optisa i386 sparcv7 sparcv9`);
 }
 elsif ($result_OSName eq "Linux") {
     if ($result_machineProc eq "unknown") {
@@ -158,9 +156,10 @@ elsif ($result_OSName eq "Linux") {
     # is no easy way to do this.
     open(ETCISSUE, "/etc/issue");
     while (<ETCISSUE>) {
-        push(@etc_issue);
+        push(@etc_issue, $_);
     }
     close(ETCISSUE);
+
 
     if (grep(/SUSE LINUX Enterprise Server/, @etc_issue)) {
         # 
@@ -175,7 +174,7 @@ elsif ($result_OSName eq "Linux") {
         # 
         # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
         # 
-        $result_OSRuntimeName = 'RedHat';
+        $result_OSRuntimeName = 'UnitedLinux';
     }
     elsif (grep(/Red Hat Linux/, @etc_issue)) {
         #
@@ -191,20 +190,21 @@ elsif ($result_OSName eq "Linux") {
     #    elsif (-FedoreCore-) {
     #        $result_OSRuntimeName = 'RedHatFedora';
     #    }
-    elsif (-f /etc/gentoo-release) {
+    elsif (-f '/etc/gentoo-release') {
         #
         # Gentoo Base System version 1.12.6
         # 
-        open(ETCGENTOORELEASE, "/etc/issue");
+        open(ETCGENTOORELEASE, "/etc/gentoo-release");
         while (<ETCGENTOORELEASE>) {
-            push(@etc_gentoorelease);
+            push(@etc_gentoorelease, $_);
         }
         close(ETCGENTOORELEASE);
 
         $result_OSRuntimeName = 'Gentoo';
 
-        $tmp_version = pop(grep(/Gentoo Base System/, @etc_gentoorelease));
-        $tmp_version =~ s/^.*version\s+\([^\s]+\).*$/\1/;
+        @tmp_version = grep(/Gentoo Base System/, @etc_gentoorelease);
+	$tmp_version = pop(@tmp_version);
+	$tmp_version =~ s/^.*version\s+([^\s]+).*$/\1/;
         ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
             = split(/\./, $tmp_version, 3);
     }
@@ -217,7 +217,7 @@ elsif ($result_OSName eq "Linux") {
 }
 elsif ($result_OSName eq "Darwin") {
     $result_OSRuntimeName = normalize(`/usr/bin/sw_vers -productName`);
-    $tmp_rev = `/usr/bin/sw_vers -productVersion`;
+    $tmp_rev = normalize(`/usr/bin/sw_vers -productVersion`);
     ($result_OSRuntimeRevMajor, 
      $result_OSRuntimeRevMinor, 
      $result_OSRuntimeRevPatch) = split(/\./, $tmp_rev, 3);
