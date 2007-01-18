@@ -17,7 +17,6 @@ sub print_usage {
           "\t[-M]          Display the OS major revision\n".
           "\t[-N]          Display the OS minor revision\n".
           "\t[-P]          Display the OS patch revision\n".
-          "\t                  older versions that didn't break this down by name and revision)\n".
           "\t[-w]          Display the OS runtime Name\n".
           "\t[-x]          Display the OS runtime major revision\n".
           "\t[-y]          Display the OS runtime minor revision\n".
@@ -37,7 +36,6 @@ sub print_usage {
           "\t                      - OS runtime major revision number\n".
           "\t                      - OS runtime minor revision number\n".
           "\t                      - OS runtime patch revision number\n".
-          "\t                      - OS runtime old name\n".
           "\t                      - Machine type\n".
           "\t                      - Machine processor\n".
           "\t                      - Machine instruction set\n".
@@ -53,7 +51,8 @@ sub normalize {
     local($string);
 
     $string = $_[0];
-    $string =~ s/[\s\r\n]+/ /gm;
+    $string =~ s/[\s\r\n\(\)]+/ /gm;
+    $string =~ s/[\\\/]+/./gm;
     $string =~ s/^\s+//;
     $string =~ s/\s+$//;
     $string =~ s/ /_/g;
@@ -104,12 +103,7 @@ if ($opt_h) {
 #
 
 $result_OSName = `uname -s`;
-$result_OSName = normalize($result_OSName);
-
-
-
 $result_machineName = `uname -n`;
-$result_machineName = normalize($result_machineName);
 
 #
 # Break down OS/kernel revision
@@ -117,9 +111,6 @@ $result_machineName = normalize($result_machineName);
 
 $tmp_rev = `uname -r`;
 ($result_OSRevMajor, $result_OSRevMinor, $result_OSRevPatch) = split(/\./,$tmp_rev,3);
-$result_OSRevMajor = normalize($result_OSRevMajor);
-$result_OSRevMinor = normalize($result_OSRevMinor);
-$result_OSRevPatch = normalize($result_OSRevPatch);
 $result_OSRuntimeName = 'unknown';
 
 
@@ -127,14 +118,11 @@ $result_OSRuntimeName = 'unknown';
 # Refine notions of hardware and instruction sets,
 #
 $result_machineType = `uname -m`;
-$result_machineType = normalize($result_machineType);
-
 if ($result_OSName eq "HP-UX") {
     $result_machineProc = 'unknown';
 }
 else {
     $result_machineProc = `uname -p`;
-    $result_machineProc = normalize($result_machineProc);
 }
 
 # XXX I'm not sure if this is right. Check Mac OSX and Cygwin too
@@ -142,7 +130,6 @@ $result_machineInstset = $result_machineType;
 
 if ($result_OSName eq "SunOS") {
     $result_machineInstset = `optisa i386 sparcv7 sparcv9`;
-    $result_machineInstset = normalize($result_machineInstset);
 }
 elsif ($result_OSName eq "Linux") {
     if ($result_machineProc eq "unknown") {
@@ -167,13 +154,66 @@ if ($result_OSName eq "SunOS") {
 
 }
 elsif ($result_OSName eq "Linux") {
-    $result_OSRuntimeOldName = readlink("/lib/libc.so.6");
-    $result_OSRuntimeOldName =~ s/\.so$//;
-    $result_OSRuntimeOldName = normalize($result_OSRuntimeOldName);
+    # Of course, with a million linux distros, there
+    # is no easy way to do this.
+    open(ETCISSUE, "/etc/issue");
+    while (<ETCISSUE>) {
+        push(@etc_issue);
+    }
+    close(ETCISSUE);
 
-    ($result_OSRuntimeName, $tmp_rev) = split(/-/, $result_OSRuntimeOldName, 2);
-    ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
-        = split(/\./,$tmp_rev,3);
+    if (grep(/SUSE LINUX Enterprise Server/, @etc_issue)) {
+        # 
+        # Welcome to SUSE LINUX Enterprise Server 9 (i586) - Kernel \r (\l).
+        # 
+        $result_OSRuntimeName = 'SUSEEnterprise';
+        
+    }
+    elsif (grep(/UnitedLinux/, @etc_issue)) {
+        #
+        # Welcome to UnitedLinux 1.0 (i586) - Kernel \r (\l).
+        # 
+        # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
+        # 
+        $result_OSRuntimeName = 'RedHat';
+    }
+    elsif (grep(/Red Hat Linux/, @etc_issue)) {
+        #
+        # Red Hat Linux release 7.1 (Seawolf)
+        # 
+        # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
+        # 
+        $result_OSRuntimeName = 'RedHat';
+    }
+    #    elsif (-RHELS-) {
+    #        $result_OSRuntimeName = 'RedHatEnterprise';
+    #    }
+    #    elsif (-FedoreCore-) {
+    #        $result_OSRuntimeName = 'RedHatFedora';
+    #    }
+    elsif (-f /etc/gentoo-release) {
+        #
+        # Gentoo Base System version 1.12.6
+        # 
+        open(ETCGENTOORELEASE, "/etc/issue");
+        while (<ETCGENTOORELEASE>) {
+            push(@etc_gentoorelease);
+        }
+        close(ETCGENTOORELEASE);
+
+        $result_OSRuntimeName = 'Gentoo';
+
+        $tmp_version = pop(grep(/Gentoo Base System/, @etc_gentoorelease));
+        $tmp_version =~ s/^.*version\s+\([^\s]+\).*$/\1/;
+        ($result_OSRuntimeRevMajor, $result_OSRuntimeRevMinor, $result_OSRuntimeRevPatch)
+            = split(/\./, $tmp_version, 3);
+    }
+    else {
+        $result_OSRuntimeName = 'unknown';
+        $result_OSRuntimeRevMajor = 0;
+        $result_OSRuntimeRevMinor = 0;
+        $result_OSRuntimeRevPatch = 0;
+    }
 }
 elsif ($result_OSName eq "Darwin") {
     $result_OSRuntimeName = normalize(`/usr/bin/sw_vers -productName`);
@@ -210,14 +250,15 @@ elsif ($result_OSName =~ "CYGWIN_NT") {
     $result_OSRuntimeRevMinor = $result_OSRevMinor;
     $result_OSRuntimeRevPatch = $result_OSRevPatch;
 
-    ($result_OSRuntimeName, $result_OSRevMajor,
-     $result_OSRevMinor, $result_OSRevPatch, @garbage) = 
-         split(/[-\.]/, $tmp_runtime);
+    ($result_OSRuntimeName, $tmp_rev) = split(/-/, $tmp_runtime, 2);
+
+    ($result_OSRevMajor, $result_OSRevMinor, $result_OSRevPatch) = 
+        split(/\./, $tmp_rev, 3);
 }
 
 
 #
-# Final cleanup. We don't like empty values.
+# Final cleanup. We don't like empty or messy values.
 #
 if (! ${result_machineName} )       { ${result_machineName} = "unknown" ; }
 if (! ${result_OSName} )            { ${result_OSName} = "unknown" ; }
@@ -231,7 +272,19 @@ if (! ${result_OSRuntimeRevPatch} ) { ${result_OSRuntimeRevPatch} = "0" ; }
 if (! ${result_machineType} )       { ${result_machineType} = "unknown" ; }
 if (! ${result_machineProc} )       { ${result_machineProc} = "unknown" ; }
 if (! ${result_machineInstset} )    { ${result_machineInstset} = "unknown" ; }
-if (! ${result_build3Platform} )    { ${result_build3Platform} = "unknown" ; }
+
+$result_machineName       = normalize($result_machineName);
+$result_OSName            = normalize($result_OSName);
+$result_OSRevMajor        = normalize($result_OSRevMajor);
+$result_OSRevMinor        = normalize($result_OSRevMinor);
+$result_OSRevPatch        = normalize($result_OSRevPatch);
+$result_OSRuntimeName     = normalize($result_OSRuntimeName);
+$result_OSRuntimeRevMajor = normalize($result_OSRuntimeRevMajor);
+$result_OSRuntimeRevMinor = normalize($result_OSRuntimeRevMinor);
+$result_OSRuntimeRevPatch = normalize($result_OSRuntimeRevPatch);
+$result_machineType       = normalize($result_machineType);
+$result_machineProc       = normalize($result_machineProc);
+$result_machineInstset    = normalize($result_machineInstset);
 
 
 #
