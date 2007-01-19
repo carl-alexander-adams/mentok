@@ -7,10 +7,20 @@
 -include $(BS_ROOT)/nativecode/defines-nativecode-$(BS_PLATFORM_ARCH_FALLBACK_1).mk
 -include $(BS_ROOT)/nativecode/defines-nativecode-$(BS_PLATFORM_ARCH_FULL).mk
 
+#
+# Link in toolchain macros
+#
+include $(BS_ROOT)/nativecode/toolchains/defines.mk
 
-ifeq ($(NC_CONTROL_TOOLCHAIN),)
-NC_CONTROL_TOOLCHAIN=GNU
-endif
+
+#
+# Controls - global defaults
+#
+
+# Default tool chain now controller per-platform
+#ifeq ($(NC_CONTROL_TOOLCHAIN),)
+#NC_CONTROL_TOOLCHAIN=GNU
+#endif
 
 ifeq ($(NC_CONTROL_OPTIMIZE),)
 NC_CONTROL_OPTIMIZE=1
