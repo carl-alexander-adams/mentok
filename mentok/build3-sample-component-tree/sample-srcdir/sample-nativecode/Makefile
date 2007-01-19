@@ -4,6 +4,16 @@ COMPONENT_ROOT=../..
 # The root of the build system
 BS_ROOT=$(COMPONENT_ROOT)/../build3
 
+SUBDIR_TARGETS= \
+	cc-obj \
+	cxx-obj \
+	inc-obj \
+	lib \
+	shlib \
+	lexyacc-obj \
+	exe-1 \
+	exe-2
+
 # Boostrap Build system definitions.
 include $(BS_ROOT)/defines.mk
 
@@ -15,10 +25,10 @@ include $(BS_ROOT)/defines.mk
 FLAGS_CC+=-I$(BS_ARCH_TARGET_DIR)
 
 # Generate src code from lex code.
-LEX_TARGETS=foo.yy.c
+# LEX_TARGETS=foo.yy.c
 
 # Generate src code from yacc code.
-YACC_TARGETS=bar.tab.c
+# YACC_TARGETS=bar.tab.c
 
 
 # Specify executable pattern targets

@@ -27,6 +27,14 @@ FLAGS_LD_EXE_LOADLIBS+=$(COMPONENT_ROOT)/buildnum/$(BS_ARCH_TARGET_DIR)/buildnum
 
 
 # Layer in per-product per-OS defines...
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_12).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_11).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_10).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_9).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_8).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_7).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_6).mk
+-include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_5).mk
 -include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_4).mk
 -include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_3).mk
 -include $(COMPONENT_ROOT)/build3-config/defines-$(BS_PLATFORM_ARCH_FALLBACK_2).mk
