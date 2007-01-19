@@ -175,27 +175,38 @@ XC_CAVIUMMIPS64_LINUX_PLATFORM_FALLBACK_12=$(call BS_FUNC_GEN_PLATFORM_FALLBACK_
 
 
 
+# Note: the trailing space on the outflags is INTENTIONAL.
+# the core rules leave no space between the output file
+# and the outflag to accommodate some platforms. If you want
+# space, add it here.
 ifeq ($(BIN_XC_CAVIUMMIPS64_LINUX_CC),)
 BIN_XC_CAVIUMMIPS64_LINUX_CC=$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/bin/mips64-octeon-linux-gnu-gcc
+BIN_XC_CAVIUMMIPS64_LINUX_CC_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_XC_CAVIUMMIPS64_LINUX_CXX),)
 BIN_XC_CAVIUMMIPS64_LINUX_CXX=$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/bin/mips64-octeon-linux-gnu-g++ \
     -I$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/lib/gcc/mips64-octeon-linux/3.4.3/include \
     -I$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/lib/gcc/mips64-octeon-linux/3.4.3/install-tools/include \
     -I$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/include/c++/3.4.3/mipsisa64-octeon-elf
-
+BIN_XC_CAVIUMMIPS64_LINUX_CXX_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_XC_CAVIUMMIPS64_LINUX_AS),)
 BIN_XC_CAVIUMMIPS64_LINUX_AS=$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/bin/mips64-octeon-linux-gnu-gcc
+BIN_XC_CAVIUMMIPS64_LINUX_AS_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_XC_CAVIUMMIPS64_LINUX_CPP),)
 BIN_XC_CAVIUMMIPS64_LINUX_CPP=$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/bin/mips64-octeon-linux-gnu-gcc -E
+BIN_XC_CAVIUMMIPS64_LINUX_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_XC_CAVIUMMIPS64_LINUX_LD),)
 BIN_XC_CAVIUMMIPS64_LINUX_LD=$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/bin/mips64-octeon-linux-gnu-gcc
+BIN_XC_CAVIUMMIPS64_LINUX_LD_OUTPUTFLAG_EXE=-o 
+BIN_XC_CAVIUMMIPS64_LINUX_LD_OUTPUTFLAG_SHLIB=-o 
+BIN_XC_CAVIUMMIPS64_LINUX_LD_OUTPUTFLAG_INCOBJ=-o 
 endif
 ifeq ($(BIN_XC_CAVIUMMIPS64_LINUX_AR),)
 BIN_XC_CAVIUMMIPS64_LINUX_AR=$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/bin/mips64-octeon-linux-gnu-ar
+BIN_XC_CAVIUMMIPS64_LINUX_AR_OUTPUTFLAG=
 endif
 ifeq ($(BIN_XC_CAVIUMMIPS64_LINUX_STRIP),)
 BIN_XC_CAVIUMMIPS64_LINUX_STRIP=$(XC_CAVIUMMIPS64_LINUX_SDK_HOME)/tools/bin/mips64-octeon-linux-gnu-strip

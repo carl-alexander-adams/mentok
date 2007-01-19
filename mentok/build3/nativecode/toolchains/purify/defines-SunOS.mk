@@ -1,17 +1,26 @@
 #
 # Purify & Gnu tool chain
 #
+# 
+# Note: the trailing space on the outflags is INTENTIONAL.
+# the core rules leave no space between the output file
+# and the outflag to accommodate some platforms. If you want
+# space, add it here.
 ifeq ($(BIN_PURIFY_CC),)
 BIN_PURIFY_CC=/usr/local/bin/gcc
+BIN_PURIFY_CC_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_PURIFY_CXX),)
 BIN_PURIFY_CXX=/usr/local/bin/g++
+BIN_PURIFY_CXX_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_PURIFY_AS),)
 BIN_PURIFY_AS=/usr/local/bin/gcc
+BIN_PURIFY_AS_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_PURIFY_CPP),)
 BIN_PURIFY_CPP=/usr/local/bin/gcc -E
+BIN_PURIFY_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_PURIFY_LD),)
 BIN_PURIFY_LD=/opt/rational/releases/PurifyPlusFamily.2002a.06.00/sun4_solaris2/bin/purify \
@@ -22,9 +31,13 @@ BIN_PURIFY_LD=/opt/rational/releases/PurifyPlusFamily.2002a.06.00/sun4_solaris2/
 	-leaks-at-exit=yes \
 	-fds-inuse-at-exit=yes \
 	/usr/local/bin/gcc
+BIN_PURIFY_LD_OUTPUTFLAG_EXE=-o 
+BIN_PURIFY_LD_OUTPUTFLAG_SHLIB=-o 
+BIN_PURIFY_LD_OUTPUTFLAG_INCOBJ=-o 
 endif
 ifeq ($(BIN_PURIFY_AR),)
 BIN_PURIFY_AR=/usr/local/bin/ar
+BIN_PURIFY_AR_OUTPUTFLAG=
 endif
 # Don't strip purify builds
 ifeq ($(BIN_PURIFY_STRIP),)

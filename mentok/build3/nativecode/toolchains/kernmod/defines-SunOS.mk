@@ -2,24 +2,36 @@
 #
 # Vendor tool chain with options for compiling Solaris kernel modules
 #
+# Note: the trailing space on the outflags is INTENTIONAL.
+# the core rules leave no space between the output file
+# and the outflag to accommodate some platforms. If you want
+# space, add it here.
 ifeq ($(BIN_KERNMOD_CC),)
 BIN_KERNMOD_CC = $(BIN_VENDOR_CC)
+BIN_KERNMOD_CC_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_KERNMOD_CXX),)
 # No C++ in kernel modules!
 BIN_KERNMOD_CXX = $(BIN_FALSE)
+BIN_KERNMOD_CXX_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_KERNMOD_AS),)
 BIN_KERNMOD_AS = $(BIN_VENDOR_AS)
+BIN_KERNMOD_AS_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_KERNMOD_CPP),)
 BIN_KERNMOD_CPP = $(BIN_VENDOR_CPP)
+BIN_KERNMOD_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_KERNMOD_LD),)
 BIN_KERNMOD_LD = $(BIN_VENDOR_LD)
+BIN_KERNMOD_LD_OUTPUTFLAG_EXE=-o 
+BIN_KERNMOD_LD_OUTPUTFLAG_SHLIB=-o 
+BIN_KERNMOD_LD_OUTPUTFLAG_INCOBJ=-o 
 endif
 ifeq ($(BIN_KERNMOD_AR),)
 BIN_KERNMOD_AR = $(BIN_VENDOR_AR)
+BIN_KERNMOD_AR_OUTPUTFLAG=
 endif
 ifeq ($(BIN_KERNMOD_STRIP),)
   # Solaris kernel modules should NOT be striped!
