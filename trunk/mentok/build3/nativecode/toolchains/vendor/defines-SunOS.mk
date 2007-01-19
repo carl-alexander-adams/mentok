@@ -1,23 +1,36 @@
 #
 # Vendor tool chain
 #
+# 
+# Note: the trailing space on the outflags is INTENTIONAL.
+# the core rules leave no space between the output file
+# and the outflag to accommodate some platforms. If you want
+# space, add it here.
 ifeq ($(BIN_VENDOR_CC),)
 BIN_VENDOR_CC=/opt/SUNWspro/bin/cc
+BIN_VENDOR_CC_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_VENDOR_CXX),)
 BIN_VENDOR_CXX=/opt/SUNWspro/bin/CC
+BIN_VENDOR_CXX_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_VENDOR_AS),)
 BIN_VENDOR_AS=/opt/SUNWspro/bin/cc
+BIN_VENDOR_AS_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_VENDOR_CPP),)
 BIN_VENDOR_CPP=/opt/SUNWspro/bin/cc -E
+BIN_VENDOR_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_VENDOR_LD),)
 BIN_VENDOR_LD=/usr/ccs/bin/ld
+BIN_VENDOR_LD_OUTPUTFLAG_EXE=-o 
+BIN_VENDOR_LD_OUTPUTFLAG_SHLIB=-o 
+BIN_VENDOR_LD_OUTPUTFLAG_INCOBJ=-o 
 endif
 ifeq ($(BIN_VENDOR_AR),)
 BIN_VENDOR_AR=/usr/ccs/bin/ar
+BIN_VENDOR_AR_OUTPUTFLAG=
 endif
 ifeq ($(BIN_VENDOR_STRIP),)
 BIN_VENDOR_STRIP=/usr/local/bin/strip

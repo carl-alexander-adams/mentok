@@ -10,26 +10,39 @@ _bin_purify=/opt/rational/releases/purify.i386_linux2.2003a.06.12/purify \
 	-leaks-at-exit=yes \
 	-fds-inuse-at-exit=yes
 
+# 
+# Note: the trailing space on the outflags is INTENTIONAL.
+# the core rules leave no space between the output file
+# and the outflag to accommodate some platforms. If you want
+# space, add it here.
 ifeq ($(BIN_PURIFY_CC),)
 #BIN_PURIFY_CC=$(_bin_purify) $(BIN_GNU_CC)
 BIN_PURIFY_CC=$(BIN_GNU_CC)
+BIN_PURIFY_CC_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_PURIFY_CXX),)
 #BIN_PURIFY_CXX=$(_bin_purify) $(BIN_GNU_CXX)
 BIN_PURIFY_CXX=$(BIN_GNU_CXX)
+BIN_PURIFY_CXX_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_PURIFY_AS),)
 #BIN_PURIFY_AS=$(_bin_purify) $(BIN_GNU_AS)
 BIN_PURIFY_AS=$(BIN_GNU_AS)
+BIN_PURIFY_AS_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_PURIFY_CPP),)
 BIN_PURIFY_CPP=$(BIN_GNU_CPP)
+BIN_PURIFY_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_PURIFY_LD),)
 BIN_PURIFY_LD=$(_bin_purify) $(BIN_GNU_LD)
+BIN_PURIFY_LD_OUTPUTFLAG_EXE=-o 
+BIN_PURIFY_LD_OUTPUTFLAG_SHLIB=-o 
+BIN_PURIFY_LD_OUTPUTFLAG_INCOBJ=-o 
 endif
 ifeq ($(BIN_PURIFY_AR),)
 BIN_PURIFY_AR=$(BIN_GNU_AR)
+BIN_PURIFY_AR_OUTPUTFLAG=
 endif
 # Don't strip purify builds
 ifeq ($(BIN_PURIFY_STRIP),)

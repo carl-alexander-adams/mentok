@@ -2,6 +2,11 @@
 # Gnu tool chain
 #
 
+# Note: the trailing space on the outflags is INTENTIONAL.
+# the core rules leave no space between the output file
+# and the outflag to accommodate some platforms. If you want
+# space, add it here.
+
 # We set these differently for different linux's
 #
 # ifeq ($(BIN_GNU_CC),)

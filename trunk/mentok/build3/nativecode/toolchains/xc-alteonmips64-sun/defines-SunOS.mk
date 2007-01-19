@@ -168,23 +168,35 @@ XC_ALTEONMIPS64_SUN_PLATFORM_FALLBACK_12=$(call BS_FUNC_GEN_PLATFORM_FALLBACK_12
 
 
 
+# Note: the trailing space on the outflags is INTENTIONAL.
+# the core rules leave no space between the output file
+# and the outflag to accommodate some platforms. If you want
+# space, add it here.
 ifeq ($(BIN_XC_ALTEONMIPS64_SUN_CC),)
 BIN_XC_ALTEONMIPS64_SUN_CC=/usr/local/sbtools/sparc-solaris-5.6/mips64-sb1sim-2.1.1/bin/mips64-sb1sim-gcc
+BIN_XC_ALTEONMIPS64_SUN_CC_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_XC_ALTEONMIPS64_SUN_CXX),)
 BIN_XC_ALTEONMIPS64_SUN_CXX=/usr/local/sbtools/sparc-solaris-5.6/mips64-sb1sim-2.1.1/bin/mips64-sb1sim-g++
+BIN_XC_ALTEONMIPS64_SUN_CXX_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_XC_ALTEONMIPS64_SUN_AS),)
 BIN_XC_ALTEONMIPS64_SUN_AS=/usr/local/sbtools/sparc-solaris-5.6/mips64-sb1sim-2.1.1/bin/mips64-sb1sim-gcc
+BIN_XC_ALTEONMIPS64_SUN_AS_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_XC_ALTEONMIPS64_SUN_CPP),)
 BIN_XC_ALTEONMIPS64_SUN_CPP=/usr/local/sbtools/sparc-solaris-5.6/mips64-sb1sim-2.1.1/bin/mips64-sb1sim-gcc -E
+BIN_XC_ALTEONMIPS64_SUN_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_XC_ALTEONMIPS64_SUN_LD),)
 BIN_XC_ALTEONMIPS64_SUN_LD=/usr/local/sbtools/sparc-solaris-5.6/mips64-sb1sim-2.1.1/bin/mips64-sb1sim-gcc
+BIN_XC_ALTEONMIPS64_SUN_LD_OUTPUTFLAG_EXE=-o 
+BIN_XC_ALTEONMIPS64_SUN_LD_OUTPUTFLAG_SHLIB=-o 
+BIN_XC_ALTEONMIPS64_SUN_LD_OUTPUTFLAG_INCOBJ=-o 
 endif
 ifeq ($(BIN_XC_ALTEONMIPS64_SUN_AR),)
 BIN_XC_ALTEONMIPS64_SUN_AR=/usr/local/sbtools/sparc-solaris-5.6/mips64-sb1sim-2.1.1/bin/mips64-sb1sim-ar
+BIN_XC_ALTEONMIPS64_SUN_AR_OUTPUTFLAG=
 endif
 ifeq ($(BIN_XC_ALTEONMIPS64_SUN_STRIP),)
 BIN_XC_ALTEONMIPS64_SUN_STRIP=/usr/local/sbtools/sparc-solaris-5.6/mips64-sb1sim-2.1.1/bin/mips64-sb1sim-strip
