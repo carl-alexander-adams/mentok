@@ -1,22 +1,19 @@
-# The source root of this component
-COMPONENT_ROOT=../../..
-
-# The root of the build system
-BS_ROOT=$(COMPONENT_ROOT)/../build3
-
-SUBDIR_TARGETS=
-
-# Boostrap Build system definitions.
+# macros and includes to make the build system go. (generally this
+# will be one of the first things in your Makefile)
+COMPONENT_ROOT=../..
+BS_ROOT=$(COMPONENT_ROOT)/build3
 include $(BS_ROOT)/defines.mk
 
 
 #
-# Set up global C flags
+# Set up global C flags - The use of += is encouraged as to avoid
+# stomping on project wide settings in $(COMPONENT_ROOT)/build3-config
 #
-
 FLAGS_CC+=-I../include
 
+# 
 # Specify bare C object pattern targets
+#
 OBJ_CC_TARGETS=say-hello.o empty.o foo.o
 
 
@@ -57,5 +54,7 @@ foo.o_CFLAGS_PROFILE=-DTEST_PER_OBJECT_CFLAGS_PROFILE
 foo.o_CFLAGS_COV=-DTEST_PER_OBJECT_CFLAGS_COV
 
 
-# Finally, include the rules to make the build system go.
+
+# include the rules to make the build system go. (generally this
+# will be one of the last things in your Makefile)
 include $(BS_ROOT)/rules.mk

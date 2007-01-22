@@ -1,12 +1,7 @@
-# The source root of this component
-COMPONENT_ROOT=../../..
-
-# The root of the build system
-BS_ROOT=$(COMPONENT_ROOT)/../build3
-
-SUBDIR_TARGETS=
-
-# Boostrap Build system definitions.
+# macros and includes to make the build system go. (generally this
+# will be one of the first things in your Makefile)
+COMPONENT_ROOT=../..
+BS_ROOT=$(COMPONENT_ROOT)/build3
 include $(BS_ROOT)/defines.mk
 
 
@@ -37,9 +32,10 @@ OBJ_CXX_TARGETS=hello-plusplus.o hello-pp.o
 #
 # Options for hello-pp.o
 #
-hello-pp.o_TOOLCHAIN=GNU
+# hello-pp.o_TOOLCHAIN=GNU
 hello-pp.o_CFLAGS=$(FLAGS_CXX) -DTEST_PER_OBJECT_CFLAGS
 
 
-# Finally, include the rules to make the build system go.
+# include the rules to make the build system go. (generally this
+# will be one of the last things in your Makefile)
 include $(BS_ROOT)/rules.mk
