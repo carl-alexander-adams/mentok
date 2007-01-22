@@ -1,7 +1,12 @@
 
 #
-# Vendor tool chain - Visual Studio 6
+# Vendor tool chain - Visual Studio 6 and updated MS platform SDK
+# with the following configuration:
+# 
+#   MSVC install dir: C:/Program Files/Microsoft Visual Studio
+#   Platform SDK installed in C:\Program Files\Microsoft SDK
 #
+
 ifeq ($(BIN_VENDOR_CC),)
 BIN_VENDOR_CC="C:/Program Files/Microsoft Visual Studio/VC98/bin/cl.exe" -nologo
 BIN_VENDOR_CC_OUTPUTFLAG=-Fo
@@ -29,16 +34,31 @@ BIN_VENDOR_AR="C:/Program Files/Microsoft Visual Studio/VC98/bin/lib.exe"
 BIN_VENDOR_AR_OUTPUTFLAG=/OUT:
 endif
 ifeq ($(BIN_VENDOR_STRIP),)
-BIN_VENDOR_STRIP=$(BIN_FALSE)
+# While strip is not supported, this is /bin/true to keep
+# the build running.
+BIN_VENDOR_STRIP=$(BIN_TRUE) --strip-not-supported--
 endif
 
 
 
 # /Fo"Debug/" /Fd"Debug/"
-_FLAGS_VC6_COMMON=-W3 -DWIN32 -GX -GZ -DMBCS -D_R_LARGEFILE -D_WIN32_DCOM -D_CONSOLE -D_NO_DLOPEN_ -D_MBCS
+_FLAGS_VC6_COMPILE_COMMON= \
+	-W3 \
+	-GX -GZ \
+	-DWIN32 \
+	-DMBCS \
+	-D_MBCS \
+	-D_R_LARGEFILE \
+	-D_WIN32_DCOM \
+	-D_CONSOLE \
+	-D_NO_DLOPEN_ \
+	-I"C:/Program Files/Microsoft SDK/include"
+
+#_FLAGS_VC6_LOADLIBS_COMMON= \
+#	-link /libpath:"C:/Program Files/Microsoft SDK/lib"
 
 ifeq ($(FLAGS_VENDOR_CC),)
-FLAGS_VENDOR_CC=$(_FLAGS_VC6_COMMON) -TC
+FLAGS_VENDOR_CC=$(_FLAGS_VC6_COMPILE_COMMON) -TC
 endif
 ifeq ($(FLAGS_VENDOR_CC_DEP),)
 # MS compiler cannot generate makefile style depends lists for us.
@@ -65,7 +85,7 @@ FLAGS_VENDOR_CC_REENT=-D_REENTRANT
 endif
 
 ifeq ($(FLAGS_VENDOR_CXX),)
-FLAGS_VENDOR_CXX=$(_FLAGS_VC6_COMMON) -TP
+FLAGS_VENDOR_CXX=$(_FLAGS_VC6_COMPILE_COMMON) -TP
 endif
 ifeq ($(FLAGS_VENDOR_CXX_DEP),)
 # MS compiler cannot generate makefile style depends lists for us.
@@ -93,7 +113,7 @@ endif
 
 
 ifeq ($(FLAGS_VENDOR_AS),)
-FLAGS_VENDOR_AS=$(_FLAGS_VC6_COMMON)
+FLAGS_VENDOR_AS=$(_FLAGS_VC6_COMPILE_COMMON)
 endif
 ifeq ($(FLAGS_VENDOR_AS_DEP),)
 # MS compiler cannot generate makefile style depends lists for us.
@@ -130,7 +150,7 @@ ifeq ($(FLAGS_VENDOR_LD_EXE_COV),)
 FLAGS_VENDOR_LD_EXE_COV=--coverage-build-not-supported--
 endif
 ifeq ($(FLAGS_VENDOR_LD_EXE_LOADLIBS),)
-FLAGS_VENDOR_LD_EXE_LOADLIBS=
+FLAGS_VENDOR_LD_EXE_LOADLIBS=$(_FLAGS_VC6_LOADLIBS_COMMON)
 endif
 ifeq ($(FLAGS_VENDOR_LD_EXE_LOADLIBS_OPT),)
 FLAGS_VENDOR_LD_EXE_LOADLIBS_OPT=

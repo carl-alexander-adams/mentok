@@ -1,7 +1,6 @@
+include $(COMPONENT_ROOT)/build3-config/defines.mk
 
 include $(BS_ROOT)/base/defines-base.mk
-
-include $(COMPONENT_ROOT)/build3-config/defines.mk
 
 include $(BS_ROOT)/recursion/defines-recursion.mk
 include $(BS_ROOT)/config/defines-config.mk
@@ -15,3 +14,4 @@ include $(BS_ROOT)/release-engineering/defines-release-engineering.mk
 include $(BS_ROOT)/doc/defines-doc.mk
 include $(BS_ROOT)/xmlmd/defines-xmlmd.mk
 
+include $(COMPONENT_ROOT)/build3-config/imports.mk
