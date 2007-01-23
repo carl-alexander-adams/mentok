@@ -37,6 +37,7 @@ BIN_GNU_STRIP=/usr/bin/strip
 endif
 
 
+
 ifeq ($(FLAGS_GNU_CC),)
 FLAGS_GNU_CC=-W \
 	-Wall \

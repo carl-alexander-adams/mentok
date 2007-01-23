@@ -38,6 +38,21 @@ endif
 
 
 
+ifeq ($(EXTENSION_VENDOR_OBJ),)
+EXTENSION_VENDOR_OBJ=.o
+endif
+ifeq ($(EXTENSION_VENDOR_EXE),)
+EXTENSION_VENDOR_EXE=
+endif
+ifeq ($(EXTENSION_VENDOR_LIB),)
+EXTENSION_VENDOR_LIB=.a
+endif
+ifeq ($(EXTENSION_VENDOR_SHLIB),)
+EXTENSION_VENDOR_SHLIB=.so
+endif
+
+
+
 ifeq ($(FLAGS_VENDOR_CC),)
 FLAGS_VENDOR_CC=-errtags=yes
 endif

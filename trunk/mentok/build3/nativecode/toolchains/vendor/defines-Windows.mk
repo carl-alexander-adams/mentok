@@ -1,4 +1,3 @@
-
 #
 # Vendor tool chain - Visual Studio 6 and updated MS platform SDK
 # with the following configuration:
@@ -38,6 +37,22 @@ ifeq ($(BIN_VENDOR_STRIP),)
 # the build running.
 BIN_VENDOR_STRIP=$(BIN_TRUE) --strip-not-supported--
 endif
+
+
+
+ifeq ($(EXTENSION_VENDOR_OBJ),)
+EXTENSION_VENDOR_OBJ=.obj
+endif
+ifeq ($(EXTENSION_VENDOR_EXE),)
+EXTENSION_VENDOR_EXE=.exe
+endif
+ifeq ($(EXTENSION_VENDOR_LIB),)
+EXTENSION_VENDOR_LIB=.lib
+endif
+ifeq ($(EXTENSION_VENDOR_SHLIB),)
+EXTENSION_VENDOR_SHLIB=.dll
+endif
+
 
 
 

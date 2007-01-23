@@ -55,6 +55,7 @@ BIN_GNU_STRIP=C:/cygwin/bin/strip.exe
 endif
 
 
+
 ifeq ($(FLAGS_GNU_CC),)
 FLAGS_GNU_CC=-W \
 	-Wall \
@@ -281,13 +282,13 @@ endif
 # Since we couldn't get the GNU version of strip to compile correctly
 # on the mac we're using the vendor version.
 ifeq ($(FLAGS_GNU_STRIP_EXE),)
-FLAGS_GNU_STRIP_EXE= $(FLAGS_VENDOR_STRIP_EXE)
+FLAGS_GNU_STRIP_EXE= $(FLAGS_GNU_STRIP_EXE)
 endif
 ifeq ($(FLAGS_GNU_STRIP_SHLIB),)
-FLAGS_GNU_STRIP_SHLIB= $(FLAGS_VENDOR_STRIP_SHLIB)
+FLAGS_GNU_STRIP_SHLIB= $(FLAGS_GNU_STRIP_SHLIB)
 endif
 ifeq ($(FLAGS_GNU_STRIP_LIB),)
-FLAGS_GNU_STRIP_LIB= $(FLAGS_VENDOR_STRIP_SHLIB)
+FLAGS_GNU_STRIP_LIB= $(FLAGS_GNU_STRIP_SHLIB)
 endif
 
 
