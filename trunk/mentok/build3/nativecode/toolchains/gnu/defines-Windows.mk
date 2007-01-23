@@ -22,6 +22,25 @@ BIN_GNU_CPP=C:/cygwin/bin/gcc.exe -E
 BIN_GNU_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_GNU_LD),)
+# This bit is annoying, maybe even broken. we use compiler as
+# the linker in many tool chains (noteably gnu).  However, 
+# using the compiler as the linker doesn't work for C++ programs
+# in all environments. I know of no one linker default setting 
+# that can be placed in a tool chain that will work for linking
+# Assembler, C, and C++ derived object files into an executable.
+# The defaults exe linker is configured for C based programs.
+# Permaps we should create different tool chains that favor
+# different defaults, to make things easier for different
+# projects.
+#
+# This can be overridden in makes files with constructs like
+# the following:
+#
+#    BIN_$(NC_CONTROL_TOOLCHAIN)_LD=$(BIN_$(ND_CONTROL_TOOLCHAIN)_CXX)
+#    or 
+#    BIN_VENDOR_LD=$(BIN_VENDOR_CXX)
+#    or
+#    BIN_GNU_LD=$(BIN_GNU_CXX)
 BIN_GNU_LD=C:/cygwin/bin/gcc.exe
 BIN_GNU_LD_OUTPUTFLAG_EXE=-o 
 BIN_GNU_LD_OUTPUTFLAG_SHLIB=-o 
