@@ -91,6 +91,11 @@ _func_get_toolchain_platform_fallback_4=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFO
 _func_get_toolchain_platform_fallback_5=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFORM_FALLBACK_5),$(BS_PLATFORM_ARCH_FALLBACK_5))
 _func_get_toolchain_platform_fallback_6=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFORM_FALLBACK_6),$(BS_PLATFORM_ARCH_FALLBACK_6))
 _func_get_toolchain_platform_fallback_7=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFORM_FALLBACK_7),$(BS_PLATFORM_ARCH_FALLBACK_7))
+_func_get_toolchain_platform_fallback_8=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFORM_FALLBACK_8),$(BS_PLATFORM_ARCH_FALLBACK_8))
+_func_get_toolchain_platform_fallback_9=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFORM_FALLBACK_9),$(BS_PLATFORM_ARCH_FALLBACK_9))
+_func_get_toolchain_platform_fallback_10=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFORM_FALLBACK_10),$(BS_PLATFORM_ARCH_FALLBACK_10))
+_func_get_toolchain_platform_fallback_11=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFORM_FALLBACK_11),$(BS_PLATFORM_ARCH_FALLBACK_11))
+_func_get_toolchain_platform_fallback_12=$(if $($(1)_PLATFORM_FULL),$($(1)_PLATFORM_FALLBACK_12),$(BS_PLATFORM_ARCH_FALLBACK_12))
 
 # public accessors to our internal fuction.
 NC_FUNC_GET_TOOLCHAIN_PLATFORM_FULL=$(call _func_get_toolchain_platform_full,$(1))
@@ -101,6 +106,11 @@ NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_4=$(call _func_get_toolchain_platform_fa
 NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_5=$(call _func_get_toolchain_platform_fallback_5,$(1))
 NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_6=$(call _func_get_toolchain_platform_fallback_6,$(1))
 NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_7=$(call _func_get_toolchain_platform_fallback_7,$(1))
+NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_8=$(call _func_get_toolchain_platform_fallback_8,$(1))
+NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_9=$(call _func_get_toolchain_platform_fallback_9,$(1))
+NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_10=$(call _func_get_toolchain_platform_fallback_10,$(1))
+NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_11=$(call _func_get_toolchain_platform_fallback_11,$(1))
+NC_FUNC_GET_TOOLCHAIN_PLATFORM_FALLBACK_12=$(call _func_get_toolchain_platform_fallback_12,$(1))
 NC_FUNC_GET_TOOLCHAIN_PLATFORM_LIST= \
 	$(call _func_get_toolchain_platform_full,$(1)) \
 	$(call _func_get_toolchain_platform_fallback_1,$(1)) \
@@ -108,7 +118,12 @@ NC_FUNC_GET_TOOLCHAIN_PLATFORM_LIST= \
 	$(call _func_get_toolchain_platform_fallback_3,$(1)) \
 	$(call _func_get_toolchain_platform_fallback_5,$(1)) \
 	$(call _func_get_toolchain_platform_fallback_6,$(1)) \
-	$(call _func_get_toolchain_platform_fallback_7,$(1))
+	$(call _func_get_toolchain_platform_fallback_7,$(1)) \
+	$(call _func_get_toolchain_platform_fallback_8,$(1)) \
+	$(call _func_get_toolchain_platform_fallback_9,$(1)) \
+	$(call _func_get_toolchain_platform_fallback_10,$(1)) \
+	$(call _func_get_toolchain_platform_fallback_11,$(1)) \
+	$(call _func_get_toolchain_platform_fallback_12,$(1))
 
 
 #
