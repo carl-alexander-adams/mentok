@@ -82,7 +82,6 @@ FLAGS_GNU_CXX=-W \
 	-Wpointer-arith \
 	-Wsign-compare \
 	-Winline \
-	-Wmissing-prototypes \
 	-Wunused
 #	-v \
 #	-ftime-report \
