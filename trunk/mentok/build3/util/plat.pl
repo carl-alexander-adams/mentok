@@ -46,7 +46,7 @@ $result = {};
 # Process args.
 #
 
-getopts('3ad:hilmMnNpPRswxyz');
+getopts('3ad:hilmMnNpPRswxyz') || die;
 $display_machineName = $opt_n || $opt_a;
 $display_OSName = $opt_s  || $opt_a;
 $display_OSRevMajor = $opt_M  || $opt_a;
