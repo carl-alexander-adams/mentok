@@ -408,16 +408,21 @@ sub plat_refineLinux {
     elsif (-f '/etc/fedora-release') {
         # Fedora is redhat derived, so test for it before redhat.
         #
-        # /etc/issue:
-        # 
+        # /etc/issue (FC 5):
         # Fedora Core release 5 (Bordeaux)
         # Kernel \r on an \m
         # 
-        # /etc/fedore-release:
-        # 
+        # /etc/fedore-release (FC 5)
         # Fedora Core release 5 (Bordeaux)
         # 
-        $platinfo->{'OSRuntimeName'} = 'FedoraCore';
+        # /etc/issue (FC 10): 
+        # Fedora release 10 (Cambridge)
+        # Kernel \r on an \m (\l)
+        # 
+        # /etc/fedore-release (FC 10):
+        # Fedora release 10 (Cambridge)
+        # 
+        $platinfo->{'OSRuntimeName'} = 'Fedora';
 
         open(ETC_DISTRORELEASE, '/etc/fedora-release');
         while (<ETC_DISTRORELEASE>) {
@@ -426,7 +431,7 @@ sub plat_refineLinux {
         }
         close(ETC_DISTRORELEASE);
 
-        @tmp_version = grep(/Fedora Core/, @etc_distrorelease);
+        @tmp_version = grep(/Fedora.*release/, @etc_distrorelease);
         $tmp_version = pop(@tmp_version);
         $tmp_version =~ s/^.*release\s+([^\s]+).*$/\1/;
         ($platinfo->{'OSRuntimeRevMajor'},
