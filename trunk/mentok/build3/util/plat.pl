@@ -335,8 +335,7 @@ sub plat_refineLinux {
         $tmp_version =~ s/^.*version\s+([^\s]+).*$/\1/;
         ($platinfo->{'OSRuntimeRevMajor'},
          $platinfo->{'OSRuntimeRevMinor'},
-         $platinfo->{'OSRuntimeRevPatch'})
-            = split(/\./, $tmp_version, 3);
+         $platinfo->{'OSRuntimeRevPatch'}) = split(/\./, $tmp_version, 3);
     }
     elsif (-f '/etc/SuSE-release') {
         # /etc/issue:
@@ -362,8 +361,7 @@ sub plat_refineLinux {
         $tmp_version =~ s/.*=\s+//;
         ($platinfo->{'OSRuntimeRevMajor'},
          $platinfo->{'OSRuntimeRevMinor'},
-         $platinfo->{'OSRuntimeRevPatch'})
-            = split(/\./, $tmp_version, 3);
+         $platinfo->{'OSRuntimeRevPatch'}) = split(/\./, $tmp_version, 3);
     }
     elsif (-f '/etc/UnitedLinux-release') {
         # /etc/issue:
@@ -399,8 +397,7 @@ sub plat_refineLinux {
         $tmp_version =~ s/.*=\s+//;
         ($platinfo->{'OSRuntimeRevMajor'},
          $platinfo->{'OSRuntimeRevMinor'},
-         $platinfo->{'OSRuntimeRevPatch'})
-            = split(/\./, $tmp_version, 3);
+         $platinfo->{'OSRuntimeRevPatch'}) = split(/\./, $tmp_version, 3);
     }
     #
     # Need to add RedHat Enterprise Linux here.
@@ -422,7 +419,6 @@ sub plat_refineLinux {
         # /etc/fedore-release (FC 10):
         # Fedora release 10 (Cambridge)
         # 
-        $platinfo->{'OSRuntimeName'} = 'Fedora';
 
         open(ETC_DISTRORELEASE, '/etc/fedora-release');
         while (<ETC_DISTRORELEASE>) {
@@ -431,27 +427,36 @@ sub plat_refineLinux {
         }
         close(ETC_DISTRORELEASE);
 
+        if (grep(/Fedora Core/, @etc_distrorelease)) {
+            $platinfo->{'OSRuntimeName'} = 'FedoraCore';
+        }
+        else {
+            $platinfo->{'OSRuntimeName'} = 'Fedora';
+        }
+
         @tmp_version = grep(/Fedora.*release/, @etc_distrorelease);
         $tmp_version = pop(@tmp_version);
         $tmp_version =~ s/^.*release\s+([^\s]+).*$/\1/;
         ($platinfo->{'OSRuntimeRevMajor'},
          $platinfo->{'OSRuntimeRevMinor'},
-         $platinfo->{'OSRuntimeRevPatch'})
-            = split(/\./, $tmp_version, 3);
+         $platinfo->{'OSRuntimeRevPatch'}) = split(/\./, $tmp_version, 3);
     }
     elsif (-f '/etc/redhat-release') {
-        # /etc/issue:
-        # 
+        # /etc/issue (RH 7.1)
         # Red Hat Linux release 7.1 (Seawolf)
         # 
         # Kernel 2.4.18-17.7.xsmp on a 2 processor i686
         # 
         # 
-        # /etc/redhat-release:
-        # 
+        # /etc/redhat-release (RH 7.1)
         # Red Hat Linux release 7.1 (Seawolf)
         # 
-        $platinfo->{'OSRuntimeName'} = 'RedHat';
+        # /etc/redhat-release (RHAS 3.0):
+        # Red Hat Enterprise Linux AS release 3 (Taroon)
+        #
+        # /etc/redhat-release (RHES 4.0):
+        # Red Hat Enterprise Linux ES release 4 (Nahant)
+
 
         open(ETC_DISTRORELEASE, '/etc/redhat-release');
         while (<ETC_DISTRORELEASE>) {
@@ -460,13 +465,24 @@ sub plat_refineLinux {
         }
         close(ETC_DISTRORELEASE);
 
-        @tmp_version = grep(/Red Hat Linux/, @etc_distrorelease);
+
+        if (grep(/Red Hat Enterprise Linux AS/, @etc_distrorelease)) {
+            $platinfo->{'OSRuntimeName'} = 'RHAS';
+        }
+        elsif (grep(/Red Hat Enterprise Linux ES/, @etc_distrorelease)) {
+            $platinfo->{'OSRuntimeName'} = 'RHES';
+        }
+        else {
+            $platinfo->{'OSRuntimeName'} = 'RedHat';
+        }
+        @tmp_version = grep(/Red Hat.*release/, @etc_distrorelease);
         $tmp_version = pop(@tmp_version);
-        $tmp_version =~ s/^.*release\s+([^\s]+).*$/\1/;
+        # $tmp_version =~ s/^.*release\s+([^\s]+).*$/\1/; # why is this not working on RHES 3?        
+        $tmp_version =~ s/^.*release\s+//;
+        $tmp_version =~ s/\s+.*$//;
         ($platinfo->{'OSRuntimeRevMajor'},
          $platinfo->{'OSRuntimeRevMinor'},
-         $platinfo->{'OSRuntimeRevPatch'})
-            = split(/\./, $tmp_version, 3);
+         $platinfo->{'OSRuntimeRevPatch'}) = split(/\./, $tmp_version, 3);
     }
     elsif (grep(/Ubuntu/, @etc_issue)) {
         # Ubuntu is Debian derived, so test for it before Debian
@@ -495,16 +511,14 @@ sub plat_refineLinux {
         $tmp_version =~ s/^.*Ubuntu\s+([^\s]+).*$/\1/;
         ($platinfo->{'OSRuntimeRevMajor'},
          $platinfo->{'OSRuntimeRevMinor'},
-         $platinfo->{'OSRuntimeRevPatch'})
-            = split(/\./, $tmp_version, 3);
+         $platinfo->{'OSRuntimeRevPatch'}) = split(/\./, $tmp_version, 3);
 
         # @tmp_version = grep(/DISTRIB_RELEASE/, @etc_lsbrelease);
         # $tmp_version = pop(@tmp_version);
         # $tmp_version =~ s/.*=\s+//;
         # ($platinfo->{'OSRuntimeRevMajor'},
         #  $platinfo->{'OSRuntimeRevMinor'},
-        #  $platinfo->{'OSRuntimeRevPatch'})
-        #     = split(/\./, $tmp_version, 3);
+        #  $platinfo->{'OSRuntimeRevPatch'}) = split(/\./, $tmp_version, 3);
     }
     elsif (-f '/etc/debian_version') {
         # /etc/issue:
@@ -528,8 +542,7 @@ sub plat_refineLinux {
         $tmp_version = shift(@etc_distrorelease);
         ($platinfo->{'OSRuntimeRevMajor'},
          $platinfo->{'OSRuntimeRevMinor'},
-         $platinfo->{'OSRuntimeRevPatch'})
-            = split(/\./, $tmp_version, 3);
+         $platinfo->{'OSRuntimeRevPatch'}) = split(/\./, $tmp_version, 3);
     }
     else {
         $platinfo->{'OSRuntimeName'} = 'unknown';
