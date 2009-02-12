@@ -46,7 +46,7 @@ $result = {};
 # Process args.
 #
 
-getopts('3ad:hilmMnNpPRswxyz') || die;
+getopts('3acd:hilmMnNpPRswxyz') || die;
 $display_machineName = $opt_n || $opt_a;
 $display_OSName = $opt_s  || $opt_a;
 $display_OSRevMajor = $opt_M  || $opt_a;
@@ -60,6 +60,7 @@ $display_OSRuntimeRevMajor = $opt_x  || $opt_a;
 $display_OSRuntimeRevMinor = $opt_y  || $opt_a;
 $display_OSRuntimeRevPatch = $opt_z  || $opt_a;
 $display_build3Platform = $opt_3 || $opt_a;
+$config_do_cygwin = $opt_c;
 
 if ($opt_d) {
     $config_delim = $opt_d;
@@ -100,7 +101,12 @@ elsif ($result->{'OSName'} eq "Darwin") {
     plat_refineDarwin($result);
 }
 elsif ($result->{'OSName'} =~ "CYGWIN_NT") {
-    plat_refineCygwin($result);
+    if ($config_do_cygwin) {
+        plat_refineCygwin_CygwinRuntime($result);
+    }
+    else {
+        plat_refineCygwin_WindowsRuntime($result);
+    }
 }
 elsif ($result->{'OSName'} =~ "AIX") {
     plat_refineAIX($result);
@@ -608,7 +614,7 @@ sub plat_refineDarwin {
 }
 
 
-sub plat_refineCygwin {
+sub plat_refineCygwin_CygwinRuntime {
     local($platinfo) = @_;
     local($tmp_runtime,
           $tmp_rev);
@@ -625,21 +631,70 @@ sub plat_refineCygwin {
     # in the cygwin runtime, doesn't mean you are
     # compiling for the cygwin runtime.
     # 
-    # we doctor things up for a Windows OS and Cygwin
-    # runtime by default.
+    # we doctor things up for a Windows OS and Cygwin Runtime.
+    # It could be argued that Cygwin should be treated as a 
+    # cross compile target OS/Runtime in most cases, and that
+    # plat.pl should accuratly reflect the native operating
+    # system environment.
 
     # Cygwin puts the windows version in the OS name,
     # and the cygwin version in what's returned by
     # uname -r
-    $tmp_runtime = $platinfo->{'OSName'};
-    $platinfo->{'OSName'} = 'Windows';
+    ($tmp_runtime, $tmp_rev) = split(/-/, $platinfo->{'OSName'}, 2);
 
+    $platinfo->{'OSRuntimeName'} = 'Cygwin';
     $platinfo->{'OSRuntimeRevMajor'} = $platinfo->{'OSRevMajor'};
     $platinfo->{'OSRuntimeRevMinor'} = $platinfo->{'OSRevMinor'};
     $platinfo->{'OSRuntimeRevPatch'} = $platinfo->{'OSRevPatch'};
 
-    ($platinfo->{'OSRuntimeName'}, $tmp_rev) = split(/-/, $tmp_runtime, 2);
 
+    #
+    # OS
+    # 
+    $platinfo->{'OSName'} = 'Windows';
+    ($platinfo->{'OSRevMajor'},
+     $platinfo->{'OSRevMinor'},
+     $platinfo->{'OSRevPatch'}) = 
+        split(/\./, $tmp_rev, 3);
+
+    #
+    # Machine type
+    # 
+    $result->{'machineType'} = normalize(`uname -m`);
+    (! $?) || die "Error calling \"uname -m\"";
+
+    $result->{'machineProc'} = normalize(`uname -p`); 
+    (! $?) || die "Error calling \"uname -p\"";
+
+    # $result->{'machineInstset'} = $result->{'machineType'};
+}
+
+
+sub plat_refineCygwin_WindowsRuntime {
+    local($platinfo) = @_;
+    local($tmp_runtime,
+          $tmp_rev);
+
+    #
+    # Runtime
+    # 
+
+    # $platinfo->{'OSName'} will have something like 
+    # "CYGWIN_NT-5.1" from uname -s on Cygwin.
+    # 
+    ($tmp_runtime, $tmp_rev) = split(/-/, $platinfo->{'OSName'}, 2);
+
+    $platinfo->{'OSRuntimeName'} = 'Windows';
+    ($platinfo->{'OSRuntimeRevMajor'},
+     $platinfo->{'OSRuntimeRevMinor'},
+     $platinfo->{'OSRuntimeRevPatch'}) = 
+        split(/\./, $tmp_rev, 3);
+
+
+    #
+    # OS
+    # 
+    $platinfo->{'OSName'} = 'Windows';
     ($platinfo->{'OSRevMajor'},
      $platinfo->{'OSRevMinor'},
      $platinfo->{'OSRevPatch'}) = 
@@ -787,6 +842,8 @@ sub print_usage {
           "\t[-m]          Display the machine type\n".
           "\t[-p]          Display the machine processor family\n".
           "\t[-i]          Display the machine/OS optimal instruction set\n".
+          "\t[-c]          On windows machines, treat Cygwin as the runtime. The default\n".
+          "\t                  is to treat the native Windows OS as the runtime.\n".
 
           "\t[-a]          Display all system attributes\n".
           "\t                  Fields will be displayed in the following order:\n".
