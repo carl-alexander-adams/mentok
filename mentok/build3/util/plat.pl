@@ -100,6 +100,9 @@ elsif ($result->{'OSName'} eq "Linux") {
 elsif ($result->{'OSName'} eq "Darwin") {
     plat_refineDarwin($result);
 }
+elsif ($result->{'OSName'} =~ "FreeBSD") {
+    plat_refineFreeBSD($result);
+}
 elsif ($result->{'OSName'} =~ "CYGWIN_NT") {
     if ($config_do_cygwin) {
         plat_refineCygwin_CygwinRuntime($result);
@@ -771,6 +774,30 @@ sub plat_refineHPUX {
     # $result->{'machineInstset'} = $result->{'machineType'};
 }
 
+sub plat_refineFreeBSD {
+    local($platinfo) = @_;
+
+    #
+    # Runtime
+    # 
+
+    $platinfo->{'OSRuntimeName'} = $platinfo->{'OSName'};
+    $platinfo->{'OSRuntimeRevMajor'} = $platinfo->{'OSRevMajor'};
+    $platinfo->{'OSRuntimeRevMinor'} = $platinfo->{'OSRevMinor'};
+    $platinfo->{'OSRuntimeRevPatch'} = $platinfo->{'OSRevPatch'};
+
+    #
+    # Machine type
+    # 
+    $result->{'machineType'} = normalize(`uname -m`);
+    (! $?) || die "Error calling \"uname -m\"";
+
+    $result->{'machineProc'} = normalize(`uname -p`); 
+    (! $?) || die "Error calling \"uname -p\"";
+
+    $result->{'machineInstset'} = $result->{'machineProc'};
+}
+
 sub plat_refineUnknown {
     local($platinfo) = @_;
 
@@ -781,7 +808,7 @@ sub plat_refineUnknown {
     #
     # Machine type
     # 
-    (0) || die "refineUnknown not implemented.\n";
+    # (0) || die "refineUnknown not implemented.\n";
 }
 
 sub plat_constructBuild3 {
