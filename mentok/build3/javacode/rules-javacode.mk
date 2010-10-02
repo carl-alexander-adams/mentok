@@ -20,6 +20,8 @@ javacode_info:
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --------------------------------------------------")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) JAVA_HOME                                $(JAVA_HOME)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX)")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) JC_JAVAHOME                              $(JC_JAVAHOME)")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) JC_JAVASRCROOT                           $(JC_JAVASRCROOT)")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) JC_CLASSPATH                             $(JC_CLASSPATH)")

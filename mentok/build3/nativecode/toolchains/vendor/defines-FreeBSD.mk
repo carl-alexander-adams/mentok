@@ -18,7 +18,7 @@ BIN_VENDOR_CPP=/usr/bin/gcc -E
 BIN_VENDOR_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_VENDOR_LD),)
-BIN_VENDOR_LD=/usr/bin/ld
+BIN_VENDOR_LD=/usr/bin/gcc
 BIN_VENDOR_LD_OUTPUTFLAG_EXE=-o 
 BIN_VENDOR_LD_OUTPUTFLAG_SHLIB=-o 
 BIN_VENDOR_LD_OUTPUTFLAG_INCOBJ=-o 
@@ -51,20 +51,25 @@ endif
 
 
 ifeq ($(FLAGS_VENDOR_CC),)
-FLAGS_VENDOR_CC=-W \
+FLAGS_VENDOR_CC=\
+    -Werror \
 	-Wall \
-	-Wcast-qual \
-	-Wcast-align \
-	-Wpointer-arith \
-	-Wsign-compare \
-	-Winline \
-	-Waggregate-return \
-	-Wmissing-prototypes \
-	-Wmissing-declarations \
-	-Wunused
+	-Wformat-security \
+#   -W \
+#   -Werror \
+#	-Wcast-qual \
+#	-Wcast-align \
+#	-Wpointer-arith \
+#	-Wsign-compare \
+#	-Winline \
+#	-Waggregate-return \
+#	-Wmissing-prototypes \
+#	-Wmissing-declarations \
+#	-Wunused
 #	-v \
 #	-ftime-report \
-#	-fmem-report
+#	-fmem-report \
+
 
 endif
 ifeq ($(FLAGS_VENDOR_CC_DEP),)
@@ -86,7 +91,10 @@ ifeq ($(FLAGS_VENDOR_CC_NOASSERT),)
 FLAGS_VENDOR_CC_NOASSERT=-DNDEBUG
 endif
 ifeq ($(FLAGS_VENDOR_CC_REENT),)
-FLAGS_VENDOR_CC_REENT=-D_REENTRANT
+FLAGS_VENDOR_CC_REENT=-D_REENTRANT -DWITH_THREADS -D_THREAD_SAFE
+endif
+ifeq ($(FLAGS_VENDOR_CC_PIC),)
+FLAGS_VENDOR_CC_PIC=-fpic -fPIC
 endif
 
 ifeq ($(FLAGS_VENDOR_CXX),)
@@ -124,7 +132,10 @@ ifeq ($(FLAGS_VENDOR_CXX_NOASSERT),)
 FLAGS_VENDOR_CXX_NOASSERT=-DNDEBUG
 endif
 ifeq ($(FLAGS_VENDOR_CXX_REENT),)
-FLAGS_VENDOR_CXX_REENT=-D_REENTRANT
+FLAGS_VENDOR_CXX_REENT=-D_REENTRANT -DWITH_THREADS -D_THREAD_SAFE
+endif
+ifeq ($(FLAGS_VENDOR_CXX_PIC),)
+FLAGS_VENDOR_CXX_PIC=-fpic -fPIC
 endif
 
 

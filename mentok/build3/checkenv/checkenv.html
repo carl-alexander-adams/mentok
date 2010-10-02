@@ -1,0 +1,143 @@
+<html> <head>
+<title>Check Environment Module</title>
+</head>
+
+<body>
+<h1>Check Environment Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Check Environment Module provides the
+build system with the ability to run environment checks on the build environment.
+
+<hr>
+<h2>Macros and Controls</h2>
+<i>The Check Environment Module currently does not have any control macros</i>
+<!--
+<dl>
+  <dt><b>XML_VALIDATE_CLASS</b></dt>
+  <dd>
+       This is the java class entry point into the default XML
+       validation utility. The value is used to set the default value
+       of the complete validation command line. Defaults to "Validate".
+       </dd><p>
+</dl>
+-->
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#checkenv_info">checkenv_info</a>
+  <li><a href="#checkenv_man">checkenv_man</a>
+  <li><a href="#checkenv_man">checkenv_ckospkg</a>
+</ul>
+
+
+<hr>
+<a name="checkenv_info">
+<h2>checkenv_info</h2>
+<h3>checkenv_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the check environment module of
+the build system. The <b>checkenv_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>checkenv_info</b> target.
+
+<hr>
+<a name="checkenv_man">
+<h2>checkenv_man</h2>
+<h3>checkenv_man Overview</h3>
+Simple target to display usage information and help pertaining to 
+the check envirionment  module of the build system.
+The <b>checkenv_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>checkenv_man</b> target.
+
+<hr>
+<a name="checkenv_ckospkg">
+<h2>checkenv_ckospkg</h2>
+<h3>checkenv_ckospkg Overview</h3>
+Simple target to trigger <b>CKOSPKG_TARGETS</b> pattern targets in isolation.
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#CKOSPKG_TARGETS>CKOSPKG_TARGETS</a>
+</ul>
+
+<hr>
+<a name="CKOSPKG_TARGETS">
+<h2>CKOSPKG_TARGETS</h2>
+<h3>CKOSPKG_TARGETS Overview</h3>
+CKOSPKG_TARGETS is the pattern target for checking that a given
+OS package is installed. If the requested OS package is not found,
+a build failure will result.  Package check targets can specify a 
+package name (which defaults to the target name), version, release,
+and architecture.  When version, release, or arch are not specified, any
+found version satisifies the target.  Wild cards may be used on OSs that
+support this (such as YUM based systems)
+
+<h3>CKOSPKG_TARGETS Overview</h3>
+<h3>EXE_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;ckospkg target&gt;</i>_NAME</b></dt>
+  <dd>
+       Override the default package name to ckeck for.
+       The default is the name of the target itself.
+       </dd><p>
+
+  <dt><b><i>&lt;ckospkg target&gt;</i>_VERSION</b></dt>
+  <dd>
+       Check for a particular version of the installed package.
+       The default is to accept any found version of the package.
+       </dd><p>
+
+  <dt><b><i>&lt;ckospkg target&gt;</i>_RELEASE</b></dt>
+  <dd>
+       Check for a particular release of the installed package.
+       The default is to accept any found release of the package.
+       </dd><p>
+
+  <dt><b><i>&lt;ckospkg target&gt;</i>_ARCH</b></dt>
+  <dd>
+       Check for a particular architecture of the installed package.
+       The default is to accept any found architecture of the package.
+       <b>NOTE:</b> while architecure names provoded by the
+       <a href="../base/base.html">base module of build3</a> may
+       be useful, this architecure must be specified per the underlaying
+       operating system's expectations.
+       </dd><p>
+
+</dl>
+
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+# The source root of this Component
+COMPONENT_ROOT=../..
+
+# The root of the build system
+BS_ROOT=$(COMPONENT_ROOT)/build3
+
+# Boostrap Build system definitions.
+include $(BS_ROOT)/defines.mk
+
+# check for a particular version of postgres-devel with a package 
+# name override, and any version of openssl with all defaults.
+
+CKOSPKG_TARGETS=\
+    postgres-devel \
+	openssl
+
+postgres-server_NAME=postgresql-devel
+postgres-server_VERSION=8.1.18
+postgres-server_RELEASE=e15_4.1
+postgres-server_ARCH=x86_64
+
+# Finally, include the rules to make the build system go.
+include $(BS_ROOT)/rules.mk
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>

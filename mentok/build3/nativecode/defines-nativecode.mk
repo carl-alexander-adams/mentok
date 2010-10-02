@@ -57,3 +57,10 @@ endif
 ifeq ($(NC_CONTROL_REENTRANT),)
 NC_CONTROL_REENTRANT=0
 endif
+
+ifeq ($(NC_CONTROL_PIC),)
+NC_CONTROL_PIC=0
+endif
+
+# Always export the lib vtag, since it's useful for packaging and should never vary accross makefiles.
+export NC_LIB_VTAG

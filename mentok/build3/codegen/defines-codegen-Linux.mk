@@ -3,7 +3,7 @@ BIN_LEX=/usr/bin/flex
 endif
 
 ifeq ($(BIN_YACC),)
-BIN_YACC=/usr/local/bison-2.0/bin/bison
+BIN_YACC=/usr/bin/bison
 endif
 
 
@@ -16,3 +16,6 @@ FLAGS_YACC=-y -d
 endif
 
 
+ifeq ($(FLAGS_YACC_OUTPUTFLAG),)
+FLAGS_YACC_OUTPUTFLAG=--output=
+endif

@@ -39,7 +39,7 @@ filterobjlist_only_cc=$(foreach o,$(1),\
 		$(call _filterobjlist_cc_marcoSRC,$(o)),\
 		$(call _filterobjlist_cc_guessSRC,$(o))))
 
-_filterobjlist_cxx_marcoSRC=$(if $(filter %.cc,$($(1)_SRC)),$(1),)
+_filterobjlist_cxx_marcoSRC=$(if $(filter %.cc %.cpp,$($(1)_SRC)),$(1),)
 _filterobjlist_cxx_guessSRC=$(if $(wildcard $(call _guess_cxx_src,$(1))),$(1),)
 filterobjlist_only_cxx=$(foreach o,$(1),\
 	$(if $($(o)_SRC),\
@@ -159,6 +159,7 @@ nativecode_info_core:
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) NC_CONTROL_STRIP                         $(NC_CONTROL_STRIP)")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) NC_CONTROL_NOASSERT                      $(NC_CONTROL_NOASSERT)")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) NC_CONTROL_REENTRANT                     $(NC_CONTROL_REENTRANT)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) NC_CONTROL_PIC                           $(NC_CONTROL_PIC)")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) ")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) ")
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) OBJ_CC_TARGETS                           $(OBJ_CC_TARGETS)")
@@ -218,7 +219,7 @@ _EXE_DEP_%: _OBJ=$(foreach obj,$(_OBJLIST),$(call _func_get_target_dir,$(obj))/$
 _EXE_DEP_%: _RAWOBJ=$($*_RAWOBJS)
 _EXE_DEP_%: _DEP=$($*_DEP)
 _EXE_DEP_%:
-	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for EXE linked target $(*)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Rebuilding dependancy for EXE linked target $(*)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## EXE target: $(*) $(_EXE)" >> $(_EXE_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_EXE): $(_OBJ)" >> $(_EXE_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_EXE): $(_RAWOBJ)" >> $(_EXE_DEPEND_FILE)
@@ -273,6 +274,7 @@ $(_EXE_TARGETS): _LDFLAGS_LOADLIBS=$(_T_LDFLAGS_LOADLIBS) $(_LDFLAGS_LOADLIBS_OP
 $(_EXE_TARGETS):
 $(_EXE_TARGETS):
 $(_EXE_TARGETS): _STRIP_FLAGS=$(if $($(_T)_STRIPFLAGS),$($(_T)_STRIPFLAGS),$(FLAGS_$(_TC)_STRIP_EXE) $(FLAGS_STRIP_EXE))
+$(_EXE_TARGETS): _STRIP_ECHO=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Stripping EXE target $(_T)"),)
 $(_EXE_TARGETS): _STRIP_CMD=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(_STRIP) $(_STRIP_FLAGS) $@,)
 $(_EXE_TARGETS): _PRESTRIP_CMD=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(BIN_CP) $@ $@.unstripped,)
 $(_EXE_TARGETS):
@@ -300,15 +302,17 @@ $(_EXE_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target LDFLAGS          (Current Build) :  $(_LDFLAGS)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target LDFLAGS_LOADLIBS (Current Build) :  $(_LDFLAGS_LOADLIBS)")
 	$(BS_CMDPREFIX_VERBOSE2) $(_MKDIR)
-	$(BS_CMDPREFIX_VERBOSE2) $(_LD) $(_LD_OUTPUTFLAG_EXE)$@ $(_LDFLAGS) $(_OBJS) $(_RAWOBJS) $(_LDFLAGS_LOADLIBS)
-	$(BS_CMDPREFIX_VERBOSE2) $(_PRESTRIP_CMD)
-	$(BS_CMDPREFIX_VERBOSE2) $(_STRIP_CMD)
+	$(BS_CMDPREFIX_VERBOSE1) $(_LD) $(_LD_OUTPUTFLAG_EXE)$@ $(_LDFLAGS) $(_OBJS) $(_RAWOBJS) $(_LDFLAGS_LOADLIBS)
+	@$(_STRIP_ECHO)
+	$(BS_CMDPREFIX_VERBOSE1) $(_PRESTRIP_CMD)
+	$(BS_CMDPREFIX_VERBOSE1) $(_STRIP_CMD)
 
 
 #
 # Static lib linked targets
 #
-_LIB_TARGETS=$(foreach t,$(sort $(LIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
+#_LIB_TARGETS=$(foreach t,$(sort $(LIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
+_LIB_TARGETS=$(foreach t,$(sort $(LIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t:.a=$(NC_LIB_VTAG).a))
 _LIB_DEP_GENERATION_TARGETS=$(addprefix _LIB_DEP_,$(LIB_TARGETS))
 _LIB_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_lib.mk
 
@@ -342,12 +346,12 @@ _LIB_DEP_PREP:
 
 
 _LIB_DEP_%:
-_LIB_DEP_%: _LIB=$(call _func_get_target_dir,$(*))/$(*)
+_LIB_DEP_%: _LIB=$(call _func_get_target_dir,$(*))/$(*:.a=$(NC_LIB_VTAG).a)
 _LIB_DEP_%: _OBJ=$(foreach obj,$($*_OBJS),$(call _func_get_target_dir,$(obj))/$(obj))
 _LIB_DEP_%: _RAWOBJ=$($*_RAWOBJS)
 _LIB_DEP_%: _DEP=$($*_DEP)
 _LIB_DEP_%:
-	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for Static Library linked target $(*) ")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Rebuilding dependancy for Static Library linked target $(*) ")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## LIB target: $(*) $(_LIB)" >> $(_LIB_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_LIB): $(_OBJ)" >> $(_LIB_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_LIB): $(_RAWOBJ)" >> $(_LIB_DEPEND_FILE)
@@ -358,7 +362,8 @@ _LIB_DEP_%:
 
 
 $(_LIB_TARGETS):
-$(_LIB_TARGETS): _T=$(notdir $@)
+$(_LIB_TARGETS): _T_vtag=$(notdir $@)
+$(_LIB_TARGETS): _T=$(_T_vtag:$(NC_LIB_VTAG).a=.a)
 $(_LIB_TARGETS):
 $(_LIB_TARGETS): _TC=$(if $($(_T)_TOOLCHAIN),$($(_T)_TOOLCHAIN),$(NC_CONTROL_TOOLCHAIN))
 $(_LIB_TARGETS): _AR=$(if $($(_T)_AR),$($(_T)_AR),$(BIN_$(_TC)_AR))
@@ -396,6 +401,7 @@ $(_LIB_TARGETS): _ARFLAGS=$(_T_ARFLAGS) $(_ARFLAGS_OPT) $(_ARFLAGS_DBG) $(_ARFLA
 $(_LIB_TARGETS): _ARFLAGS_LOADLIBS=$(_T_ARFLAGS_LOADLIBS) $(_ARFLAGS_LOADLIBS_OPT) $(_ARFLAGS_LOADLIBS_DBG) $(_ARFLAGS_LOADLIBS_PROFILE) $(_ARFLAGS_LOADLIBS_COV)
 $(_LIB_TARGETS):
 $(_LIB_TARGETS): _STRIP_FLAGS=$(if $($(_T)_STRIPFLAGS),$($(_T)_STRIPFLAGS),$(FLAGS_$(_TC)_STRIP_LIB) $(FLAGS_STRIP_LIB))
+$(_LIB_TARGETS): _STRIP_ECHO=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Stripping static library target $(_T)"),)
 $(_LIB_TARGETS): _STRIP_CMD=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(_STRIP) $(_STRIP_FLAGS) $@,)
 $(_LIB_TARGETS): _PRESTRIP_CMD=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(BIN_CP) $@ $@.unstripped,)
 $(_LIB_TARGETS):
@@ -423,9 +429,10 @@ $(_LIB_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target ARFLAGS          (Current Build) :  $(_ARFLAGS)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target ARFLAGS_LOADLIBS (Current Build) :  $(_ARFLAGS_LOADLIBS)")
 	$(BS_CMDPREFIX_VERBOSE2) $(_MKDIR)
-	$(BS_CMDPREFIX_VERBOSE2) $(_AR) $(_ARFLAGS) $(_AR_OUTPUTFLAG)$@ $(_OBJS) $(_RAWOBJS) $(_ARFLAGS_LOADLIBS)
-	$(BS_CMDPREFIX_VERBOSE2) $(_PRESTRIP_CMD)
-	$(BS_CMDPREFIX_VERBOSE2) $(_STRIP_CMD)
+	$(BS_CMDPREFIX_VERBOSE1) $(_AR) $(_ARFLAGS) $(_AR_OUTPUTFLAG)$@ $(_OBJS) $(_RAWOBJS) $(_ARFLAGS_LOADLIBS)
+	@$(_STRIP_ECHO)
+	$(BS_CMDPREFIX_VERBOSE1) $(_PRESTRIP_CMD)
+	$(BS_CMDPREFIX_VERBOSE1) $(_STRIP_CMD)
 
 
 
@@ -433,7 +440,8 @@ $(_LIB_TARGETS):
 #
 # Shared lib linked targets
 #
-_SHLIB_TARGETS=$(foreach t,$(sort $(SHLIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
+#_SHLIB_TARGETS=$(foreach t,$(sort $(SHLIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
+_SHLIB_TARGETS=$(foreach t,$(sort $(SHLIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t:.so=$(NC_LIB_VTAG).so))
 _SHLIB_DEP_GENERATION_TARGETS=$(addprefix _SHLIB_DEP_,$(SHLIB_TARGETS))
 _SHLIB_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_shlib.mk
 
@@ -467,12 +475,12 @@ _SHLIB_DEP_PREP:
 
 
 _SHLIB_DEP_%:
-_SHLIB_DEP_%: _SHLIB=$(call _func_get_target_dir,$(*))/$(*)
+_SHLIB_DEP_%: _SHLIB=$(call _func_get_target_dir,$(*))/$(*:.so=$(NC_LIB_VTAG).so)
 _SHLIB_DEP_%: _OBJ=$(foreach obj,$($*_OBJS),$(call _func_get_target_dir,$(obj))/$(obj))
 _SHLIB_DEP_%: _RAWOBJ=$($*_RAWOBJS)
 _SHLIB_DEP_%: _DEP=$($*_DEP)
 _SHLIB_DEP_%:
-	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for Shared Library linked target $(*)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Rebuilding dependancy for Shared Library linked target $(*)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## SHLIB target: $(*) $(_SHLIB)" >> $(_SHLIB_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_SHLIB): $(_OBJ)" >> $(_SHLIB_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_SHLIB): $(_RAWOBJ)" >> $(_SHLIB_DEPEND_FILE)
@@ -483,7 +491,8 @@ _SHLIB_DEP_%:
 
 
 $(_SHLIB_TARGETS):
-$(_SHLIB_TARGETS): _T=$(notdir $@)
+$(_SHLIB_TARGETS): _T_vtag=$(notdir $@)
+$(_SHLIB_TARGETS): _T=$(_T_vtag:$(NC_LIB_VTAG).so=.so)
 $(_SHLIB_TARGETS):
 $(_SHLIB_TARGETS): _TC=$(if $($(_T)_TOOLCHAIN),$($(_T)_TOOLCHAIN),$(NC_CONTROL_TOOLCHAIN))
 $(_SHLIB_TARGETS): _LD=$(if $($(_T)_LD),$($(_T)_LD),$(BIN_$(_TC)_LD))
@@ -521,6 +530,7 @@ $(_SHLIB_TARGETS): _LDFLAGS=$(_T_LDFLAGS) $(_LDFLAGS_OPT) $(_LDFLAGS_DBG) $(_LDF
 $(_SHLIB_TARGETS): _LDFLAGS_LOADLIBS=$(_T_LDFLAGS_LOADLIBS) $(_LDFLAGS_LOADLIBS_OPT) $(_LDFLAGS_LOADLIBS_DBG) $(_LDFLAGS_LOADLIBS_PROFILE) $(_LDFLAGS_LOADLIBS_COV) 
 $(_SHLIB_TARGETS):
 $(_SHLIB_TARGETS): _STRIP_FLAGS=$(if $($(_T)_STRIPFLAGS),$($(_T)_STRIPFLAGS),$(FLAGS_$(_TC)_STRIP_SHLIB) $(FLAGS_STRIP_SHLIB))
+$(_SHLIB_TARGETS): _STRIP_ECHO=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Stripping shared library target $(_T)"),)
 $(_SHLIB_TARGETS): _STRIP_CMD=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(_STRIP) $(_STRIP_FLAGS) $@,)
 $(_SHLIB_TARGETS): _PRESTRIP_CMD=$(if $(filter 1,$(NC_CONTROL_STRIP)),$(BIN_CP) $@ $@.unstripped,)
 $(_SHLIB_TARGETS):
@@ -548,9 +558,10 @@ $(_SHLIB_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target LDFLAGS          (Current Build) :  $(_LDFLAGS)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target LDFLAGS_LOADLIBS (Current Build) :  $(_LDFLAGS_LOADLIBS)")
 	$(BS_CMDPREFIX_VERBOSE2) $(_MKDIR)
-	$(BS_CMDPREFIX_VERBOSE2) $(_LD) $(_LD_OUTPUTFLAG_SHLIB)$@ $(_LDFLAGS) $(_OBJS) $(_RAWOBJS) $(_LDFLAGS_LOADLIBS)
-	$(BS_CMDPREFIX_VERBOSE2) $(_PRESTRIP_CMD)
-	$(BS_CMDPREFIX_VERBOSE2) $(_STRIP_CMD)
+	$(BS_CMDPREFIX_VERBOSE1) $(_LD) $(_LD_OUTPUTFLAG_SHLIB)$@ $(_LDFLAGS) $(_OBJS) $(_RAWOBJS) $(_LDFLAGS_LOADLIBS)
+	@$(_STRIP_ECHO)
+	$(BS_CMDPREFIX_VERBOSE1) $(_PRESTRIP_CMD)
+	$(BS_CMDPREFIX_VERBOSE1) $(_STRIP_CMD)
 
 
 
@@ -597,7 +608,7 @@ _INCOBJ_DEP_%: _OBJ=$(foreach obj,$($*_OBJS),$(call _func_get_target_dir,$(obj))
 _INCOBJ_DEP_%: _RAWOBJ=$($*_RAWOBJS)
 _INCOBJ_DEP_%: _DEP=$($*_DEP)
 _INCOBJ_DEP_%:
-	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for Incrementally Linked Object target $(*)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Rebuilding dependancy for Incrementally Linked Object target $(*)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Incrementally Linked Object Target: $(*) $(_INCOBJ)" >> $(_INCOBJ_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_INCOBJ): $(_OBJ)" >> $(_INCOBJ_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_INCOBJ): $(_RAWOBJ)" >> $(_INCOBJ_DEPEND_FILE)
@@ -666,7 +677,7 @@ $(_OBJ_INC_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target LDFLAGS          (Current Build) :  $(_LDFLAGS)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target LDFLAGS_LOADLIBS (Current Build) :  $(_LDFLAGS_LOADLIBS)")
 	$(BS_CMDPREFIX_VERBOSE2) $(_MKDIR)
-	$(BS_CMDPREFIX_VERBOSE2) $(_LD) $(_LD_OUTPUTFLAG_INCOBJ)$@ $(_LDFLAGS) $(_OBJS) $(_RAWOBJS) $(_LDFLAGS_LOADLIBS)
+	$(BS_CMDPREFIX_VERBOSE1) $(_LD) $(_LD_OUTPUTFLAG_INCOBJ)$@ $(_LDFLAGS) $(_OBJS) $(_RAWOBJS) $(_LDFLAGS_LOADLIBS)
 
 
 
@@ -726,7 +737,7 @@ _OBJ_AS_DEP_%: _ASFLAGS=$(_T_ASFLAGS) $(_ASFLAGS_OPT) $(_ASFLAGS_DBG) $(_ASFLAGS
 _OBJ_AS_DEP_%: 
 _OBJ_AS_DEP_%: _SED_HACK = s?^\(.*:\)?$(call _func_get_target_dir,$(*))\/$(*):?
 _OBJ_AS_DEP_%: 
-	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for Assembly object target $(*)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Rebuilding dependancy for Assembly object target $(*)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Object file: $(*) $(_OBJ)" >> $(_OBJ_AS_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_OBJ): $(_SRC)" >> $(_OBJ_AS_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_OBJ): $(_DEP)" >> $(_OBJ_AS_DEPEND_FILE)
@@ -770,7 +781,7 @@ $(_OBJ_AS_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target ASFLAGS (Coverage)       :  $(_T_ASFLAGS_COV)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target ASFLAGS (current build)  :  $(_ASFLAGS)")
 	$(BS_CMDPREFIX_VERBOSE2) $(_MKDIR)
-	$(BS_CMDPREFIX_VERBOSE2) $(_AS) $(_ASFLAGS) -c $(_AS_OUTPUTFLAG)$@ $(_SRC)
+	$(BS_CMDPREFIX_VERBOSE1) $(_AS) $(_ASFLAGS) -c $(_AS_OUTPUTFLAG)$@ $(_SRC)
 
 
 
@@ -816,6 +827,7 @@ _OBJ_CXX_DEP_%:
 _OBJ_CXX_DEP_%: 
 _OBJ_CXX_DEP_%: _T_CXXFLAGS         = $(if $($*_CXXFLAGS),$($*_CXXFLAGS),$(FLAGS_$(_TC)_CXX) $(FLAGS_CXX))
 _OBJ_CXX_DEP_%: _T_CXXFLAGS_REENT   = $(if $($*_CXXFLAGS_REENT),$($*_CXXFLAGS_REENT),$(FLAGS_$(_TC)_CXX_REENT) $(FLAGS_CXX_REENT))
+_OBJ_CXX_DEP_%: _T_CXXFLAGS_PIC     = $(if $($*_CXXFLAGS_PIC),$($*_CXXFLAGS_PIC),$(FLAGS_$(_TC)_CXX_PIC) $(FLAGS_CXX_PIC))
 _OBJ_CXX_DEP_%: _T_CXXFLAGS_OPT     = $(if $($*_CXXFLAGS_OPT),$($*_CXXFLAGS_OPT),$(FLAGS_$(_TC)_CXX_OPT) $(FLAGS_CXX_OPT))
 _OBJ_CXX_DEP_%: _T_CXXFLAGS_DBG     = $(if $($*_CXXFLAGS_DBG),$($*_CXXFLAGS_DBG),$(FLAGS_$(_TC)_CXX_DBG) $(FLAGS_CXX_DBG))
 _OBJ_CXX_DEP_%: _T_CXXFLAGS_PROFILE = $(if $($*_CXXFLAGS_PROFILE),$($*_CXXFLAGS_PROFILE),$(FLAGS_$(_TC)_CXX_PROFILE) $(FLAGS_CXX_PROFILE))
@@ -826,17 +838,20 @@ _OBJ_CXX_DEP_%: _DFRNT=$(if $(findstring $(_SRC),$(*:%_r.o=%.cc)),1,$(NC_CONTROL
 _OBJ_CXX_DEP_%: _OBJ_IS_REENT=$(if $($*_REENT),$($*_REENT),$(_DFRNT))
 _OBJ_CXX_DEP_%: _CXXFLAGS_REENT=$(if $(filter 1,$(_OBJ_IS_REENT)),$(_T_CXXFLAGS_REENT))
 _OBJ_CXX_DEP_%:
+_OBJ_CXX_DEP_%: _OBJ_IS_PIC=$(if $($*_PIC),$($*_PIC),$(NC_CONTROL_PIC))
+_OBJ_CXX_DEP_%: _CXXFLAGS_PIC=$(if $(filter 1,$(_OBJ_IS_PIC)),$(_T_CXXFLAGS_PIC))
+_OBJ_CXX_DEP_%:
 _OBJ_CXX_DEP_%: _CXXFLAGS_OPT=$(if $(filter 1,$(NC_CONTROL_OPTIMIZE)),$(_T_CXXFLAGS_OPT))
 _OBJ_CXX_DEP_%: _CXXFLAGS_DBG=$(if $(filter 1,$(NC_CONTROL_DEBUG)),$(_T_CXXFLAGS_DBG))
 _OBJ_CXX_DEP_%: _CXXFLAGS_PROFILE=$(if $(filter 1,$(NC_CONTROL_PROFILE)),$(_T_CXXFLAGS_PROFILE))
 _OBJ_CXX_DEP_%: _CXXFLAGS_COV=$(if $(filter 1,$(NC_CONTROL_COV)),$(_T_CXXFLAGS_COV))
 _OBJ_CXX_DEP_%: _CXXFLAGS_NOASSERT=$(if $(filter 1,$(NC_CONTROL_NOASSERT)),$(_T_CXXFLAGS_NOASSERT))
 _OBJ_CXX_DEP_%:
-_OBJ_CXX_DEP_%: _CXXFLAGS=$(_T_CXXFLAGS) $(_CXXFLAGS_REENT) $(_CXXFLAGS_OPT) $(_CXXFLAGS_DBG) $(_CXXFLAGS_PROFILE) $(_CXXFLAGS_COV) $(_CXXFLAGS_NOASSERT)
+_OBJ_CXX_DEP_%: _CXXFLAGS=$(_T_CXXFLAGS) $(_CXXFLAGS_REENT) $(_CXXFLAGS_PIC) $(_CXXFLAGS_OPT) $(_CXXFLAGS_DBG) $(_CXXFLAGS_PROFILE) $(_CXXFLAGS_COV) $(_CXXFLAGS_NOASSERT)
 _OBJ_CXX_DEP_%: 
 _OBJ_CXX_DEP_%: _SED_HACK = s?^\(.*:\)?$(call _func_get_target_dir,$(*))\/$(*):?
 _OBJ_CXX_DEP_%: 
-	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for C++ object target $(*)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Rebuilding dependancy for C++ object target $(*)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Object file: $(*) $(_OBJ)" >> $(_OBJ_CXX_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_OBJ): $(_SRC)" >> $(_OBJ_CXX_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_OBJ): $(_DEP)" >> $(_OBJ_CXX_DEPEND_FILE)
@@ -854,6 +869,7 @@ $(_OBJ_CXX_TARGETS): _CXX_OUTPUTFLAG=$(if $($(_T)_CXX_OUTPUTFLAG),$($(_T)_CXX_OU
 $(_OBJ_CXX_TARGETS):
 $(_OBJ_CXX_TARGETS): _T_CXXFLAGS         = $(if $($(_T)_CXXFLAGS),$($(_T)_CXXFLAGS),$(FLAGS_$(_TC)_CXX) $(FLAGS_CXX))
 $(_OBJ_CXX_TARGETS): _T_CXXFLAGS_REENT   = $(if $($(_T)_CXXFLAGS_REENT),$($(_T)_CXXFLAGS_REENT),$(FLAGS_$(_TC)_CXX_REENT) $(FLAGS_CXX_REENT))
+$(_OBJ_CXX_TARGETS): _T_CXXFLAGS_PIC     = $(if $($(_T)_CXXFLAGS_PIC),$($(_T)_CXXFLAGS_PIC),$(FLAGS_$(_TC)_CXX_PIC) $(FLAGS_CXX_PIC))
 $(_OBJ_CXX_TARGETS): _T_CXXFLAGS_OPT     = $(if $($(_T)_CXXFLAGS_OPT),$($(_T)_CXXFLAGS_OPT),$(FLAGS_$(_TC)_CXX_OPT) $(FLAGS_CXX_OPT))
 $(_OBJ_CXX_TARGETS): _T_CXXFLAGS_DBG     = $(if $($(_T)_CXXFLAGS_DBG),$($(_T)_CXXFLAGS_DBG),$(FLAGS_$(_TC)_CXX_DBG) $(FLAGS_CXX_DBG))
 $(_OBJ_CXX_TARGETS): _T_CXXFLAGS_PROFILE = $(if $($(_T)_CXXFLAGS_PROFILE),$($(_T)_CXXFLAGS_PROFILE),$(FLAGS_$(_TC)_CXX_PROFILE) $(FLAGS_CXX_PROFILE))
@@ -864,13 +880,16 @@ $(_OBJ_CXX_TARGETS): _DFRNT=$(if $(findstring $(_SRC),$(_T:%_r.o=%.cc)),1,$(NC_C
 $(_OBJ_CXX_TARGETS): _OBJ_IS_REENT=$(if $($(_T)_REENT),$($(_T)_REENT),$(_DFRNT))
 $(_OBJ_CXX_TARGETS): _CXXFLAGS_REENT=$(if $(filter 1,$(_OBJ_IS_REENT)),$(_T_CXXFLAGS_REENT))
 $(_OBJ_CXX_TARGETS):
+$(_OBJ_CXX_TARGETS): _OBJ_IS_PIC=$(if $($(_T)_PIC),$($(_T)_PIC),$(NC_CONTROL_PIC))
+$(_OBJ_CXX_TARGETS): _CXXFLAGS_PIC=$(if $(filter 1,$(_OBJ_IS_PIC)),$(_T_CXXFLAGS_PIC))
+$(_OBJ_CXX_TARGETS):
 $(_OBJ_CXX_TARGETS): _CXXFLAGS_OPT=$(if $(filter 1,$(NC_CONTROL_OPTIMIZE)),$(_T_CXXFLAGS_OPT))
 $(_OBJ_CXX_TARGETS): _CXXFLAGS_DBG=$(if $(filter 1,$(NC_CONTROL_DEBUG)),$(_T_CXXFLAGS_DBG))
 $(_OBJ_CXX_TARGETS): _CXXFLAGS_PROFILE=$(if $(filter 1,$(NC_CONTROL_PROFILE)),$(_T_CXXFLAGS_PROFILE))
 $(_OBJ_CXX_TARGETS): _CXXFLAGS_COV=$(if $(filter 1,$(NC_CONTROL_COV)),$(_T_CXXFLAGS_COV))
 $(_OBJ_CXX_TARGETS): _CXXFLAGS_NOASSERT=$(if $(filter 1,$(NC_CONTROL_NOASSERT)),$(_T_CXXFLAGS_NOASSERT))
 $(_OBJ_CXX_TARGETS):
-$(_OBJ_CXX_TARGETS): _CXXFLAGS=$(_T_CXXFLAGS) $(_CXXFLAGS_REENT) $(_CXXFLAGS_OPT) $(_CXXFLAGS_DBG) $(_CXXFLAGS_PROFILE) $(_CXXFLAGS_COV) $(_CXXFLAGS_NOASSERT)
+$(_OBJ_CXX_TARGETS): _CXXFLAGS=$(_T_CXXFLAGS) $(_CXXFLAGS_REENT) $(_CXXFLAGS_PIC) $(_CXXFLAGS_OPT) $(_CXXFLAGS_DBG) $(_CXXFLAGS_PROFILE) $(_CXXFLAGS_COV) $(_CXXFLAGS_NOASSERT)
 $(_OBJ_CXX_TARGETS):
 $(_OBJ_CXX_TARGETS): _MKDIR=$(if $(wildcard $(dir $@)),,$(BIN_MKDIR) -p $(dir $@))
 $(_OBJ_CXX_TARGETS):
@@ -879,10 +898,12 @@ $(_OBJ_CXX_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Output File                     :  $@")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Source File                     :  $(_SRC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Object is Reentrant             :  $(_OBJ_IS_REENT)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Object is Position Independent  :  $(_OBJ_IS_PIC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Toolchain                       :  $(_TC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Compiler                        :  $(_CXX)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CXXFLAGS (base)          :  $(_T_CXXFLAGS)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CXXFLAGS (Reentrant)     :  $(_T_CXXFLAGS_REENT)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CXXFLAGS (PIC)           :  $(_T_CXXFLAGS_PIC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CXXFLAGS (Optimize)      :  $(_T_CXXFLAGS_OPT)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CXXFLAGS (Debug)         :  $(_T_CXXFLAGS_DBG)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CXXFLAGS (Profile)       :  $(_T_CXXFLAGS_PROFILE)")
@@ -890,7 +911,7 @@ $(_OBJ_CXX_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CXXFLAGS (Asserts)       :  $(_T_CXXFLAGS_NOASSERT)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CXXFLAGS (current build) :  $(_CXXFLAGS)")
 	$(BS_CMDPREFIX_VERBOSE2) $(_MKDIR)
-	$(BS_CMDPREFIX_VERBOSE2) $(_CXX) $(_CXXFLAGS) -c $(_CXX_OUTPUTFLAG)$@ $(_SRC)
+	$(BS_CMDPREFIX_VERBOSE1) $(_CXX) $(_CXXFLAGS) -c $(_CXX_OUTPUTFLAG)$@ $(_SRC)
 
 
 
@@ -935,7 +956,9 @@ _OBJ_CC_DEP_%: _DEPCC=$(if $(_T_CFLAGS_DEP),$(if $($*_CC),$($*_CC),$(BIN_$(_TC)_
 _OBJ_CC_DEP_%: 
 _OBJ_CC_DEP_%: 
 _OBJ_CC_DEP_%: _T_CFLAGS         = $(if $($*_CFLAGS),$($*_CFLAGS),$(FLAGS_$(_TC)_CC) $(FLAGS_CC))
+_OBJ_CC_DEP_%: _T_CFLAGS_EXTRA   = $(if $($*_CFLAGS_EXTRA),$($*_CFLAGS_EXTRA),)
 _OBJ_CC_DEP_%: _T_CFLAGS_REENT   = $(if $($*_CFLAGS_REENT),$($*_CFLAGS_REENT),$(FLAGS_$(_TC)_CC_REENT) $(FLAGS_CC_REENT))
+_OBJ_CC_DEP_%: _T_CFLAGS_PIC     = $(if $($*_CFLAGS_PIC),$($*_CFLAGS_PIC),$(FLAGS_$(_TC)_CC_PIC) $(FLAGS_CC_PIC))
 _OBJ_CC_DEP_%: _T_CFLAGS_OPT     = $(if $($*_CFLAGS_OPT),$($*_CFLAGS_OPT),$(FLAGS_$(_TC)_CC_OPT) $(FLAGS_CC_OPT))
 _OBJ_CC_DEP_%: _T_CFLAGS_DBG     = $(if $($*_CFLAGS_DBG),$($*_CFLAGS_DBG),$(FLAGS_$(_TC)_CC_DBG) $(FLAGS_CC_DBG))
 _OBJ_CC_DEP_%: _T_CFLAGS_PROFILE = $(if $($*_CFLAGS_PROFILE),$($*_CFLAGS_PROFILE),$(FLAGS_$(_TC)_CC_PROFILE) $(FLAGS_CC_PROFILE))
@@ -946,17 +969,20 @@ _OBJ_CC_DEP_%: _DFRNT=$(if $(findstring $(_SRC),$(*:%_r.o=%.c)),1,$(NC_CONTROL_R
 _OBJ_CC_DEP_%: _OBJ_IS_REENT=$(if $($*_REENT),$($*_REENT),$(_DFRNT))
 _OBJ_CC_DEP_%: _CFLAGS_REENT=$(if $(filter 1,$(_OBJ_IS_REENT)),$(_T_CFLAGS_REENT))
 _OBJ_CC_DEP_%:
+_OBJ_CC_DEP_%: _OBJ_IS_PIC=$(if $($*_PIC),$($*_PIC),$(NC_CONTROL_PIC))
+_OBJ_CC_DEP_%: _CFLAGS_PIC=$(if $(filter 1,$(_OBJ_IS_PIC)),$(_T_CFLAGS_PIC))
+_OBJ_CC_DEP_%:
 _OBJ_CC_DEP_%: _CFLAGS_OPT=$(if $(filter 1,$(NC_CONTROL_OPTIMIZE)),$(_T_CFLAGS_OPT))
 _OBJ_CC_DEP_%: _CFLAGS_DBG=$(if $(filter 1,$(NC_CONTROL_DEBUG)),$(_T_CFLAGS_DBG))
 _OBJ_CC_DEP_%: _CFLAGS_PROFILE=$(if $(filter 1,$(NC_CONTROL_PROFILE)),$(_T_CFLAGS_PROFILE))
 _OBJ_CC_DEP_%: _CFLAGS_COV=$(if $(filter 1,$(NC_CONTROL_COV)),$(_T_CFLAGS_COV))
 _OBJ_CC_DEP_%: _CFLAGS_NOASSERT=$(if $(filter 1,$(NC_CONTROL_NOASSERT)),$(_T_CFLAGS_NOASSERT))
 _OBJ_CC_DEP_%:
-_OBJ_CC_DEP_%: _CFLAGS=$(_T_CFLAGS) $(_CFLAGS_REENT) $(_CFLAGS_OPT) $(_CFLAGS_DBG) $(_CFLAGS_PROFILE) $(_CFLAGS_COV) $(_CFLAGS_NOASSERT)
+_OBJ_CC_DEP_%: _CFLAGS=$(_T_CFLAGS_EXTRA) $(_T_CFLAGS) $(_CFLAGS_REENT) $(_CFLAGS_PIC) $(_CFLAGS_OPT) $(_CFLAGS_DBG) $(_CFLAGS_PROFILE) $(_CFLAGS_COV) $(_CFLAGS_NOASSERT)
 _OBJ_CC_DEP_%: 
 _OBJ_CC_DEP_%: _SED_HACK = s?^\(.*:\)?$(call _func_get_target_dir,$(*))\/$(*):?
 _OBJ_CC_DEP_%: 
-	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) Rebuilding dependancy for C object target $(*)")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Rebuilding dependancy for C object target $(*)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Object file: $(*) $(_OBJ)" >> $(_OBJ_CC_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_OBJ): $(_SRC)" >> $(_OBJ_CC_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "$(_OBJ): $(_DEP)" >> $(_OBJ_CC_DEPEND_FILE)
@@ -973,7 +999,9 @@ $(_OBJ_CC_TARGETS): _CC=$(if $($(_T)_CC),$($(_T)_CC),$(BIN_$(_TC)_CC))
 $(_OBJ_CC_TARGETS): _CC_OUTPUTFLAG=$(if $($(_T)_CC_OUTPUTFLAG),$($(_T)_CC_OUTPUTFLAG),$(BIN_$(_TC)_CC_OUTPUTFLAG))
 $(_OBJ_CC_TARGETS):
 $(_OBJ_CC_TARGETS): _T_CFLAGS         = $(if $($(_T)_CFLAGS),$($(_T)_CFLAGS),$(FLAGS_$(_TC)_CC) $(FLAGS_CC))
+$(_OBJ_CC_TARGETS): _T_CFLAGS_EXTRA   = $(if $($(_T)_CFLAGS_EXTRA),$($(_T)_CFLAGS_EXTRA),)
 $(_OBJ_CC_TARGETS): _T_CFLAGS_REENT   = $(if $($(_T)_CFLAGS_REENT),$($(_T)_CFLAGS_REENT),$(FLAGS_$(_TC)_CC_REENT) $(FLAGS_CC_REENT))
+$(_OBJ_CC_TARGETS): _T_CFLAGS_PIC     = $(if $($(_T)_CFLAGS_PIC),$($(_T)_CFLAGS_PIC),$(FLAGS_$(_TC)_CC_PIC) $(FLAGS_CC_PIC))
 $(_OBJ_CC_TARGETS): _T_CFLAGS_OPT     = $(if $($(_T)_CFLAGS_OPT),$($(_T)_CFLAGS_OPT),$(FLAGS_$(_TC)_CC_OPT) $(FLAGS_CC_OPT))
 $(_OBJ_CC_TARGETS): _T_CFLAGS_DBG     = $(if $($(_T)_CFLAGS_DBG),$($(_T)_CFLAGS_DBG),$(FLAGS_$(_TC)_CC_DBG) $(FLAGS_CC_DBG))
 $(_OBJ_CC_TARGETS): _T_CFLAGS_PROFILE = $(if $($(_T)_CFLAGS_PROFILE),$($(_T)_CFLAGS_PROFILE),$(FLAGS_$(_TC)_CC_PROFILE) $(FLAGS_CC_PROFILE))
@@ -984,13 +1012,16 @@ $(_OBJ_CC_TARGETS): _DFRNT=$(if $(findstring $(_SRC),$(_T:%_r.o=%.c)),1,$(NC_CON
 $(_OBJ_CC_TARGETS): _OBJ_IS_REENT=$(if $($(_T)_REENT),$($(_T)_REENT),$(_DFRNT))
 $(_OBJ_CC_TARGETS): _CFLAGS_REENT=$(if $(filter 1,$(_OBJ_IS_REENT)),$(_T_CFLAGS_REENT))
 $(_OBJ_CC_TARGETS):
+$(_OBJ_CC_TARGETS): _OBJ_IS_PIC=$(if $($(_T)_PIC),$($(_T)_PIC),$(NC_CONTROL_PIC))
+$(_OBJ_CC_TARGETS): _CFLAGS_PIC=$(if $(filter 1,$(_OBJ_IS_PIC)),$(_T_CFLAGS_PIC))
+$(_OBJ_CC_TARGETS):
 $(_OBJ_CC_TARGETS): _CFLAGS_OPT=$(if $(filter 1,$(NC_CONTROL_OPTIMIZE)),$(_T_CFLAGS_OPT))
 $(_OBJ_CC_TARGETS): _CFLAGS_DBG=$(if $(filter 1,$(NC_CONTROL_DEBUG)),$(_T_CFLAGS_DBG))
 $(_OBJ_CC_TARGETS): _CFLAGS_PROFILE=$(if $(filter 1,$(NC_CONTROL_PROFILE)),$(_T_CFLAGS_PROFILE))
 $(_OBJ_CC_TARGETS): _CFLAGS_COV=$(if $(filter 1,$(NC_CONTROL_COV)),$(_T_CFLAGS_COV))
 $(_OBJ_CC_TARGETS): _CFLAGS_NOASSERT=$(if $(filter 1,$(NC_CONTROL_NOASSERT)),$(_T_CFLAGS_NOASSERT))
 $(_OBJ_CC_TARGETS):
-$(_OBJ_CC_TARGETS): _CFLAGS=$(_T_CFLAGS) $(_CFLAGS_REENT) $(_CFLAGS_OPT) $(_CFLAGS_DBG) $(_CFLAGS_PROFILE) $(_CFLAGS_COV) $(_CFLAGS_NOASSERT)
+$(_OBJ_CC_TARGETS): _CFLAGS=$(_T_CFLAGS_EXTRA) $(_T_CFLAGS) $(_CFLAGS_REENT) $(_CFLAGS_PIC) $(_CFLAGS_OPT) $(_CFLAGS_DBG) $(_CFLAGS_PROFILE) $(_CFLAGS_COV) $(_CFLAGS_NOASSERT)
 $(_OBJ_CC_TARGETS):
 $(_OBJ_CC_TARGETS): _MKDIR=$(if $(wildcard $(dir $@)),,$(BIN_MKDIR) -p $(dir $@))
 $(_OBJ_CC_TARGETS):
@@ -999,10 +1030,12 @@ $(_OBJ_CC_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Output File                    :  $@")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Source File                    :  $(_SRC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Object is Reentrant            :  $(_OBJ_IS_REENT)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Object is Position Independent :  $(_OBJ_IS_PIC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Toolchain                      :  $(_TC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Compiler                       :  $(_CC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CFLAGS (base)           :  $(_T_CFLAGS)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CFLAGS (Reentrant)      :  $(_T_CFLAGS_REENT)")
+	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CFLAGS (PIC)            :  $(_T_CFLAGS_PIC)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CFLAGS (Optimize)       :  $(_T_CFLAGS_OPT)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CFLAGS (Debug)          :  $(_T_CFLAGS_DBG)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CFLAGS (Profile)        :  $(_T_CFLAGS_PROFILE)")
@@ -1010,7 +1043,7 @@ $(_OBJ_CC_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CFLAGS (Asserts)        :  $(_T_CFLAGS_NOASSERT)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)      Target CFLAGS (current build)  :  $(_CFLAGS)")
 	$(BS_CMDPREFIX_VERBOSE2) $(_MKDIR)
-	$(BS_CMDPREFIX_VERBOSE2) $(_CC) $(_CFLAGS) -c $(_CC_OUTPUTFLAG)$@ $(_SRC)
+	$(BS_CMDPREFIX_VERBOSE1) $(_CC) $(_CFLAGS) -c $(_CC_OUTPUTFLAG)$@ $(_SRC)
 
 
 

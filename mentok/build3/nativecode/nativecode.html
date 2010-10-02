@@ -76,10 +76,39 @@ C++, and assembler source files.
   <dd>
        Specifies whether targets are compiled
        reentrant by default. A value of "0"
-       uses the default based on filenames,
+       uses the default based on filenames (objects named
+       like "*_r.o" are assumed tp be reentrant),
        a value of "1" makes the default behavior
        to build objects reentrant.
        </dd><p>
+
+  <dt><b>NC_CONTROL_PIC</b></dt>
+  <dd>
+       Specifies whether targets are compiled
+       position independent by default. 
+       A value of "1" indicates that the object 
+       should be built position independent. 
+       A value of "o" indicates that the object 
+       should not be built position independent. 
+       </dd><p>
+
+  <dt><b>NC_LIB_VTAG</b></dt>
+  <dd>
+       Specifies a variant static/shared library tag.
+       This string will be appended to library
+       targets between after the library name
+       but before the suffix so that users of a
+       variant library will be required to use
+       different linkage. (e.g. -llibname_r vs -llibname).
+       This is intended to be used when a variant
+       produces code that is incompatible with other
+       variants, making it inappropriate to generate 
+       libraries with the same name.
+       By default, no library variant tagging is done.
+       In general, it is preferred that variants not
+       produce incompatible versions of a library.
+       </dd><p>
+
 </dl>
 
 <hr>
@@ -881,6 +910,10 @@ FLAGS_CC
 [ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CC_REENT ]
 <br>
 [ FLAGS_CC_REENT ]
+<br>
+[ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CC_PIC ]
+<br>
+[ FLAGS_CC_PIC ]
 </blockquote>
 
 
@@ -907,6 +940,12 @@ FLAGS_CC
   <dt><b><i>&lt;object target&gt;</i>_REENT</b></dt>
   <dd>
        Override the default reentrant setting for the
+       current <i>&lt;object target&gt;</i> only.
+       </dd><p>
+	
+  <dt><b><i>&lt;object target&gt;</i>_PIC</b></dt>
+  <dd>
+       Override the default position independent setting for the
        current <i>&lt;object target&gt;</i> only.
        </dd><p>
 	
@@ -1003,6 +1042,10 @@ FLAGS_CXX
 [ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CXX_REENT ]
 <br>
 [ FLAGS_CXX_REENT ]
+<br>
+[ FLAGS_<i>&lt;TOOLCHAIN&gt;</i>_CXX_PIC ]
+<br>
+[ FLAGS_CXX_PIC ]
 </blockquote>
 
 
@@ -1029,6 +1072,12 @@ FLAGS_CXX
   <dt><b><i>&lt;object target&gt;</i>_REENT</b></dt>
   <dd>
        Override the default reentrant setting for
+       for the current <i>&lt;object target&gt;</i> only.
+       </dd><p>
+	
+  <dt><b><i>&lt;object target&gt;</i>_PIC</b></dt>
+  <dd>
+       Override the default position independent setting for
        for the current <i>&lt;object target&gt;</i> only.
        </dd><p>
 	

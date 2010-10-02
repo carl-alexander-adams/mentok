@@ -19,18 +19,18 @@ endif
 
 _platformutil_output:=$(shell $(BIN_PLATFORMUTIL) -a -d ' ')
 
-BS_OS_HOSTNAME:=$(word 1,$(_platformutil_output))
-BS_OS_NAME:=$(word 2,$(_platformutil_output))
-BS_OS_REVMAJOR:=$(word 3,$(_platformutil_output))
-BS_OS_REVMINOR:=$(word 4,$(_platformutil_output))
-BS_OS_REVPATCH:=$(word 5,$(_platformutil_output))
-BS_OS_RUNTIMENAME:=$(word 6,$(_platformutil_output))
-BS_OS_RUNTIMEREVMAJOR:=$(word 7,$(_platformutil_output))
-BS_OS_RUNTIMEREVMINOR:=$(word 8,$(_platformutil_output))
-BS_OS_RUNTIMEREVPATCH:=$(word 9,$(_platformutil_output))
-BS_OS_MACHINETYPE:=$(word 10,$(_platformutil_output))
-BS_OS_MACHINEPROC:=$(word 11,$(_platformutil_output))
-BS_OS_MACHINEINSTSET:=$(word 12,$(_platformutil_output))
+export BS_OS_HOSTNAME:=$(word 1,$(_platformutil_output))
+export BS_OS_NAME:=$(word 2,$(_platformutil_output))
+export BS_OS_REVMAJOR:=$(word 3,$(_platformutil_output))
+export BS_OS_REVMINOR:=$(word 4,$(_platformutil_output))
+export BS_OS_REVPATCH:=$(word 5,$(_platformutil_output))
+export BS_OS_RUNTIMENAME:=$(word 6,$(_platformutil_output))
+export BS_OS_RUNTIMEREVMAJOR:=$(word 7,$(_platformutil_output))
+export BS_OS_RUNTIMEREVMINOR:=$(word 8,$(_platformutil_output))
+export BS_OS_RUNTIMEREVPATCH:=$(word 9,$(_platformutil_output))
+export BS_OS_MACHINETYPE:=$(word 10,$(_platformutil_output))
+export BS_OS_MACHINEPROC:=$(word 11,$(_platformutil_output))
+export BS_OS_MACHINEINSTSET:=$(word 12,$(_platformutil_output))
 
 
 
@@ -76,33 +76,61 @@ bs_FUNC_GEN_RUNTIME_FALLBACK_3=$(strip $(1))
 #  (8)runtime major
 #  (9)runtime minor
 #  (10)runtime patch
-BS_FUNC_GEN_PLATFORM_FULL=$(call bs_FUNC_GEN_OS_FULL, $(1), $(2), $(3), $(4))-$(call bs_FUNC_GEN_RUNTIME_FULL, $(7), $(8), $(9), $(10))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_1=$(call bs_FUNC_GEN_OS_FULL, $(1), $(2), $(3), $(4))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_1, $(7), $(8), $(9))-$(strip $(5))
+# Original Build3 fallback list
+# BS_FUNC_GEN_PLATFORM_FULL=$(call bs_FUNC_GEN_OS_FULL, $(1), $(2), $(3), $(4))-$(call bs_FUNC_GEN_RUNTIME_FULL, $(7), $(8), $(9), $(10))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_1=$(call bs_FUNC_GEN_OS_FULL, $(1), $(2), $(3), $(4))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_1, $(7), $(8), $(9))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_2=$(call bs_FUNC_GEN_OS_FALLBACK_1, $(1), $(2), $(3))-$(call bs_FUNC_GEN_RUNTIME_FULL, $(7), $(8), $(9), $(10))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_3=$(call bs_FUNC_GEN_OS_FALLBACK_1, $(1), $(2), $(3))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_1, $(7), $(8), $(9))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_4=$(call bs_FUNC_GEN_OS_FALLBACK_1, $(1), $(2), $(3))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_2, $(7), $(8))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_5=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_1, $(7), $(8), $(9))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_6=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_2, $(7), $(8))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_7=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_3, $(7))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_8=$(call bs_FUNC_GEN_OS_FALLBACK_1, $(1), $(2), $(3))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_9=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(strip $(5))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_10=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_2, $(7), $(8))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_11=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_3, $(7))
+# 
+# BS_FUNC_GEN_PLATFORM_FALLBACK_12=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_2=$(call bs_FUNC_GEN_OS_FALLBACK_1, $(1), $(2), $(3))-$(call bs_FUNC_GEN_RUNTIME_FULL, $(7), $(8), $(9), $(10))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_3=$(call bs_FUNC_GEN_OS_FALLBACK_1, $(1), $(2), $(3))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_1, $(7), $(8), $(9))-$(strip $(5))
+# Simplified build3 platform fallback list for nCircle (because FreeBSD-FreeBSD looks silly, and for everything that isn't kernel code it's the runtime that matters.)
+BS_FUNC_GEN_PLATFORM_FULL=$(call bs_FUNC_GEN_RUNTIME_FULL, $(7), $(8), $(9), $(10))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_4=$(call bs_FUNC_GEN_OS_FALLBACK_1, $(1), $(2), $(3))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_2, $(7), $(8))-$(strip $(5))
+BS_FUNC_GEN_PLATFORM_FALLBACK_1=$(call bs_FUNC_GEN_RUNTIME_FALLBACK_1, $(7), $(8), $(9))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_5=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_1, $(7), $(8), $(9))-$(strip $(5))
+BS_FUNC_GEN_PLATFORM_FALLBACK_2=$(call bs_FUNC_GEN_RUNTIME_FALLBACK_2, $(7), $(8))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_6=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_2, $(7), $(8))-$(strip $(5))
+BS_FUNC_GEN_PLATFORM_FALLBACK_3=$(call bs_FUNC_GEN_RUNTIME_FALLBACK_3, $(7))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_7=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_3, $(7))-$(strip $(5))
+BS_FUNC_GEN_PLATFORM_FALLBACK_4=$(call bs_FUNC_GEN_RUNTIME_FALLBACK_3, $(7))
+
+BS_FUNC_GEN_PLATFORM_FALLBACK_5=
+
+BS_FUNC_GEN_PLATFORM_FALLBACK_6=
+
+BS_FUNC_GEN_PLATFORM_FALLBACK_7=$(call bs_FUNC_GEN_OS_FULL, $(1), $(2), $(3), $(4))-$(strip $(5))
 
 BS_FUNC_GEN_PLATFORM_FALLBACK_8=$(call bs_FUNC_GEN_OS_FALLBACK_1, $(1), $(2), $(3))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_9=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(strip $(5))
+BS_FUNC_GEN_PLATFORM_FALLBACK_9=$(call bs_FUNC_GEN_OS_FALLBACK_2, $(1), $(2))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_10=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_2, $(7), $(8))
+BS_FUNC_GEN_PLATFORM_FALLBACK_10=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(strip $(5))
 
-BS_FUNC_GEN_PLATFORM_FALLBACK_11=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(call bs_FUNC_GEN_RUNTIME_FALLBACK_3, $(7))
+BS_FUNC_GEN_PLATFORM_FALLBACK_11=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))-$(strip $(5))
 
 BS_FUNC_GEN_PLATFORM_FALLBACK_12=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))
-
-
 
 
 
@@ -308,15 +336,29 @@ BS_WARN_PREFIX="\*\* "
 BS_ERROR_PREFIX="\*\*\* ERROR "
 
 
-BS_ROOT_TARGET_DIR=./BUILDTARGETS$(if $(strip $(BS_VTAG)),-$(strip $(BS_VTAG)))
+BS_ROOT_TARGET_DIR=BUILDTARGETS$(if $(strip $(BS_VTAG)),-$(strip $(BS_VTAG)))
 
 BS_FUNC_GEN_TARGET_DIR=$(BS_ROOT_TARGET_DIR)/$(strip $(1))
 
 BS_ARCH_TARGET_DIR=$(call BS_FUNC_GEN_TARGET_DIR, $(BS_PLATFORM_ARCH_FULL))
+export BS_ARCH_TARGET_DIR
 BS_NOARCH_TARGET_DIR=$(call BS_FUNC_GEN_TARGET_DIR, $(BS_PLATFORM_NOARCH))
-
+export BS_NOARCH_TARGET_DIR
 
 BS_CURRENT_SRCDIR_ABSPATH=$(shell $(BIN_PWD))
+export BS_CURRENT_SRCDIR_ABSPATH
+
+BS_ARCH_TARGET_DIR_ABSPATH=$(BS_CURRENT_SRCDIR_ABSPATH)/$(BS_ARCH_TARGET_DIR)
+export BS_ARCH_TARGET_DIR_ABSPATH
+BS_NOARCH_TARGET_DIR_ABSPATH=$(BS_CURRENT_SRCDIR_ABSPATH)/$(BS_NOARCH_TARGET_DIR)
+export BS_NOARCH_TARGET_DIR_ABSPATH
+
+
+
+ifeq ($(BS_ROOT_ABSPATH),)
+BS_ROOT_ABSPATH:=$(shell $(BIN_CD) $(BS_ROOT) && $(BIN_PWD))
+endif
+export BS_ROOT_ABSPATH
 
 ifeq ($(COMPONENT_ROOT_ABSPATH),)
 COMPONENT_ROOT_ABSPATH:=$(shell $(BIN_CD) $(COMPONENT_ROOT) && $(BIN_PWD))
@@ -338,6 +380,11 @@ BS_DATE_DAY:=$(shell $(BIN_DATE) +%d)
 endif
 export BS_DATE_DAY
 
+ifeq ($(BS_DATE_DAYOFYEAR),)
+BS_DATE_DAYOFYEAR:=$(shell $(BIN_DATE) +%j)
+endif
+export BS_DATE_DAYOFYEAR
+
 ifeq ($(BS_DATE_HOUR),)
 BS_DATE_HOUR:=$(shell $(BIN_DATE) +%H)
 endif
@@ -352,6 +399,30 @@ ifeq ($(BS_DATE_SECOND),)
 BS_DATE_SECOND:=$(shell $(BIN_DATE) +%S)
 endif
 export BS_DATE_SECOND
+
+ifeq ($(BS_DATE_UNIXSECOND),)
+BS_DATE_UNIXSECOND:=$(shell $(BIN_DATE) +%s)
+endif
+export BS_DATE_UNIXSECOND
+
+ifeq ($(BS_DATE_UNIXNANOSECOND),)
+BS_DATE_UNIXNANOSECOND:=$(shell $(BIN_DATE) +%N)
+endif
+export BS_DATE_UNIXNANOSECOND
+
+# "Day of year" might have two leading zeros
+# We also have to be careful to avoid empty string results
+# bs_FUNC_STRIP_LEADING_ZEROS=$(shell $(BIN_ECHO) $1 | $(BIN_SED) 's/^0*//')
+bs_FUNC_STRIP_LEADING_2_ZEROS=$(patsubst 0%,%,$(patsubst 0%,%,$1))
+bs_FUNC_STRIP_LEADING_1_ZEROS=$(patsubst 0%,%,$1)
+export BS_DATE_MONTH_NOPAD:=$(call bs_FUNC_STRIP_LEADING_1_ZEROS, $(BS_DATE_MONTH))
+export BS_DATE_DAY_NOPAD:=$(call bs_FUNC_STRIP_LEADING_1_ZEROS, $(BS_DATE_DAY))
+export BS_DATE_DAYOFYEAR_NOPAD:=$(call bs_FUNC_STRIP_LEADING_2_ZEROS, $(BS_DATE_DAYOFYEAR))
+export BS_DATE_HOUR_NOPAD:=$(call bs_FUNC_STRIP_LEADING_1_ZEROS, $(BS_DATE_HOUR))
+export BS_DATE_MINUTE_NOPAD:=$(call bs_FUNC_STRIP_LEADING_1_ZEROS, $(BS_DATE_MINUTE))
+export BS_DATE_SECOND_NOPAD:=$(call bs_FUNC_STRIP_LEADING_1_ZEROS, $(BS_DATE_SECOND))
+# Nanosecond needs padding to make sense as a decimal float
+# export BS_DATE_NANOSECOND_NOPAD:=$(BS_DATE_NANOSECOND)
 
 ifeq ($(BS_USERNAME),)
 BS_USERNAME:=$(shell $(BIN_WHOAMI))

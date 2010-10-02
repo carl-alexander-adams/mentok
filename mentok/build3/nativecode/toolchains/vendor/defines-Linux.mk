@@ -18,7 +18,8 @@ BIN_VENDOR_CPP=/usr/bin/gcc -E
 BIN_VENDOR_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_VENDOR_LD),)
-BIN_VENDOR_LD=/usr/bin/ld
+#BIN_VENDOR_LD=/usr/bin/ld
+BIN_VENDOR_LD=/usr/bin/gcc
 BIN_VENDOR_LD_OUTPUTFLAG_EXE=-o 
 BIN_VENDOR_LD_OUTPUTFLAG_SHLIB=-o 
 BIN_VENDOR_LD_OUTPUTFLAG_INCOBJ=-o 
@@ -51,17 +52,22 @@ endif
 
 
 ifeq ($(FLAGS_VENDOR_CC),)
-FLAGS_VENDOR_CC=-W \
+FLAGS_VENDOR_CC= \
+	-pipe \
 	-Wall \
-	-Wcast-qual \
-	-Wcast-align \
-	-Wpointer-arith \
-	-Wsign-compare \
-	-Winline \
-	-Waggregate-return \
-	-Wmissing-prototypes \
+	-Wformat-security \
 	-Wmissing-declarations \
-	-Wunused
+#    -Werror \
+#   -W \
+#	-Wcast-qual \
+#	-Wcast-align \
+#	-Wpointer-arith \
+#	-Wsign-compare \
+#	-Winline \
+#	-Waggregate-return \
+#	-Wmissing-prototypes \
+#	-Wmissing-declarations \
+#	-Wunused
 #	-v \
 #	-ftime-report \
 #	-fmem-report
@@ -71,7 +77,8 @@ ifeq ($(FLAGS_VENDOR_CC_DEP),)
 FLAGS_VENDOR_CC_DEP=-MM -w
 endif
 ifeq ($(FLAGS_VENDOR_CC_DBG),)
-FLAGS_VENDOR_CC_DBG=-g
+FLAGS_VENDOR_CC_DBG=-ggdb -g3
+#FLAGS_VENDOR_CC_DBG=-gdwarf-2 -g3
 endif
 ifeq ($(FLAGS_VENDOR_CC_OPT),)
 FLAGS_VENDOR_CC_OPT=-O
@@ -86,20 +93,22 @@ ifeq ($(FLAGS_VENDOR_CC_NOASSERT),)
 FLAGS_VENDOR_CC_NOASSERT=-DNDEBUG
 endif
 ifeq ($(FLAGS_VENDOR_CC_REENT),)
-FLAGS_VENDOR_CC_REENT=-D_REENTRANT
+FLAGS_VENDOR_CC_REENT=-D_REENTRANT -DWITH_THREADS -D_THREAD_SAFE
+endif
+ifeq ($(FLAGS_VENDOR_CC_PIC),)
+FLAGS_VENDOR_CC_PIC=-fpic -fPIC
 endif
 
 ifeq ($(FLAGS_VENDOR_CXX),)
 FLAGS_VENDOR_CXX=-W \
-	-Wall \
 	-Wcast-qual \
 	-Wcast-align \
-	-Wpointer-arith \
-	-Wsign-compare \
 	-Winline \
-	-Waggregate-return \
-	-Wmissing-prototypes \
-	-Wunused
+	-Wpointer-arith
+
+#	-Wsign-compare \
+#	-Wall
+#	-Wunused
 #	-v \
 #	-ftime-report \
 #	-fmem-report
@@ -109,7 +118,8 @@ ifeq ($(FLAGS_VENDOR_CXX_DEP),)
 FLAGS_VENDOR_CXX_DEP=-MM -w
 endif
 ifeq ($(FLAGS_VENDOR_CXX_DBG),)
-FLAGS_VENDOR_CXX_DBG=-g
+FLAGS_VENDOR_CXX_DBG=-ggdb -g3
+#FLAGS_VENDOR_CXX_DBG=-gdwarf-2 -g3
 endif
 ifeq ($(FLAGS_VENDOR_CXX_OPT),)
 FLAGS_VENDOR_CXX_OPT=-O
@@ -124,7 +134,10 @@ ifeq ($(FLAGS_VENDOR_CXX_NOASSERT),)
 FLAGS_VENDOR_CXX_NOASSERT=-DNDEBUG
 endif
 ifeq ($(FLAGS_VENDOR_CXX_REENT),)
-FLAGS_VENDOR_CXX_REENT=-D_REENTRANT
+FLAGS_VENDOR_CXX_REENT=-D_REENTRANT -DWITH_THREADS -D_THREAD_SAFE
+endif
+ifeq ($(FLAGS_VENDOR_CXX_PIC),)
+FLAGS_VENDOR_CXX_PIC=-fpic -fPIC
 endif
 
 
@@ -181,7 +194,7 @@ endif
 
 
 ifeq ($(FLAGS_VENDOR_LD_SHLIB),)
-FLAGS_VENDOR_LD_SHLIB=-shared
+FLAGS_VENDOR_LD_SHLIB=-shared -Wl,-x
 endif
 ifeq ($(FLAGS_VENDOR_LD_SHLIB_OPT),)
 FLAGS_VENDOR_LD_SHLIB_OPT=

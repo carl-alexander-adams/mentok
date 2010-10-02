@@ -1,5 +1,5 @@
 ifeq ($(JC_JAVAHOME),)
-JC_JAVAHOME=/usr/local/java1.4
+JC_JAVAHOME=/usr/lib/jvm/jre-1.6.0-openjdk.x86_64
 endif
 
 # Actually for JNI, so these are args to $(CC)
@@ -24,7 +24,7 @@ BIN_JARSIGNER=$(JC_JAVAHOME)/bin/jarsigner
 endif
 
 ifeq ($(BIN_JAVACC),)
-BIN_JAVACC=/usr/local/bin/javacc
+BIN_JAVACC=$(JC_JAVAHOME)/bin/javacc
 endif
 
 

@@ -1,0 +1,2 @@
+#!/bin/sh
+exec 3< $0 ; exec /usr/bin/python -c "import sys,os,marshal ; f = os.fdopen(3, 'rb'); f.readline(); f.readline(); f.seek(8, 1); _c = marshal.load(f); sys.argv[0] = '$0'; del sys, os, marshal, f; exec _c" "$@"
