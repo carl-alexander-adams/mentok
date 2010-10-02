@@ -15,4 +15,6 @@ ifeq ($(FLAGS_YACC),)
 FLAGS_YACC=-y -d
 endif
 
-
+ifeq ($(FLAGS_YACC_OUTPUTFLAG),)
+FLAGS_YACC_OUTPUTFLAG=--output=
+endif

@@ -24,8 +24,9 @@ recursion_info:
 
 ifdef SUBDIR_TARGETS
 $(SUBDIR_TARGETS):
-	@$(call BS_FUNC_ECHO_VERBOSE3,"$(BS_INFO_PREFIX) --- Entering $@")
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --- Entering $@")
 	$(BS_CMDPREFIX_VERBOSE2) $(MAKE) $(RECURSION_MAKE_FLAGS) -C $@ $(MAKECMDGOALS)
+	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) --- Leaving $@")
 endif
 
 recursion_subdirs: $(SUBDIR_TARGETS)

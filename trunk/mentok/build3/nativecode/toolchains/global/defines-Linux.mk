@@ -3,7 +3,8 @@
 #
 
 ifeq ($(FLAGS_CC),)
-FLAGS_CC=-D_GNU_SOURCE
+FLAGS_CC=-D__linux__=1
+# FLAGS_CXX=-D_GNU_SOURCE
 endif
 ifeq ($(FLAGS_CC_DBG),)
 FLAGS_CC_DBG=
@@ -26,7 +27,8 @@ endif
 
 
 ifeq ($(FLAGS_CXX),)
-FLAGS_CXX=-D_GNU_SOURCE
+FLAGS_CC=-D__linux__=1
+# FLAGS_CXX=-D_GNU_SOURCE
 endif
 ifeq ($(FLAGS_CXX_DBG),)
 FLAGS_CXX_DBG=

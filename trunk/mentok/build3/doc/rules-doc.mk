@@ -106,7 +106,8 @@ man:: doc_man
 
 pretarget::
 
-target:: doc_doxygen
+# target:: doc_doxygen
+target::
 
 # posttarget:: doc_doxygen
 posttarget::

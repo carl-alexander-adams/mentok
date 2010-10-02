@@ -13,3 +13,11 @@
 -include $(BS_ROOT)/codegen/defines-codegen-$(BS_PLATFORM_ARCH_FULL).mk
 
 
+ifeq ($(BIN_KVPBUILDER),)
+BIN_KVPBUILDER=$(BS_ROOT)/codegen/kvptemplate.pl
+endif
+
+ifeq ($(FLAGS_KVPBUILDER),)
+FLAGS_KVPBUILDER=
+endif
+

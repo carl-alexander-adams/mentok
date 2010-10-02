@@ -1,0 +1,95 @@
+<html> <head>
+<title>Perforce Module</title>
+</head>
+
+<body>
+<h1>Perforce Module</h1>
+<hr>
+
+<h2>Overview</h2>
+The Perforce Module provides the
+build system with the ability to manipulate files in the perforce source control system.
+
+<hr>
+<h2>Macros and Controls</h2>
+<i>The Perforce Module currently does not have any control macros</i>
+<!--
+<dl>
+  <dt><b>XML_VALIDATE_CLASS</b></dt>
+  <dd>
+       This is the java class entry point into the default XML
+       validation utility. The value is used to set the default value
+       of the complete validation command line. Defaults to "Validate".
+       </dd><p>
+</dl>
+-->
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#perforce_info">perforce_info</a>
+  <li><a href="#perforce_man">perforce_man</a>
+</ul>
+
+
+<hr>
+<a name="perforce_info">
+<h2>perforce_info</h2>
+<h3>perforce_info Overview</h3>
+Simple target to display information about the macro
+settings of all global macros used by the perforce module of
+the build system. The <b>perforce_info</b> target will be 
+built during the "info" phase of a build, and can be built in 
+isolation by requesting the <b>perforce_info</b> target.
+
+<hr>
+<a name="perforce_man">
+<h2>perforce_man</h2>
+<h3>perforce_man Overview</h3>
+Simple target to display usage information and help pertaining to 
+the perforce  module of the build system.
+The <b>perforce_man</b> target will be built during the "man"
+phase of a build, and can be built in isolation by requesting
+the <b>perforce_man</b> target.
+
+<hr>
+<h2>Functions</h2>
+<ul>
+  <li><a href="#PERFORCE_FUNC_GET_LASTCHANGENUM">PERFORCE_FUNC_GET_LASTCHANGENUM</a>
+</ul>
+
+<hr>
+<a name="PERFORCE_FUNC_GET_LASTCHANGENUM">
+<h2>PERFORCE_FUNC_GET_LASTCHANGENUM(<i>&lt;perforce path&gt;</i>)</h2>
+This function will return the latest submitted change list number for the
+specified perforce file or directory path. Unsubmitted change lists are
+ignored.  It is assumed that the user's environment has appropriate
+perforce credentials already in place. Since this function calls perforce
+commands, it is probably advisable to use an immediate (":=") rather than
+a deferred ("=") macro assignment when receiving results from this function.
+This function will generate an error if a revision number cannot be determined.
+
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+# The source root of this Component
+COMPONENT_ROOT=../..
+
+# The root of the build system
+BS_ROOT=$(COMPONENT_ROOT)/build3
+
+# Boostrap Build system definitions.
+include $(BS_ROOT)/defines.mk
+
+# Obtain the latest changelist that applied to a file or directory
+FILE_REV:=$(call PERFORCE_FUNC_GET_LASTCHANGENUM,my_source.c)
+DIR_REV:=$(call PERFORCE_FUNC_GET_LASTCHANGENUM,$(COMPONENT_ROOT)/...)
+
+
+# Finally, include the rules to make the build system go.
+include $(BS_ROOT)/rules.mk
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>

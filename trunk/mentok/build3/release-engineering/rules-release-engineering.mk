@@ -41,26 +41,35 @@ posttarget::
 
 #
 # Targets that release engineering automated build scripts expect to request.
+# These end up being the user friendly targets used by most developers.
 #
 all: target
 
+package: base_force_manual_depends
 package: recursion_subdirs
+package: target
+package: packaging_epm
+package: packaging_iso
 package: packaging_zip
 package: packaging_targz
+package: packaging_mkdir
 package: packaging_packagefile
 package: packaging_packagedir
 
-dist: recursion_subdirs
+dist: package
 dist: component_dist
 
-imports: recursion_subdirs
-imports: component_import
+#imports: base_force_manual_depends
+#imports: recursion_subdirs
+#imports: component_import
+
+#import: imports
 
 #
-# DOcs are build targets managed in parallel to the main binary targets.
+# Docs are build targets managed in parallel to the main binary targets.
 #
 doc: doc_doxygen
-
+doc: recursion_subdirs
 
 
 # This is the same.

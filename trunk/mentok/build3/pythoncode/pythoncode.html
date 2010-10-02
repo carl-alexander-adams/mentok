@@ -1,0 +1,90 @@
+<html> <head>
+<title>Build System Python Code Module</title>
+</head>
+
+<body>
+<h1>Build System Python Code Module</h1>
+<hr>
+
+<h2>Overview</h2>
+Need to provide overvide docs
+
+<hr>
+<h2>Macros and Controls</h2>
+<dl>
+  <dt><b>XXX</b></dt>
+  <dd>
+       xxx description
+       </dd><p>
+</dl>
+
+
+<hr>
+<h2>Targets</h2>
+<ul>
+  <li><a href="#PYTHON_PYO_TARGETS">PYTHON_PYO_TARGET</a>
+  <li><a href="#python_pyo">python_pyo</a>
+</ul>
+
+<!--
+<hr>
+<h2>Functions</h2>
+<ul>
+  <li><a href="#PYTHON_FUNC_XXX">PYTHON_FUNC_XXX</a>
+</ul>
+-->
+
+
+
+<hr>
+<a name="PYTHON_PYO_TARGETS">
+<h2>PYTHON_PYO_TARGETS</h2>
+<h3>PYTHON_PYO_TARGETS Overview</h3>
+PYTHON_PYO_TARGETS is the pattern target used to compile python 
+object files (.pyo files) from python source files (.py files).
+
+<h3>PYTHON_PYO_TARGETS Options</h3>
+<dl>
+  <dt><b><i>&lt;python object target&gt;</i>_SRC</b></dt>
+  <dd>
+       Specifies an override for the default source file.
+       The default value is simply <i>&lt;python object target&gt;.py</i>.
+       </dd><p>
+       
+</dl>
+
+
+
+<hr>
+<a name="python_pyo">
+<h2>python_pyo</h2>
+<h3>python_pyo Overview</h3>
+Simple target to trigger the building of PYTHON_PYO_TARGETS
+pattern targets independent of the main build "target" phase. 
+
+
+<!--
+<hr>
+<a name="PYTHON_FUNC_XXX">
+<h2>PYTHON_FUNC_XXX</h2>
+This function does not exist.
+-->
+
+<hr>
+<h2>Example Makefile</h2>
+<bloclquote><pre><tt>
+COMPONENT_ROOT=../..
+BS_ROOT=$(COMPONENT_ROOT)/../build3
+
+include $(BS_ROOT)/defines.mk
+
+
+PYTHON_PYO_TARGETS=foo.pyo
+
+foo.pyo_SRC=bar.py
+include $(BS_ROOT)/rules.mk
+
+</tt></pre></blockquote>	
+
+<hr>
+</body> </html>

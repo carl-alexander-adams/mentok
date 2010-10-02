@@ -24,3 +24,7 @@ endif
 ifeq ($(JC_CLASSPATH),)
 JC_CLASSPATH=$(JC_JAVASRCROOT):$(JC_JAVAHOME)/jre/lib/rt.jar:$(JC_JAVACCZIP)
 endif
+
+# Export these so the binaries always have them?
+# export JAVA_HOME=$(JC_JAVAHOME)
+# export CLASSPATH=$(JC_JAVASRCROOT)

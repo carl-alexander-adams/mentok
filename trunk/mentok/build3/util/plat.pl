@@ -465,6 +465,9 @@ sub plat_refineLinux {
         #
         # /etc/redhat-release (RHES 4.0):
         # Red Hat Enterprise Linux ES release 4 (Nahant)
+        # 
+        # /etc/redhat-release (CentOS 5.4):
+        # CentOS release 5.4 (Final)
 
 
         open(ETC_DISTRORELEASE, '/etc/redhat-release');
@@ -481,10 +484,14 @@ sub plat_refineLinux {
         elsif (grep(/Red Hat Enterprise Linux ES/, @etc_distrorelease)) {
             $platinfo->{'OSRuntimeName'} = 'RHES';
         }
+        elsif (grep(/CentOS/, @etc_distrorelease)) {
+            $platinfo->{'OSRuntimeName'} = 'CentOS';
+        }
         else {
             $platinfo->{'OSRuntimeName'} = 'RedHat';
         }
-        @tmp_version = grep(/Red Hat.*release/, @etc_distrorelease);
+
+        @tmp_version = grep(/(Red Hat|CentOS).*release|/, @etc_distrorelease);
         $tmp_version = pop(@tmp_version);
         # $tmp_version =~ s/^.*release\s+([^\s]+).*$/\1/; # why is this not working on RHES 3?        
         $tmp_version =~ s/^.*release\s+//;

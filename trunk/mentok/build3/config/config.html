@@ -42,6 +42,12 @@
        The value of this macro should be an integer
        </dd><p>
 
+  <dt><b>BUILDSTAMP_REVISION_BUILD</b></dt>
+  <dd>
+       The global default \"revision_build\" to use when generating a buildstamp target.
+       The value of this macro should be an integer
+       </dd><p>
+
   <dt><b>BUILDSTAMP_REVISION_STRING</b></dt>
   <dd>
        The global default \"revision_string\" to use when generating a buildstamp target.
@@ -226,11 +232,25 @@ target.
        the global macro  BUILDSTAMP_REVISION_PATCH is used.
        </dd><p>
 
+  <dt><b><i>&lt;buildstamp target&gt;</i>_REVISION_BUILD</b></dt>
+  <dd>Specify the \"revision_build\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be an integer. If none is provided, the value of
+       the global macro  BUILDSTAMP_REVISION_BUILD is used.
+       </dd><p>
+
 
   <dt><b><i>&lt;buildstamp target&gt;</i>_REVISION_STRING</b></dt>
   <dd>Specify the \"revision_string\" of the current <i>&lt;buildstamp target&gt;</i>.
        This value should be a string. If none is provided, the value of
        the global macro  BUILDSTAMP_REVISION_STRING is used.
+       </dd><p>
+
+  <dt><b><i>&lt;buildstamp target&gt;</i>_REVISION_SRCVER</b></dt>
+  <dd>Specify the \"revision_srcver\" of the current <i>&lt;buildstamp target&gt;</i>.
+       This value should be a string indicating the source revision of the 
+       current buildstamp target.
+       If none is provided, the value of
+       the global macro  BUILDSTAMP_REVISION_SRCVER is used.
        </dd><p>
 
   <dt><b><i>&lt;buildstamp target&gt;</i>_DATE_YEAR</b></dt>
