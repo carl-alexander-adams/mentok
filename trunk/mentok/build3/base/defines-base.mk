@@ -105,7 +105,8 @@ bs_FUNC_GEN_RUNTIME_FALLBACK_3=$(strip $(1))
 # BS_FUNC_GEN_PLATFORM_FALLBACK_12=$(call bs_FUNC_GEN_OS_FALLBACK_3, $(1))
 
 
-# Simplified build3 platform fallback list for nCircle (because FreeBSD-FreeBSD looks silly, and for everything that isn't kernel code it's the runtime that matters.)
+# Simplified build3 platform fallback list for now.
+# This is because FreeBSD-FreeBSD looks silly, and for most cases the OS runtime implies a particular OS kernel.
 BS_FUNC_GEN_PLATFORM_FULL=$(call bs_FUNC_GEN_RUNTIME_FULL, $(7), $(8), $(9), $(10))-$(strip $(5))
 
 BS_FUNC_GEN_PLATFORM_FALLBACK_1=$(call bs_FUNC_GEN_RUNTIME_FALLBACK_1, $(7), $(8), $(9))-$(strip $(5))

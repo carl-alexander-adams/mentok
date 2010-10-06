@@ -1,11 +1,11 @@
 ifeq ($(COMPONENT_DEPOTURL_IMPORT),)
-# COMPONENT_DEPOTURL_IMPORT=http://readynas02.test.ncircle.com/depot/dev
-COMPONENT_DEPOTURL_IMPORT=http://readynas02.test.ncircle.com/depot/dev/pkg
+# COMPONENT_DEPOTURL_IMPORT=http://readynas02.mycompany.com/depot/dev
+COMPONENT_DEPOTURL_IMPORT=http://readynas02.mycompany.com/depot/dev/pkg
 endif
 
 ifeq ($(COMPONENT_DEPOTURL_DIST),)
-# COMPONENT_DEPOTURL_DIST=ftp://readynas02.test.ncircle.com/depot/dev
-COMPONENT_DEPOTURL_DIST=ftp://readynas02.test.ncircle.com/depot/dev/pkg
+# COMPONENT_DEPOTURL_DIST=ftp://readynas02.mycompany.com/depot/dev
+COMPONENT_DEPOTURL_DIST=ftp://readynas02.mycompany.com/depot/dev/pkg
 endif
 
 ifeq ($(COMPONENT_IMPORT_ROOT),)
