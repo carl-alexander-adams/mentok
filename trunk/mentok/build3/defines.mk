@@ -17,4 +17,7 @@ include $(BS_ROOT)/doc/defines-doc.mk
 include $(BS_ROOT)/xmlmd/defines-xmlmd.mk
 include $(BS_ROOT)/perforce/defines-perforce.mk
 
+include $(BS_ROOT)/branch-globals.mk
+
 include $(COMPONENT_ROOT)/build3-config/postdefines.mk
+

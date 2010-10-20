@@ -54,14 +54,14 @@ $(PACKAGE_TARGET_DIR):
 # EPM depend targets
 #
 PACKAGING_FUNC_GET_EPM_REALTARGET=$(error) #$(PACKAGE_RELEASE_DIR)/$(if $($(1)_DEST),$($(1)_DEST),$(1).tgz)
-PACKAGING_FUNC_GET_EPM_FLAGTARGET=$(call _func_get_target_dir,(packaging_flags_epm/$(1)))/packaging_flags_epm/$(1)
-PACKAGING_FUNC_GET_EPM_OUTPUT_MANIFEST=$(call _func_get_target_dir,$(1)-epm.manifest)/$(1)-epm.manifest
+PACKAGING_FUNC_GET_EPM_FLAGTARGET=$(BS_ARCH_FLAG_DIR)/packaging_flags_epm/$(1)
+PACKAGING_FUNC_GET_EPM_OUTPUT_MANIFEST=$(BS_ARCH_TARGET_DIR)/$(1)-epm.manifest
 # XXX Should we just use the output manifest as the flag target?
 
 _EPM_REAL_TARGETS=$(error) # $(foreach t,$(TARGZ_TARGETS),$(call PACKAGING_FUNC_GET_TARGZ_REALTARGET,$(t)))
 _EPM_FLAG_TARGETS=$(foreach t,$(EPM_TARGETS),$(call PACKAGING_FUNC_GET_EPM_FLAGTARGET,$(t)))
 _EPM_DEP_GENERATION_TARGETS=$(addprefix _EPM_DEP_,$(EPM_TARGETS))
-_EPM_DEPEND_FILE=$(call _func_get_target_dir,packaging_depend_epm.mk)/packaging_depend_epm.mk
+_EPM_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/packaging_depend_epm.mk
 
 ifneq ($(strip $(EPM_TARGETS)),)
 -include $(_EPM_DEPEND_FILE)
@@ -81,7 +81,7 @@ $(_EPM_DEPEND_FILE): _EPM_DEP_PREP $(_EPM_DEP_GENERATION_TARGETS)
 _EPM_DEP_PREP:
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_EPM_DEPEND_FILE)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(dir $(_EPM_DEPEND_FILE))
-	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(call _func_get_target_dir,packaging_flags_epm)/packaging_flags_epm
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_FLAG_DIR)/packaging_flags_epm
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_EPM_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for epm targets" >> $(_EPM_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_EPM_DEPEND_FILE)
@@ -163,7 +163,7 @@ $(_EPM_FLAG_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)     EPM generated package files   : (FIXME - Unknown. Depends on list file. Multiple targets might be created.)$(_EPM_REAL_TARGET)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)     EPM Output Manifest           : $(_EPM_OUTPUT_MANIFEST)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)     EPM Flag Target File          : $(_EPM_FLAG_TARGET)")
-	$(BS_CMDPREFIX_VERBOSE1) $(_ENV) $(BIN_EPM) $(_FLAGS) $(_PLATNAME_ARGS) --no-subpackage-rollup -g --output-dir '$(_TMP_DIR)' $(_OPTIONAL_ARGS) '$(_NAME)' '$(_LIST)'
+	$(BS_CMDPREFIX_VERBOSE1) $(_ENV) $(BIN_EPM) -v $(_FLAGS) $(_PLATNAME_ARGS) --no-subpackage-rollup -g --output-dir '$(_TMP_DIR)' $(_OPTIONAL_ARGS) '$(_NAME)' '$(_LIST)'
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Signing EPM_TARGET $(_T) package files")
 	$(BS_CMDPREFIX_VERBOSE1) $(if $(_SIGN_CMD),$(BIN_CD) $(_TMP_DIR) && $(_SIGN_CMD) *,)
 	@$(call BS_FUNC_ECHO_VERBOSE0,"$(BS_INFO_PREFIX) Encrypting EPM_TARGET $(_T) package files")
@@ -192,12 +192,12 @@ packaging_epm: $(_EPM_FLAG_TARGETS)
 
 #PACKAGING_FUNC_GET_ISO_REALTARGET=$(PACKAGE_RELEASE_DIR)/$(if $($(1)_DEST),$($(1)_DEST),$(1))
 PACKAGING_FUNC_GET_ISO_REALTARGET=$(PACKAGE_RELEASE_DIR_ABSPATH)/$(if $($(1)_DEST),$($(1)_DEST),$(1))
-PACKAGING_FUNC_GET_ISO_FLAGTARGET=$(call _func_get_target_dir,(packaging_flags_iso/$(1)))/packaging_flags_iso/$(1)
+PACKAGING_FUNC_GET_ISO_FLAGTARGET=$(BS_ARCH_FLAG_DIR)/packaging_flags_iso/$(1)
 
 _ISO_REAL_TARGETS=$(foreach t,$(ISO_TARGETS),$(call PACKAGING_FUNC_GET_ISO_REALTARGET,$(t)))
 _ISO_FLAG_TARGETS=$(foreach t,$(ISO_TARGETS),$(call PACKAGING_FUNC_GET_ISO_FLAGTARGET,$(t)))
 _ISO_DEP_GENERATION_TARGETS=$(addprefix _ISO_DEP_,$(ISO_TARGETS))
-_ISO_DEPEND_FILE=$(call _func_get_target_dir,packaging_depend_iso.mk)/packaging_depend_iso.mk
+_ISO_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/packaging_depend_iso.mk
 
 ifneq ($(strip $(ISO_TARGETS)),)
 -include $(_ISO_DEPEND_FILE)
@@ -217,7 +217,7 @@ $(_ISO_DEPEND_FILE): _ISO_DEP_PREP $(_ISO_DEP_GENERATION_TARGETS)
 _ISO_DEP_PREP:
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_ISO_DEPEND_FILE)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(dir $(_ISO_DEPEND_FILE))
-	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(call _func_get_target_dir,packaging_flags_iso)/packaging_flags_iso
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_DEPEND_DIR)/packaging_flags_iso
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_ISO_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for iso targets" >> $(_ISO_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_ISO_DEPEND_FILE)
@@ -294,10 +294,10 @@ packaging_iso: $(_ISO_FLAG_TARGETS)
 #
 # Rsynctree targets - mirror source tree at the specified destination using rsync.
 #
-PACKAGING_FUNC_GET_RSYNCTREE_FLAGTARGET=$(BS_ARCH_TARGET_DIR)/packaging_flags_rsynctree/$(1)
+PACKAGING_FUNC_GET_RSYNCTREE_FLAGTARGET=$(BS_ARCH_FLAG_DIR)/packaging_flags_rsynctree/$(1)
 _RSYNCTREE_FLAG_TARGETS=$(foreach t,$(RSYNCTREE_TARGETS),$(call PACKAGING_FUNC_GET_RSYNCTREE_FLAGTARGET,$(t)))
 _RSYNCTREE_DEP_GENERATION_TARGETS=$(addprefix _RSYNCTREE_DEP_,$(RSYNCTREE_TARGETS))
-_RSYNCTREE_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/packaging_depend_rsynctree.mk
+_RSYNCTREE_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/packaging_depend_rsynctree.mk
 
 ifneq ($(strip $(RSYNCTREE_TARGETS)),)
 -include $(_RSYNCTREE_DEPEND_FILE)
@@ -316,7 +316,7 @@ $(_RSYNCTREE_DEPEND_FILE): _RSYNCTREE_DEP_PREP $(_RSYNCTREE_DEP_GENERATION_TARGE
 _RSYNCTREE_DEP_PREP:
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_RSYNCTREE_DEPEND_FILE)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(dir $(_RSYNCTREE_DEPEND_FILE))
-	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_TARGET_DIR)/packaging_flags_rsynctree
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_FLAG_DIR)/packaging_flags_rsynctree
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_RSYNCTREE_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for Rsynctree targets" >> $(_RSYNCTREE_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_RSYNCTREE_DEPEND_FILE)
@@ -389,14 +389,12 @@ $(_RSYNCTREE_FLAG_TARGETS):
 #
 
 PACKAGING_FUNC_GET_TARGZ_REALTARGET=$(PACKAGE_RELEASE_DIR)/$(if $($(1)_DEST),$($(1)_DEST),$(1).tgz)
-#PACKAGING_FUNC_GET_TARGZ_REALTARGET=$(if $($(1)_DEST),$($(1)_DEST),$(call _func_get_target_platform,$(1).tgz)/$(1).tgz)
-#PACKAGING_FUNC_GET_TARGZ_REALTARGET=$(if $($(1)_DEST),$($(1)_DEST),$(call _func_get_target_dir,$(1).tgz)/$(1).tgz)
-PACKAGING_FUNC_GET_TARGZ_FLAGTARGET=$(call _func_get_target_dir,(packaging_flags_targz/$(1)))/packaging_flags_targz/$(1)
+PACKAGING_FUNC_GET_TARGZ_FLAGTARGET=$(BS_ARCH_FLAG_DIR)/packaging_flags_targz/$(1)
 
 _TARGZ_REAL_TARGETS=$(foreach t,$(TARGZ_TARGETS),$(call PACKAGING_FUNC_GET_TARGZ_REALTARGET,$(t)))
 _TARGZ_FLAG_TARGETS=$(foreach t,$(TARGZ_TARGETS),$(call PACKAGING_FUNC_GET_TARGZ_FLAGTARGET,$(t)))
 _TARGZ_DEP_GENERATION_TARGETS=$(addprefix _TARGZ_DEP_,$(TARGZ_TARGETS))
-_TARGZ_DEPEND_FILE=$(call _func_get_target_dir,packaging_depend_targz.mk)/packaging_depend_targz.mk
+_TARGZ_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/packaging_depend_targz.mk
 
 ifneq ($(strip $(TARGZ_TARGETS)),)
 -include $(_TARGZ_DEPEND_FILE)
@@ -416,7 +414,7 @@ $(_TARGZ_DEPEND_FILE): _TARGZ_DEP_PREP $(_TARGZ_DEP_GENERATION_TARGETS)
 _TARGZ_DEP_PREP:
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_TARGZ_DEPEND_FILE)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(dir $(_TARGZ_DEPEND_FILE))
-	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(call _func_get_target_dir,packaging_flags_targz)/packaging_flags_targz
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_FLAG_DIR)/packaging_flags_targz
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_TARGZ_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for targz targets" >> $(_TARGZ_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_TARGZ_DEPEND_FILE)
@@ -516,14 +514,12 @@ packaging_targz: $(_TARGZ_FLAG_TARGETS)
 #
 
 PACKAGING_FUNC_GET_ZIP_REALTARGET=$(PACKAGE_RELEASE_DIR)/$(if $($(1)_DEST),$($(1)_DEST),$(1).zip)
-#PACKAGING_FUNC_GET_ZIP_REALTARGET=$(if $($(1)_DEST),$($(1)_DEST),$(call _func_get_target_platform,$(1).zip)/$(1).zip)
-#PACKAGING_FUNC_GET_ZIP_REALTARGET=$(if $($(1)_DEST),$($(1)_DEST),$(call _func_get_target_dir,$(1).zip)/$(1).zip)
-PACKAGING_FUNC_GET_ZIP_FLAGTARGET=$(call _func_get_target_dir,(packaging_flags_zip/$(1)))/packaging_flags_zip/$(1)
+PACKAGING_FUNC_GET_ZIP_FLAGTARGET=$(BS_ARCH_FLAG_DIR)/packaging_flags_zip/$(1)
 
 _ZIP_REAL_TARGETS=$(foreach t,$(ZIP_TARGETS),$(call PACKAGING_FUNC_GET_ZIP_REALTARGET,$(t)))
 _ZIP_FLAG_TARGETS=$(foreach t,$(ZIP_TARGETS),$(call PACKAGING_FUNC_GET_ZIP_FLAGTARGET,$(t)))
 _ZIP_DEP_GENERATION_TARGETS=$(addprefix _ZIP_DEP_,$(ZIP_TARGETS))
-_ZIP_DEPEND_FILE=$(call _func_get_target_dir,packaging_depend_zip.mk)/packaging_depend_zip.mk
+_ZIP_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/packaging_depend_zip.mk
 
 ifneq ($(strip $(ZIP_TARGETS)),)
 -include $(_ZIP_DEPEND_FILE)
@@ -543,7 +539,7 @@ $(_ZIP_DEPEND_FILE): _ZIP_DEP_PREP $(_ZIP_DEP_GENERATION_TARGETS)
 _ZIP_DEP_PREP:
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_ZIP_DEPEND_FILE)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(dir $(_ZIP_DEPEND_FILE))
-	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(call _func_get_target_dir,packaging_flags_zip)/packaging_flags_zip
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_FLAG_DIR)/packaging_flags_zip
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_ZIP_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for zip targets" >> $(_ZIP_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_ZIP_DEPEND_FILE)
@@ -635,14 +631,14 @@ packaging_zip: $(_ZIP_FLAG_TARGETS)
 _PKG_ROOT=$(if $($(1)_ROOT),$($(1)_ROOT),$(PACKAGE_TARGET_DIR))
 _PKG_DEST=$(if $($(1)_DEST),$($(1)_DEST),$(1))
 PACKAGING_FUNC_GET_PACKAGEFILE_REALTARGET=$(call _PKG_ROOT,$(1))/$(call _PKG_DEST,$(1))
-PACKAGING_FUNC_GET_PACKAGEFILE_FLAGTARGET=$(call _func_get_target_dir,(packaging_flags_packagefile/$(1)))/packaging_flags_packagefile/$(1)
+PACKAGING_FUNC_GET_PACKAGEFILE_FLAGTARGET=$(BS_ARCH_FLAG_DIR)/packaging_flags_packagefile/$(1)
 
 
 _PACKAGEFILE_TARGETS=$(PACKAGEFILE_TARGETS)
 _PACKAGEFILE_REAL_TARGETS=$(foreach t,$(PACKAGEFILE_TARGETS),$(call PACKAGING_FUNC_GET_PACKAGEFILE_REALTARGET,$(t)))
 _PACKAGEFILE_FLAG_TARGETS=$(foreach t,$(PACKAGEFILE_TARGETS),$(call PACKAGING_FUNC_GET_PACKAGEFILE_FLAGTARGET,$(t)))
 _PACKAGEFILE_DEP_GENERATION_TARGETS=$(addprefix _PACKAGEFILE_DEP_,$(PACKAGEFILE_TARGETS))
-_PACKAGEFILE_DEPEND_FILE=$(call _func_get_target_dir,packaging_depend_packagefile.mk)/packaging_depend_packagefile.mk
+_PACKAGEFILE_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/packaging_depend_packagefile.mk
 
 
 ifneq ($(strip $(PACKAGEFILE_TARGETS)),)
@@ -661,7 +657,7 @@ $(_PACKAGEFILE_DEPEND_FILE): _PACKAGEFILE_DEP_PREP $(_PACKAGEFILE_DEP_GENERATION
 _PACKAGEFILE_DEP_PREP:
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_PACKAGEFILE_DEPEND_FILE)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(dir $(_PACKAGEFILE_DEPEND_FILE))
-	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(call _func_get_target_dir,packaging_flags_packagefile)/packaging_flags_packagefile
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_FLAG_DIR)/packaging_flags_packagefile
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_PACKAGEFILE_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for package file targets" >> $(_PACKAGEFILE_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_PACKAGEFILE_DEPEND_FILE)
@@ -723,14 +719,14 @@ packaging_packagefile: $(_PACKAGEFILE_FLAG_TARGETS)
 #
 
 PACKAGING_FUNC_GET_PACKAGEDIR_REALTARGET=$(PACKAGE_TARGET_DIR)/$(if $($(1)_DEST),$($(1)_DEST),$(1))
-PACKAGING_FUNC_GET_PACKAGEDIR_FLAGTARGET=$(call _func_get_target_dir,(packaging_flags_packagedir/$(1)))/packaging_flags_packagedir/$(1)
+PACKAGING_FUNC_GET_PACKAGEDIR_FLAGTARGET=$(BS_ARCH_FLAG_DIR)/packaging_flags_packagedir/$(1)
 
 
 _PACKAGEDIR_TARGETS=$(PACKAGEDIR_TARGETS)
 _PACKAGEDIR_REAL_TARGETS=$(foreach t,$(PACKAGEDIR_TARGETS),$(call PACKAGING_FUNC_GET_PACKAGEDIR_REALTARGET,$(t)))
 _PACKAGEDIR_FLAG_TARGETS=$(foreach t,$(PACKAGEDIR_TARGETS),$(call PACKAGING_FUNC_GET_PACKAGEDIR_FLAGTARGET,$(t)))
 _PACKAGEDIR_DEP_GENERATION_TARGETS=$(addprefix _PACKAGEDIR_DEP_,$(PACKAGEDIR_TARGETS))
-_PACKAGEDIR_DEPEND_FILE=$(call _func_get_target_dir,packaging_depend_packagedir.mk)/packaging_depend_packagedir.mk
+_PACKAGEDIR_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/packaging_depend_packagedir.mk
 
 
 ifneq ($(strip $(PACKAGEDIR_TARGETS)),)
@@ -749,7 +745,7 @@ $(_PACKAGEDIR_DEPEND_FILE): _PACKAGEDIR_DEP_PREP $(_PACKAGEDIR_DEP_GENERATION_TA
 _PACKAGEDIR_DEP_PREP:
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX) clearing dependancy file $(_PACKAGEDIR_DEPEND_FILE)")
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(dir $(_PACKAGEDIR_DEPEND_FILE))
-	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(call _func_get_target_dir,packaging_flags_packagedir)/packaging_flags_packagedir
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_FLAG_DIR)/packaging_flags_packagedir
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" > $(_PACKAGEDIR_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "## Auto generated depend file for package dir targets" >> $(_PACKAGEDIR_DEPEND_FILE)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_ECHO) "##" >> $(_PACKAGEDIR_DEPEND_FILE)

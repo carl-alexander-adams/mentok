@@ -22,7 +22,8 @@ BIN_GNU_CPP=/usr/bin/gcc -E
 BIN_GNU_CPP_OUTPUTFLAG=-o 
 endif
 ifeq ($(BIN_GNU_LD),)
-BIN_GNU_LD=/usr/bin/gcc
+#BIN_GNU_LD=/usr/bin/gcc
+BIN_GNU_LD=/usr/bin/g++
 BIN_GNU_LD_OUTPUTFLAG_EXE=-o 
 BIN_GNU_LD_OUTPUTFLAG_SHLIB=-o 
 BIN_GNU_LD_OUTPUTFLAG_INCOBJ=-o 
@@ -58,7 +59,7 @@ ifeq ($(FLAGS_GNU_CC_DEP),)
 FLAGS_GNU_CC_DEP=-MM
 endif
 ifeq ($(FLAGS_GNU_CC_DBG),)
-FLAGS_GNU_CC_DBG=-g3
+FLAGS_GNU_CC_DBG=-ggdb -g3 
 endif
 ifeq ($(FLAGS_GNU_CC_OPT),)
 FLAGS_GNU_CC_OPT=-O3

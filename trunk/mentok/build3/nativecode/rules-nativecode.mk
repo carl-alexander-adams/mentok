@@ -180,7 +180,7 @@ nativecode_clean::
 #
 _EXE_TARGETS=$(foreach t,$(sort $(EXE_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
 _EXE_DEP_GENERATION_TARGETS=$(addprefix _EXE_DEP_,$(EXE_TARGETS))
-_EXE_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_exe.mk
+_EXE_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/nativecode_depend_exe.mk
 
 # These need to be above the object generation rules below.
 _EXE_OBJ_TARGETS=$(foreach t,$(EXE_TARGETS),$(if $($(t)_OBJS),$($(t)_OBJS),$(t).o))
@@ -314,7 +314,7 @@ $(_EXE_TARGETS):
 #_LIB_TARGETS=$(foreach t,$(sort $(LIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
 _LIB_TARGETS=$(foreach t,$(sort $(LIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t:.a=$(NC_LIB_VTAG).a))
 _LIB_DEP_GENERATION_TARGETS=$(addprefix _LIB_DEP_,$(LIB_TARGETS))
-_LIB_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_lib.mk
+_LIB_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/nativecode_depend_lib.mk
 
 # These need to be above the object generation rules below.
 _LIB_OBJ_TARGETS=$(foreach t,$(LIB_TARGETS),$(if $($(t)_OBJS),$($(t)_OBJS),$(t).o))
@@ -443,7 +443,7 @@ $(_LIB_TARGETS):
 #_SHLIB_TARGETS=$(foreach t,$(sort $(SHLIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
 _SHLIB_TARGETS=$(foreach t,$(sort $(SHLIB_TARGETS)),$(call _func_get_target_dir,$(t))/$(t:.so=$(NC_LIB_VTAG).so))
 _SHLIB_DEP_GENERATION_TARGETS=$(addprefix _SHLIB_DEP_,$(SHLIB_TARGETS))
-_SHLIB_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_shlib.mk
+_SHLIB_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/nativecode_depend_shlib.mk
 
 # These need to be above the object generation rules below.
 _SHLIB_OBJ_TARGETS=$(foreach t,$(SHLIB_TARGETS),$(if $($(t)_OBJS),$($(t)_OBJS),$(t).o))
@@ -571,7 +571,7 @@ $(_SHLIB_TARGETS):
 #
 _OBJ_INC_TARGETS=$(foreach t,$(sort $(OBJ_INC_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
 _INCOBJ_DEP_GENERATION_TARGETS=$(addprefix _INCOBJ_DEP_,$(OBJ_INC_TARGETS))
-_INCOBJ_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_obj_inc.mk
+_INCOBJ_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/nativecode_depend_obj_inc.mk
 
 # These need to be above the object generation rules below.
 _INCOBJ_OBJ_TARGETS=$(foreach t,$(OBJ_INC_TARGETS),$(if $($(t)_OBJS),$($(t)_OBJS),$(t).o))
@@ -688,7 +688,7 @@ $(_OBJ_INC_TARGETS):
 #
 _OBJ_AS_TARGETS=$(foreach t,$(sort $(OBJ_AS_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
 _OBJ_AS_DEP_GENERATION_TARGETS=$(addprefix _OBJ_AS_DEP_,$(OBJ_AS_TARGETS))
-_OBJ_AS_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_obj_as.mk
+_OBJ_AS_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/nativecode_depend_obj_as.mk
 
 
 ifneq ($(strip $(OBJ_AS_TARGETS)),)
@@ -791,7 +791,7 @@ $(_OBJ_AS_TARGETS):
 #
 _OBJ_CXX_TARGETS=$(foreach t,$(sort $(OBJ_CXX_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
 _OBJ_CXX_DEP_GENERATION_TARGETS=$(addprefix _OBJ_CXX_DEP_,$(OBJ_CXX_TARGETS))
-_OBJ_CXX_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_obj_cxx.mk
+_OBJ_CXX_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/nativecode_depend_obj_cxx.mk
 
 
 ifneq ($(strip $(OBJ_CXX_TARGETS)),)
@@ -922,7 +922,7 @@ $(_OBJ_CXX_TARGETS):
 #
 _OBJ_CC_TARGETS=$(foreach t,$(sort $(OBJ_CC_TARGETS)),$(call _func_get_target_dir,$(t))/$(t))
 _OBJ_CC_DEP_GENERATION_TARGETS=$(addprefix _OBJ_CC_DEP_,$(OBJ_CC_TARGETS))
-_OBJ_CC_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/nativecode_depend_obj_cc.mk
+_OBJ_CC_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/nativecode_depend_obj_cc.mk
 
 ifneq ($(strip $(OBJ_CC_TARGETS)),)
 -include $(_OBJ_CC_DEPEND_FILE)

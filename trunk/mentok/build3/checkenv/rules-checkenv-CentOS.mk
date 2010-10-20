@@ -10,7 +10,7 @@
 # We don't calculate dependencies for CKOSPKG_TARGETS.  The dependency would be the
 # OS package system.  We assume that doesn't change lightly.
 
-CHECKENV_FUNC_GET_CKOSPKG_FLAGTARGET=$(addprefix $(BS_ARCH_TARGET_DIR)/checkenv_flags_ckospkg/,$(1))
+CHECKENV_FUNC_GET_CKOSPKG_FLAGTARGET=$(addprefix $(BS_ARCH_FLAG_DIR)/checkenv_flags_ckospkg/,$(1))
 
 _CKOSPKG_FLAG_TARGETS=$(foreach t,$(CKOSPKG_TARGETS),$(call CHECKENV_FUNC_GET_CKOSPKG_FLAGTARGET,$(t)))
 
@@ -40,7 +40,7 @@ $(_CKOSPKG_FLAG_TARGETS):
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)     OS Package Release            : $(_RELEASE)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)     OS Package Architecture       : $(_ARCH)")
 	@$(call BS_FUNC_ECHO_VERBOSE2,"$(BS_INFO_PREFIX)     YUM package spec              : $(_YUM_SPEC)")
-	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_TARGET_DIR)/checkenv_flags_ckospkg
+	$(BS_CMDPREFIX_VERBOSE2) $(BIN_MKDIR) -p $(BS_ARCH_FLAG_DIR)/checkenv_flags_ckospkg
 	$(BS_CMDPREFIX_VERBOSE1) $(BIN_CHECKENV_YUM) list installed $(_YUM_SPEC)
 	$(BS_CMDPREFIX_VERBOSE2) $(BIN_TOUCH) $(_FLAG_TARGET)
 

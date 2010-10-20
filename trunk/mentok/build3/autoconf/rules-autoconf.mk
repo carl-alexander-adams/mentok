@@ -35,7 +35,7 @@ _CONFIGH_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(CONFIGH_TARGETS))
 # config.h's don't depend on anything.
 #
 #_CONFIGH_DEP_GENERATION_TARGETS=$(addprefix _CONFIGH_DEP_,$(CONFIGH_TARGETS))
-#_CONFIGH_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/autoconf_depend_configh.mk
+#_CONFIGH_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/autoconf_depend_configh.mk
 
 
 ifneq ($(strip $(CONFIGH_TARGETS)),)

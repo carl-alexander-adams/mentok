@@ -53,7 +53,7 @@ export CLASSPATH
 #_JAR_TARGETS=$(addprefix $(BS_NOARCH_TARGET_DIR)/,$(sort $(JAR_TARGETS)))
 _JAR_TARGETS=$(sort $(JAR_TARGETS))
 _JAR_DEP_GENERATION_TARGETS=$(addprefix _JAR_DEP_,$(JAR_TARGETS))
-_JAR_DEPEND_FILE=$(BS_NOARCH_TARGET_DIR)/javacode_depend_jar.mk
+_JAR_DEPEND_FILE=$(BS_NOARCH_DEPEND_DIR)/javacode_depend_jar.mk
 
 _JAR_CLASS_TARGETS=$(foreach t,$(JAR_TARGETS),$(if $($(t)_CLASSES),$($(t)_CLASSES)))
 CLASS_TARGETS+=$(_JAR_CLASS_TARGETS)
@@ -132,7 +132,7 @@ $(_JAR_TARGETS):
 # Class targets
 #
 
-_CLASS_DEPEND_FILE=$(BS_NOARCH_TARGET_DIR)/javacode_depend_class.mk
+_CLASS_DEPEND_FILE=$(BS_NOARCH_DEPEND_DIR)/javacode_depend_class.mk
 # XXX - java code is currently built into the src dir.
 #_CLASS_TARGETS=$(addprefix $(BS_NOARCH_TARGET_DIR)/,$(sort $(CLASS_TARGETS)))
 _CLASS_TARGETS=$(sort $(CLASS_TARGETS))
@@ -202,7 +202,7 @@ $(_CLASS_TARGETS):
 # JJ targets
 #
 
-_JJ_DEPEND_FILE=$(BS_NOARCH_TARGET_DIR)/javacode_depend_jj.mk
+_JJ_DEPEND_FILE=$(BS_NOARCH_DEPEND_DIR)/javacode_depend_jj.mk
 # XXX - java code is currently built into the src dir.
 #_JJ_TARGETS=$(addprefix $(BS_NOARCH_TARGET_DIR)/,$(sort $(JJ_TARGETS)))
 _JJ_TARGETS=$(sort $(JJ_TARGETS))
