@@ -36,7 +36,7 @@ pythoncode_clean::
 #
 _PYEXE_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(PYEXE_TARGETS))
 _PYEXE_DEP_GENERATION_TARGETS=$(addprefix _PYEXE_DEP_,$(PYEXE_TARGETS))
-_PYEXE_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/pythoncode_depend_python_exe.mk
+_PYEXE_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/pythoncode_depend_python_exe.mk
 # Automaticly add the .pyo's to PYO_TARGETS
 _PYEXE_PYOS=$(foreach t,$(PYEXE_TARGETS),$(if $($(t)_PYO),$($(t)_PYO),$(t).pyo))
 PYO_TARGETS+=$(_PYEXE_PYOS)
@@ -99,7 +99,7 @@ python_pyexe: $(_PYEXE_TARGETS)
 _PYO_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(sort $(PYO_TARGETS)))
 _PYO_DEP_GENERATION_TARGETS=$(addprefix _PYO_DEP_,$(PYO_TARGETS))
 #_PYO_DEP_GENERATION_TARGETS=$(subst /,-,$(addprefix _PYO_DEP_,$(PYO_TARGETS)))
-_PYO_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/pythoncode_depend_python_pyo.mk
+_PYO_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/pythoncode_depend_python_pyo.mk
 
 ifneq ($(strip $(PYO_TARGETS)),)
 -include $(_PYO_DEPEND_FILE)
@@ -153,9 +153,9 @@ python_pyo: $(_PYO_TARGETS)
 # Python Object Dir
 #
 _PYODIR_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(PYODIR_TARGETS))
-_PYODIR_FLAG_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/python_flags_pyodir/,$(PYODIR_TARGETS))
+_PYODIR_FLAG_TARGETS=$(addprefix $(BS_ARCH_FLAG_DIR)/python_flags_pyodir/,$(PYODIR_TARGETS))
 _PYODIR_DEP_GENERATION_TARGETS=$(addprefix _PYODIR_DEP_,$(PYODIR_TARGETS))
-_PYODIR_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/pythoncode_depend_python_pyodir.mk
+_PYODIR_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/pythoncode_depend_python_pyodir.mk
 
 ifneq ($(strip $(PYODIR_TARGETS)),)
 -include $(_PYODIR_DEPEND_FILE)
@@ -179,7 +179,7 @@ _PYODIR_DEP_PREP:
 
 _PYODIR_DEP_%:
 _PYODIR_DEP_%: _PYODIR=$(BS_ARCH_TARGET_DIR)/$(*)
-_PYODIR_DEP_%: _FLAG=$(BS_ARCH_TARGET_DIR)/python_flags_pyodir/$(*)
+_PYODIR_DEP_%: _FLAG=$(BS_ARCH_FLAG_DIR)/python_flags_pyodir/$(*)
 _PYODIR_DEP_%: _SRCS=$(if $($*_SRCS),$($*_SRCS),$(*))
 _PYODIR_DEP_%: _DEP=$($*_DEP)
 _PYODIR_DEP_%: 

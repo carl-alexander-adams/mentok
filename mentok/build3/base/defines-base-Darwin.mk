@@ -135,7 +135,7 @@ BIN_WHOAMI=/usr/bin/whoami
 endif
 
 ifeq ($(BIN_TEST),)
-BIN_TEST=/usr/bin/test
+BIN_TEST=/bin/test
 endif
 
 ifeq ($(BIN_EPM),)

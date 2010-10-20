@@ -44,7 +44,7 @@ codegen_clean::
 #
 _KVPTEMPLATEFILE_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(sort $(KVPTEMPLATEFILE_TARGETS)))
 _KVPTEMPLATEFILE_DEP_GENERATION_TARGETS=$(addprefix _KVPTEMPLATEFILE_DEP_,$(KVPTEMPLATEFILE_TARGETS))
-_KVPTEMPLATEFILE_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/codegen_depend_kvptemplatefile.mk
+_KVPTEMPLATEFILE_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/codegen_depend_kvptemplatefile.mk
 
 ifneq ($(strip $(KVPTEMPLATEFILE_TARGETS)),)
 -include $(_KVPTEMPLATEFILE_DEPEND_FILE)
@@ -107,7 +107,7 @@ codegen_kvptemplatefile: $(_KVPTEMPLATEFILE_TARGETS)
 #
 _ENVTEMPLATEFILE_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(sort $(ENVTEMPLATEFILE_TARGETS)))
 _ENVTEMPLATEFILE_DEP_GENERATION_TARGETS=$(addprefix _ENVTEMPLATEFILE_DEP_,$(ENVTEMPLATEFILE_TARGETS))
-_ENVTEMPLATEFILE_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/codegen_depend_envtemplatefile.mk
+_ENVTEMPLATEFILE_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/codegen_depend_envtemplatefile.mk
 
 _ENVTEMPLATEFILE_BUILDERS=$(addsuffix -builder.sh,$(_ENVTEMPLATEFILE_TARGETS))
 
@@ -177,7 +177,7 @@ codegen_envtemplatefile: $(_ENVTEMPLATEFILE_TARGETS)
 #
 _LEX_YYC_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(sort $(LEX_TARGETS)))
 _LEX_DEP_GENERATION_TARGETS=$(addprefix _LEX_DEP_,$(LEX_TARGETS))
-_LEX_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/codegen_depend_lex.mk
+_LEX_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/codegen_depend_lex.mk
 
 
 ifneq ($(strip $(LEX_TARGETS)),)
@@ -239,7 +239,7 @@ codegen_lex: $(_LEX_YYC_TARGETS)
 _YACC_TABC_TARGETS=$(addprefix $(BS_ARCH_TARGET_DIR)/,$(sort $(YACC_TARGETS)))
 _YACC_TABH_TARGETS=$(patsubst %.cpp,%.h,$(patsubst %.c,%.h,$(_YACC_TABC_TARGETS)))
 _YACC_DEP_GENERATION_TARGETS=$(addprefix _YACC_DEP_,$(YACC_TARGETS))
-_YACC_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/codegen_depend_yacc.mk
+_YACC_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/codegen_depend_yacc.mk
 
 
 ifneq ($(strip $(YACC_TARGETS)),)

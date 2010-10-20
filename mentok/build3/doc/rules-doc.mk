@@ -33,7 +33,7 @@ doc_clean::
 #
 _DOXYGEN_TARGETS=$(addprefix $(BS_NOARCH_TARGET_DIR)/,$(sort $(DOXYGEN_TARGETS)))
 _DOXYGEN_DEP_GENERATION_TARGETS=$(addprefix _DOXYGEN_DEP_,$(DOXYGEN_TARGETS))
-_DOXYGEN_DEPEND_FILE=$(BS_NOARCH_TARGET_DIR)/doc_depend_doxygen.mk
+_DOXYGEN_DEPEND_FILE=$(BS_NOARCH_DEPEND_DIR)/doc_depend_doxygen.mk
 
 
 ifneq ($(strip $(DOXYGEN_TARGETS)),)

@@ -38,7 +38,7 @@ flex_clean::
 #
 _SWF_TARGETS=$(foreach t,$(sort $(SWF_TARGETS)),$(addprefix $(BS_ARCH_TARGET_DIR)/,$(t)))
 _SWF_DEP_GENERATION_TARGETS=$(addprefix _SWF_DEP_,$(SWF_TARGETS))
-_SWF_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/flex_depend_swf.mk
+_SWF_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/flex_depend_swf.mk
 
 
 ifneq ($(strip $(SWF_TARGETS)),)

@@ -63,7 +63,7 @@ _BUILDSTAMP_C_TARGETS=$(_BUILDSTAMP_H_TARGETS:.h=.c)
 # Build stamps don't depend on anything.
 #
 #_BUILDSTAMP_DEP_GENERATION_TARGETS=$(addprefix _BUILDSTAMP_DEP_,$(BUILDSTAMP_TARGETS))
-#_BUILDSTAMP_DEPEND_FILE=$(BS_ARCH_TARGET_DIR)/config_depend_buildstamp.mk
+#_BUILDSTAMP_DEPEND_FILE=$(BS_ARCH_DEPEND_DIR)/config_depend_buildstamp.mk
 
 
 ifneq ($(strip $(BUILDSTAMP_TARGETS)),)
