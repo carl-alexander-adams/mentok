@@ -7,6 +7,6 @@ build3-sample-component-tree
 src
     Build system 3 componet src tree that uses the copy of
     build system 3 in this dir. This is how build system 3
-    pushes itself to dist. (Holly recursion batman, the build
+    pushes itself to dist. (Holy recursion Batman, the build
     system's self pushing component root)
 
